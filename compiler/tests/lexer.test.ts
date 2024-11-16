@@ -64,5 +64,67 @@ describe('Lexer', () => {
             { type: 'NUMBER', value: '10' },
             { type: 'SYMBOL', value: ';' }
         ]);
-    })
+    });
+
+
+    it('should throw an error for unexpected characters', () => {
+        const lexer = new Lexer('let a = 10 @');
+        expect(() => lexer.tokenize()).toThrow('Unexpected character: @');
+    });
+
+    it('should tokenize mixed content correctly', () => {
+        const lexer = new Lexer('let x = 42 + y;');
+        const tokens = lexer.tokenize();
+        expect(tokens).toEqual([
+            { type: 'IDENTIFIER', value: 'let' },
+            { type: 'IDENTIFIER', value: 'x' },
+            { type: 'SYMBOL', value: '=' },
+            { type: 'NUMBER', value: '42' },
+            { type: 'SYMBOL', value: '+' },
+            { type: 'IDENTIFIER', value: 'y' },
+            { type: 'SYMBOL', value: ';' }
+        ]);
+    });
+
+    it('should tokenize complex expressions correctly', () => {
+        const lexer = new Lexer('if (x > 10) { x = x + 1; }');
+        const tokens = lexer.tokenize();
+        expect(tokens).toEqual([
+            { type: 'IDENTIFIER', value: 'if' },
+            { type: 'SYMBOL', value: '(' },
+            { type: 'IDENTIFIER', value: 'x' },
+            { type: 'SYMBOL', value: '>' },
+            { type: 'NUMBER', value: '10' },
+            { type: 'SYMBOL', value: ')' },
+            { type: 'SYMBOL', value: '{' },
+            { type: 'IDENTIFIER', value: 'x' },
+            { type: 'SYMBOL', value: '=' },
+            { type: 'IDENTIFIER', value: 'x' },
+            { type: 'SYMBOL', value: '+' },
+            { type: 'NUMBER', value: '1' },
+            { type: 'SYMBOL', value: ';' },
+            { type: 'SYMBOL', value: '}' }
+        ]);
+    });
+
+    it('should tokenize a complex function definition correctly', () => {
+        const lexer = new Lexer('function add(a, b) { return a + b; }');
+        const tokens = lexer.tokenize();
+        expect(tokens).toEqual([
+            { type: 'IDENTIFIER', value: 'function' },
+            { type: 'IDENTIFIER', value: 'add' },
+            { type: 'SYMBOL', value: '(' },
+            { type: 'IDENTIFIER', value: 'a' },
+            { type: 'SYMBOL', value: ',' },
+            { type: 'IDENTIFIER', value: 'b' },
+            { type: 'SYMBOL', value: ')' },
+            { type: 'SYMBOL', value: '{' },
+            { type: 'IDENTIFIER', value: 'return' },
+            { type: 'IDENTIFIER', value: 'a' },
+            { type: 'SYMBOL', value: '+' },
+            { type: 'IDENTIFIER', value: 'b' },
+            { type: 'SYMBOL', value: ';' },
+            { type: 'SYMBOL', value: '}' }
+        ]);
+    });
 });

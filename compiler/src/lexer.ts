@@ -56,7 +56,7 @@ export class Lexer {
                 this.tokens.push(this.readIdentifier());
             } else if (/\d/.test(char)) {
                 this.tokens.push(this.readNumber());
-            } else if (/[=+\-;]/.test(char)) {
+            } else if (/[=+\-;(){}>,]/.test(char)) {
                 this.tokens.push(this.readSymbol());
             } else {
                 throw new Error(`Unexpected character: ${char}`);
