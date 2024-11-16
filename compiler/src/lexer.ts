@@ -3,12 +3,12 @@ export interface Token {
     value: string;
 }
 
-export class Lexer{
+export class Lexer {
     private input: string;
     private position: number;
     private tokens: Token[];
 
-    constructor(input: string){
+    constructor(input: string) {
         this.input = input;
         this.position = 0;
         this.tokens = [];
@@ -16,34 +16,53 @@ export class Lexer{
 
     private readIdentifier(): Token {
         let start = this.position;
-        while (/[a-zA-Z]/.test(this.input[this.position])) {
+        if (/[a-zA-Z_]/.test(this.input[this.position])) {
             this.position++;
+            while (this.position < this.input.length && /[a-zA-Z0-9_]/.test(this.input[this.position])) {
+                this.position++;
+            }
         }
         return { type: 'IDENTIFIER', value: this.input.slice(start, this.position) };
     }
-
+    
     private readNumber(): Token {
         let start = this.position;
-        while (/\d/.test(this.input[this.position])) {
+        while (this.position < this.input.length && /\d/.test(this.input[this.position])) {
             this.position++;
         }
         return { type: 'NUMBER', value: this.input.slice(start, this.position) };
     }
+    
+    private readSymbol(): Token {
+        const symbol = this.input[this.position];
+        this.position++;
+        return { type: 'SYMBOL', value: symbol };
+    }
+    
 
-    tokenize(){
-        while (this.position < this.input.length){
+    private skipWhitespace() {
+        while (/\s/.test(this.input[this.position])) {
+            this.position++;
+        }
+    }
+
+    public tokenize(): Token[] {
+        while (this.position < this.input.length) {
+            this.skipWhitespace();
+            if (this.position >= this.input.length) break;
+    
             const char = this.input[this.position];
-            if(/\s/.test(char)){
-                this.position++;
-            }else if (/[a-zA-Z]/.test(char)) {
+            if (/[a-zA-Z]/.test(char)) {
                 this.tokens.push(this.readIdentifier());
             } else if (/\d/.test(char)) {
                 this.tokens.push(this.readNumber());
+            } else if (/[=+\-;]/.test(char)) {
+                this.tokens.push(this.readSymbol());
             } else {
-                this.tokens.push({ type: 'SYMBOL', value: char });
-                this.position++;
+                throw new Error(`Unexpected character: ${char}`);
+            }
         }
+        console.log(this.tokens); // Debug
         return this.tokens;
-        }
-    }
+    }    
 }
