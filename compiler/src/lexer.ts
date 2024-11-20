@@ -38,6 +38,12 @@ export class Lexer {
         this.position++;
         return { type: 'SYMBOL', value: symbol };
     }
+
+    private readPunctuation(): Token {
+        const punctuation = this.input[this.position];
+        this.position++;
+        return { type: 'PUNCTUATION', value: punctuation }
+    }
     
 
     private skipWhitespace() {
@@ -56,13 +62,14 @@ export class Lexer {
                 this.tokens.push(this.readIdentifier());
             } else if (/\d/.test(char)) {
                 this.tokens.push(this.readNumber());
-            } else if (/[=+\-;(){}>,]/.test(char)) {
+            } else if (/[=+\->,]/.test(char)) {
                 this.tokens.push(this.readSymbol());
+            } else if(/[;(){}]/.test(char)) {
+                this.tokens.push(this.readPunctuation());
             } else {
                 throw new Error(`Unexpected character: ${char}`);
             }
         }
-        console.log(this.tokens); // Debug
         return this.tokens;
     }    
 }

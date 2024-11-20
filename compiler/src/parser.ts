@@ -63,6 +63,9 @@ export class Parser {
         } else if (token.type === 'IDENTIFIER') {
             this.position++;
             return { type: 'Identifier', name: token.value };
+        } else if(token.type === "PUNCTUATION"){
+            this.position++;
+            return {type: "Punctuation", value: token.value};
         } else {
             throw new Error(`Unexpected token: ${token.value}`);
         }

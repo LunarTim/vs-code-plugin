@@ -38,7 +38,7 @@ describe('Lexer', () => {
             { type: 'IDENTIFIER', value: 'a' },
             { type: 'SYMBOL', value: '=' },
             { type: 'NUMBER', value: '10' },
-            { type: 'SYMBOL', value: ';' }
+            { type: 'PUNCTUATION', value: ';' }
         ]);
     });
 
@@ -50,7 +50,7 @@ describe('Lexer', () => {
             { type: 'IDENTIFIER', value: 'a' },
             { type: 'SYMBOL', value: '=' },
             { type: 'NUMBER', value: '10' },
-            { type: 'SYMBOL', value: ';' }
+            { type: 'PUNCTUATION', value: ';' }
         ]);
     });
 
@@ -62,7 +62,7 @@ describe('Lexer', () => {
             { type: 'IDENTIFIER', value: 'a' },
             { type: 'SYMBOL', value: '=' },
             { type: 'NUMBER', value: '10' },
-            { type: 'SYMBOL', value: ';' }
+            { type: 'PUNCTUATION', value: ';' }
         ]);
     });
 
@@ -82,7 +82,7 @@ describe('Lexer', () => {
             { type: 'NUMBER', value: '42' },
             { type: 'SYMBOL', value: '+' },
             { type: 'IDENTIFIER', value: 'y' },
-            { type: 'SYMBOL', value: ';' }
+            { type: 'PUNCTUATION', value: ';' }
         ]);
     });
 
@@ -91,19 +91,19 @@ describe('Lexer', () => {
         const tokens = lexer.tokenize();
         expect(tokens).toEqual([
             { type: 'IDENTIFIER', value: 'if' },
-            { type: 'SYMBOL', value: '(' },
+            { type: 'PUNCTUATION', value: '(' },
             { type: 'IDENTIFIER', value: 'x' },
             { type: 'SYMBOL', value: '>' },
             { type: 'NUMBER', value: '10' },
-            { type: 'SYMBOL', value: ')' },
-            { type: 'SYMBOL', value: '{' },
+            { type: 'PUNCTUATION', value: ')' },
+            { type: 'PUNCTUATION', value: '{' },
             { type: 'IDENTIFIER', value: 'x' },
             { type: 'SYMBOL', value: '=' },
             { type: 'IDENTIFIER', value: 'x' },
             { type: 'SYMBOL', value: '+' },
             { type: 'NUMBER', value: '1' },
-            { type: 'SYMBOL', value: ';' },
-            { type: 'SYMBOL', value: '}' }
+            { type: 'PUNCTUATION', value: ';' },
+            { type: 'PUNCTUATION', value: '}' }
         ]);
     });
 
@@ -113,18 +113,18 @@ describe('Lexer', () => {
         expect(tokens).toEqual([
             { type: 'IDENTIFIER', value: 'function' },
             { type: 'IDENTIFIER', value: 'add' },
-            { type: 'SYMBOL', value: '(' },
+            { type: 'PUNCTUATION', value: '(' },
             { type: 'IDENTIFIER', value: 'a' },
             { type: 'SYMBOL', value: ',' },
             { type: 'IDENTIFIER', value: 'b' },
-            { type: 'SYMBOL', value: ')' },
-            { type: 'SYMBOL', value: '{' },
+            { type: 'PUNCTUATION', value: ')' },
+            { type: 'PUNCTUATION', value: '{' },
             { type: 'IDENTIFIER', value: 'return' },
             { type: 'IDENTIFIER', value: 'a' },
             { type: 'SYMBOL', value: '+' },
             { type: 'IDENTIFIER', value: 'b' },
-            { type: 'SYMBOL', value: ';' },
-            { type: 'SYMBOL', value: '}' }
+            { type: 'PUNCTUATION', value: ';' },
+            { type: 'PUNCTUATION', value: '}' }
         ]);
     });
 });
