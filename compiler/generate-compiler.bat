@@ -1,12 +1,12 @@
-@echo on
+@echo off
 
-cd compiler\src\antlr || exit /b 1
+cd src\antlr || exit /b 1
 
-java -jar ..\..\..\antlr-4.13.1-complete.jar ^
+java -jar ..\..\lib\antlr-4.13.1-complete.jar ^
     -visitor ^
     -Dlanguage=TypeScript ^
     -o ..\js\generated ^
-    lexer.g4 parser.g4
+    Lumina.g4
 
 
-cd ..\..\..
+cd ..\.. || exit /b 1

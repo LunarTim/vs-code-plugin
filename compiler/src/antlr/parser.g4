@@ -1,4 +1,4 @@
-parser grammar parser;
+grammar parser;
 
 options { tokenVocab=Lexer; }
 
@@ -35,3 +35,10 @@ operator
 type
     : 'int' | 'float' | 'bool'
     ;
+
+
+// Lexer rules
+IDENTIFIER: [a-zA-Z][a-zA-Z0-9_]*;
+NUMBER: [0-9]+;
+PUNCTUATION: ';' | '(' | ')' | '[' | ']' | '{' | '}';
+OPERATOR: '=' | '+' | '-' | '*' | '/' | '%';
