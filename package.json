@@ -1,5 +1,6 @@
 {
   "name": "custom-language-extension",
+  "author": "Tim Hofman",
   "version": "1.0.0",
   "main": "src/extension.ts",
   "scripts": {
