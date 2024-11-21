@@ -1,7 +1,7 @@
 grammar Lumina;
 
 // Parser rules
-program: statement* EOF;
+program: (statement)*;
 
 statement
     : variableDeclaration

@@ -205,8 +205,6 @@ export default class LuminaParser extends Parser {
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 68;
-			this.match(LuminaParser.EOF);
 			}
 		}
 		catch (re) {
@@ -228,7 +226,7 @@ export default class LuminaParser extends Parser {
 		let localctx: StatementContext = new StatementContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 2, LuminaParser.RULE_statement);
 		try {
-			this.state = 78;
+			this.state = 76;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case 1:
@@ -236,14 +234,14 @@ export default class LuminaParser extends Parser {
 			case 3:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 70;
+				this.state = 68;
 				this.variableDeclaration();
 				}
 				break;
 			case 6:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 71;
+				this.state = 69;
 				this.functionDeclaration();
 				}
 				break;
@@ -258,42 +256,42 @@ export default class LuminaParser extends Parser {
 			case 49:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 72;
+				this.state = 70;
 				this.expressionStatement();
 				}
 				break;
 			case 10:
 				this.enterOuterAlt(localctx, 4);
 				{
-				this.state = 73;
+				this.state = 71;
 				this.ifStatement();
 				}
 				break;
 			case 12:
 				this.enterOuterAlt(localctx, 5);
 				{
-				this.state = 74;
+				this.state = 72;
 				this.forStatement();
 				}
 				break;
 			case 14:
 				this.enterOuterAlt(localctx, 6);
 				{
-				this.state = 75;
+				this.state = 73;
 				this.whileStatement();
 				}
 				break;
 			case 15:
 				this.enterOuterAlt(localctx, 7);
 				{
-				this.state = 76;
+				this.state = 74;
 				this.returnStatement();
 				}
 				break;
 			case 16:
 				this.enterOuterAlt(localctx, 8);
 				{
-				this.state = 77;
+				this.state = 75;
 				this.block();
 				}
 				break;
@@ -323,7 +321,7 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 80;
+			this.state = 78;
 			_la = this._input.LA(1);
 			if(!((((_la) & ~0x1F) === 0 && ((1 << _la) & 14) !== 0))) {
 			this._errHandler.recoverInline(this);
@@ -332,33 +330,33 @@ export default class LuminaParser extends Parser {
 				this._errHandler.reportMatch(this);
 			    this.consume();
 			}
-			this.state = 81;
+			this.state = 79;
 			this.match(LuminaParser.IDENTIFIER);
-			this.state = 84;
+			this.state = 82;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la===4) {
 				{
-				this.state = 82;
+				this.state = 80;
 				this.match(LuminaParser.T__3);
-				this.state = 83;
+				this.state = 81;
 				this.type_();
 				}
 			}
 
-			this.state = 88;
+			this.state = 86;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la===5) {
 				{
-				this.state = 86;
+				this.state = 84;
 				this.match(LuminaParser.T__4);
-				this.state = 87;
+				this.state = 85;
 				this.expression();
 				}
 			}
 
-			this.state = 90;
+			this.state = 88;
 			this.match(LuminaParser.PUNCTUATION);
 			}
 		}
@@ -384,37 +382,37 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 92;
+			this.state = 90;
 			this.match(LuminaParser.T__5);
-			this.state = 93;
+			this.state = 91;
 			this.match(LuminaParser.IDENTIFIER);
-			this.state = 94;
+			this.state = 92;
 			this.match(LuminaParser.T__6);
-			this.state = 96;
+			this.state = 94;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la===47) {
 				{
-				this.state = 95;
+				this.state = 93;
 				this.parameterList();
 				}
 			}
 
-			this.state = 98;
+			this.state = 96;
 			this.match(LuminaParser.T__7);
-			this.state = 101;
+			this.state = 99;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la===4) {
 				{
-				this.state = 99;
+				this.state = 97;
 				this.match(LuminaParser.T__3);
-				this.state = 100;
+				this.state = 98;
 				this.type_();
 				}
 			}
 
-			this.state = 103;
+			this.state = 101;
 			this.block();
 			}
 		}
@@ -440,21 +438,21 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 105;
+			this.state = 103;
 			this.parameter();
-			this.state = 110;
+			this.state = 108;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===9) {
 				{
 				{
-				this.state = 106;
+				this.state = 104;
 				this.match(LuminaParser.T__8);
-				this.state = 107;
+				this.state = 105;
 				this.parameter();
 				}
 				}
-				this.state = 112;
+				this.state = 110;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -482,16 +480,16 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 113;
+			this.state = 111;
 			this.match(LuminaParser.IDENTIFIER);
-			this.state = 116;
+			this.state = 114;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la===4) {
 				{
-				this.state = 114;
+				this.state = 112;
 				this.match(LuminaParser.T__3);
-				this.state = 115;
+				this.state = 113;
 				this.type_();
 				}
 			}
@@ -519,9 +517,9 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 118;
+			this.state = 116;
 			this.expression();
-			this.state = 119;
+			this.state = 117;
 			this.match(LuminaParser.PUNCTUATION);
 			}
 		}
@@ -546,24 +544,24 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 121;
+			this.state = 119;
 			this.match(LuminaParser.T__9);
-			this.state = 122;
+			this.state = 120;
 			this.match(LuminaParser.T__6);
-			this.state = 123;
+			this.state = 121;
 			this.expression();
-			this.state = 124;
+			this.state = 122;
 			this.match(LuminaParser.T__7);
-			this.state = 125;
+			this.state = 123;
 			this.statement();
-			this.state = 128;
+			this.state = 126;
 			this._errHandler.sync(this);
 			switch ( this._interp.adaptivePredict(this._input, 8, this._ctx) ) {
 			case 1:
 				{
-				this.state = 126;
+				this.state = 124;
 				this.match(LuminaParser.T__10);
-				this.state = 127;
+				this.state = 125;
 				this.statement();
 				}
 				break;
@@ -592,18 +590,18 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 130;
+			this.state = 128;
 			this.match(LuminaParser.T__11);
-			this.state = 131;
+			this.state = 129;
 			this.match(LuminaParser.T__6);
-			this.state = 134;
+			this.state = 132;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case 1:
 			case 2:
 			case 3:
 				{
-				this.state = 132;
+				this.state = 130;
 				this.variableDeclaration();
 				}
 				break;
@@ -617,7 +615,7 @@ export default class LuminaParser extends Parser {
 			case 48:
 			case 49:
 				{
-				this.state = 133;
+				this.state = 131;
 				this.expressionStatement();
 				}
 				break;
@@ -626,33 +624,33 @@ export default class LuminaParser extends Parser {
 			default:
 				break;
 			}
+			this.state = 134;
+			this.match(LuminaParser.T__12);
 			this.state = 136;
-			this.match(LuminaParser.T__12);
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 14680192) !== 0) || ((((_la - 42)) & ~0x1F) === 0 && ((1 << (_la - 42)) & 241) !== 0)) {
+				{
+				this.state = 135;
+				this.expression();
+				}
+			}
+
 			this.state = 138;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 14680192) !== 0) || ((((_la - 42)) & ~0x1F) === 0 && ((1 << (_la - 42)) & 241) !== 0)) {
-				{
-				this.state = 137;
-				this.expression();
-				}
-			}
-
-			this.state = 140;
 			this.match(LuminaParser.T__12);
-			this.state = 142;
+			this.state = 140;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 14680192) !== 0) || ((((_la - 42)) & ~0x1F) === 0 && ((1 << (_la - 42)) & 241) !== 0)) {
 				{
-				this.state = 141;
+				this.state = 139;
 				this.expression();
 				}
 			}
 
-			this.state = 144;
+			this.state = 142;
 			this.match(LuminaParser.T__7);
-			this.state = 145;
+			this.state = 143;
 			this.statement();
 			}
 		}
@@ -677,15 +675,15 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 147;
+			this.state = 145;
 			this.match(LuminaParser.T__13);
-			this.state = 148;
+			this.state = 146;
 			this.match(LuminaParser.T__6);
-			this.state = 149;
+			this.state = 147;
 			this.expression();
-			this.state = 150;
+			this.state = 148;
 			this.match(LuminaParser.T__7);
-			this.state = 151;
+			this.state = 149;
 			this.statement();
 			}
 		}
@@ -711,19 +709,19 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 153;
+			this.state = 151;
 			this.match(LuminaParser.T__14);
-			this.state = 155;
+			this.state = 153;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 14680192) !== 0) || ((((_la - 42)) & ~0x1F) === 0 && ((1 << (_la - 42)) & 241) !== 0)) {
 				{
-				this.state = 154;
+				this.state = 152;
 				this.expression();
 				}
 			}
 
-			this.state = 157;
+			this.state = 155;
 			this.match(LuminaParser.PUNCTUATION);
 			}
 		}
@@ -749,23 +747,23 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 159;
+			this.state = 157;
 			this.match(LuminaParser.T__15);
-			this.state = 163;
+			this.state = 161;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 14800078) !== 0) || ((((_la - 42)) & ~0x1F) === 0 && ((1 << (_la - 42)) & 241) !== 0)) {
 				{
 				{
-				this.state = 160;
+				this.state = 158;
 				this.statement();
 				}
 				}
-				this.state = 165;
+				this.state = 163;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 166;
+			this.state = 164;
 			this.match(LuminaParser.T__16);
 			}
 		}
@@ -790,7 +788,7 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 168;
+			this.state = 166;
 			this.assignmentExpression();
 			}
 		}
@@ -816,16 +814,16 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 170;
+			this.state = 168;
 			this.conditionalExpression();
-			this.state = 174;
+			this.state = 172;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 260046849) !== 0)) {
 				{
-				this.state = 171;
+				this.state = 169;
 				this.assignmentOperator();
-				this.state = 172;
+				this.state = 170;
 				this.assignmentExpression();
 				}
 			}
@@ -854,20 +852,20 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 176;
+			this.state = 174;
 			this.logicalOrExpression();
-			this.state = 182;
+			this.state = 180;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la===18) {
 				{
-				this.state = 177;
+				this.state = 175;
 				this.match(LuminaParser.T__17);
-				this.state = 178;
+				this.state = 176;
 				this.expression();
-				this.state = 179;
+				this.state = 177;
 				this.match(LuminaParser.T__3);
-				this.state = 180;
+				this.state = 178;
 				this.conditionalExpression();
 				}
 			}
@@ -896,21 +894,21 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 184;
+			this.state = 182;
 			this.logicalAndExpression();
-			this.state = 189;
+			this.state = 187;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===19) {
 				{
 				{
-				this.state = 185;
+				this.state = 183;
 				this.match(LuminaParser.T__18);
-				this.state = 186;
+				this.state = 184;
 				this.logicalAndExpression();
 				}
 				}
-				this.state = 191;
+				this.state = 189;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -938,21 +936,21 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 192;
+			this.state = 190;
 			this.equalityExpression();
-			this.state = 197;
+			this.state = 195;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===20) {
 				{
 				{
-				this.state = 193;
+				this.state = 191;
 				this.match(LuminaParser.T__19);
-				this.state = 194;
+				this.state = 192;
 				this.equalityExpression();
 				}
 				}
-				this.state = 199;
+				this.state = 197;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -980,21 +978,21 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 200;
+			this.state = 198;
 			this.relationalExpression();
-			this.state = 206;
+			this.state = 204;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (((((_la - 33)) & ~0x1F) === 0 && ((1 << (_la - 33)) & 15) !== 0)) {
 				{
 				{
-				this.state = 201;
+				this.state = 199;
 				this.equalityOperator();
-				this.state = 202;
+				this.state = 200;
 				this.relationalExpression();
 				}
 				}
-				this.state = 208;
+				this.state = 206;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -1022,21 +1020,21 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 209;
+			this.state = 207;
 			this.additiveExpression();
-			this.state = 215;
+			this.state = 213;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (((((_la - 37)) & ~0x1F) === 0 && ((1 << (_la - 37)) & 15) !== 0)) {
 				{
 				{
-				this.state = 210;
+				this.state = 208;
 				this.relationalOperator();
-				this.state = 211;
+				this.state = 209;
 				this.additiveExpression();
 				}
 				}
-				this.state = 217;
+				this.state = 215;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -1064,21 +1062,21 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 218;
+			this.state = 216;
 			this.multiplicativeExpression();
-			this.state = 224;
+			this.state = 222;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la===41 || _la===42) {
 				{
 				{
-				this.state = 219;
+				this.state = 217;
 				this.additiveOperator();
-				this.state = 220;
+				this.state = 218;
 				this.multiplicativeExpression();
 				}
 				}
-				this.state = 226;
+				this.state = 224;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -1106,21 +1104,21 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 227;
+			this.state = 225;
 			this.unaryExpression();
-			this.state = 233;
+			this.state = 231;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (((((_la - 43)) & ~0x1F) === 0 && ((1 << (_la - 43)) & 7) !== 0)) {
 				{
 				{
-				this.state = 228;
+				this.state = 226;
 				this.multiplicativeOperator();
-				this.state = 229;
+				this.state = 227;
 				this.unaryExpression();
 				}
 				}
-				this.state = 235;
+				this.state = 233;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -1145,7 +1143,7 @@ export default class LuminaParser extends Parser {
 		let localctx: UnaryExpressionContext = new UnaryExpressionContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 42, LuminaParser.RULE_unaryExpression);
 		try {
-			this.state = 240;
+			this.state = 238;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case 7:
@@ -1157,7 +1155,7 @@ export default class LuminaParser extends Parser {
 			case 49:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 236;
+				this.state = 234;
 				this.postfixExpression();
 				}
 				break;
@@ -1165,9 +1163,9 @@ export default class LuminaParser extends Parser {
 			case 46:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 237;
+				this.state = 235;
 				this.unaryOperator();
-				this.state = 238;
+				this.state = 236;
 				this.unaryExpression();
 				}
 				break;
@@ -1196,7 +1194,7 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 242;
+			this.state = 240;
 			this.primaryExpression();
 			}
 		}
@@ -1219,59 +1217,59 @@ export default class LuminaParser extends Parser {
 		let localctx: PrimaryExpressionContext = new PrimaryExpressionContext(this, this._ctx, this.state);
 		this.enterRule(localctx, 46, LuminaParser.RULE_primaryExpression);
 		try {
-			this.state = 254;
+			this.state = 252;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case 47:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 244;
+				this.state = 242;
 				this.match(LuminaParser.IDENTIFIER);
 				}
 				break;
 			case 48:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 245;
+				this.state = 243;
 				this.match(LuminaParser.NUMBER);
 				}
 				break;
 			case 49:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 246;
+				this.state = 244;
 				this.match(LuminaParser.STRING);
 				}
 				break;
 			case 21:
 				this.enterOuterAlt(localctx, 4);
 				{
-				this.state = 247;
+				this.state = 245;
 				this.match(LuminaParser.T__20);
 				}
 				break;
 			case 22:
 				this.enterOuterAlt(localctx, 5);
 				{
-				this.state = 248;
+				this.state = 246;
 				this.match(LuminaParser.T__21);
 				}
 				break;
 			case 23:
 				this.enterOuterAlt(localctx, 6);
 				{
-				this.state = 249;
+				this.state = 247;
 				this.match(LuminaParser.T__22);
 				}
 				break;
 			case 7:
 				this.enterOuterAlt(localctx, 7);
 				{
-				this.state = 250;
+				this.state = 248;
 				this.match(LuminaParser.T__6);
-				this.state = 251;
+				this.state = 249;
 				this.expression();
-				this.state = 252;
+				this.state = 250;
 				this.match(LuminaParser.T__7);
 				}
 				break;
@@ -1301,7 +1299,7 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 256;
+			this.state = 254;
 			_la = this._input.LA(1);
 			if(!(((((_la - 24)) & ~0x1F) === 0 && ((1 << (_la - 24)) & 8388623) !== 0))) {
 			this._errHandler.recoverInline(this);
@@ -1334,7 +1332,7 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 258;
+			this.state = 256;
 			_la = this._input.LA(1);
 			if(!(((((_la - 5)) & ~0x1F) === 0 && ((1 << (_la - 5)) & 260046849) !== 0))) {
 			this._errHandler.recoverInline(this);
@@ -1367,7 +1365,7 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 260;
+			this.state = 258;
 			_la = this._input.LA(1);
 			if(!(((((_la - 33)) & ~0x1F) === 0 && ((1 << (_la - 33)) & 15) !== 0))) {
 			this._errHandler.recoverInline(this);
@@ -1400,7 +1398,7 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 262;
+			this.state = 260;
 			_la = this._input.LA(1);
 			if(!(((((_la - 37)) & ~0x1F) === 0 && ((1 << (_la - 37)) & 15) !== 0))) {
 			this._errHandler.recoverInline(this);
@@ -1433,7 +1431,7 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 264;
+			this.state = 262;
 			_la = this._input.LA(1);
 			if(!(_la===41 || _la===42)) {
 			this._errHandler.recoverInline(this);
@@ -1466,7 +1464,7 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 266;
+			this.state = 264;
 			_la = this._input.LA(1);
 			if(!(((((_la - 43)) & ~0x1F) === 0 && ((1 << (_la - 43)) & 7) !== 0))) {
 			this._errHandler.recoverInline(this);
@@ -1499,7 +1497,7 @@ export default class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 268;
+			this.state = 266;
 			_la = this._input.LA(1);
 			if(!(_la===42 || _la===46)) {
 			this._errHandler.recoverInline(this);
@@ -1525,91 +1523,90 @@ export default class LuminaParser extends Parser {
 		return localctx;
 	}
 
-	public static readonly _serializedATN: number[] = [4,1,53,271,2,0,7,0,2,
+	public static readonly _serializedATN: number[] = [4,1,53,269,2,0,7,0,2,
 	1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,7,7,2,8,7,8,2,9,7,9,2,
 	10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,2,15,7,15,2,16,7,16,2,17,
 	7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,2,22,7,22,2,23,7,23,2,24,7,
 	24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,2,29,7,29,2,30,7,30,1,0,5,0,
-	64,8,0,10,0,12,0,67,9,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,79,
-	8,1,1,2,1,2,1,2,1,2,3,2,85,8,2,1,2,1,2,3,2,89,8,2,1,2,1,2,1,3,1,3,1,3,1,
-	3,3,3,97,8,3,1,3,1,3,1,3,3,3,102,8,3,1,3,1,3,1,4,1,4,1,4,5,4,109,8,4,10,
-	4,12,4,112,9,4,1,5,1,5,1,5,3,5,117,8,5,1,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,
-	1,7,1,7,3,7,129,8,7,1,8,1,8,1,8,1,8,3,8,135,8,8,1,8,1,8,3,8,139,8,8,1,8,
-	1,8,3,8,143,8,8,1,8,1,8,1,8,1,9,1,9,1,9,1,9,1,9,1,9,1,10,1,10,3,10,156,
-	8,10,1,10,1,10,1,11,1,11,5,11,162,8,11,10,11,12,11,165,9,11,1,11,1,11,1,
-	12,1,12,1,13,1,13,1,13,1,13,3,13,175,8,13,1,14,1,14,1,14,1,14,1,14,1,14,
-	3,14,183,8,14,1,15,1,15,1,15,5,15,188,8,15,10,15,12,15,191,9,15,1,16,1,
-	16,1,16,5,16,196,8,16,10,16,12,16,199,9,16,1,17,1,17,1,17,1,17,5,17,205,
-	8,17,10,17,12,17,208,9,17,1,18,1,18,1,18,1,18,5,18,214,8,18,10,18,12,18,
-	217,9,18,1,19,1,19,1,19,1,19,5,19,223,8,19,10,19,12,19,226,9,19,1,20,1,
-	20,1,20,1,20,5,20,232,8,20,10,20,12,20,235,9,20,1,21,1,21,1,21,1,21,3,21,
-	241,8,21,1,22,1,22,1,23,1,23,1,23,1,23,1,23,1,23,1,23,1,23,1,23,1,23,3,
-	23,255,8,23,1,24,1,24,1,25,1,25,1,26,1,26,1,27,1,27,1,28,1,28,1,29,1,29,
-	1,30,1,30,1,30,0,0,31,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,
-	36,38,40,42,44,46,48,50,52,54,56,58,60,0,8,1,0,1,3,2,0,24,27,47,47,2,0,
-	5,5,28,32,1,0,33,36,1,0,37,40,1,0,41,42,1,0,43,45,2,0,42,42,46,46,275,0,
-	65,1,0,0,0,2,78,1,0,0,0,4,80,1,0,0,0,6,92,1,0,0,0,8,105,1,0,0,0,10,113,
-	1,0,0,0,12,118,1,0,0,0,14,121,1,0,0,0,16,130,1,0,0,0,18,147,1,0,0,0,20,
-	153,1,0,0,0,22,159,1,0,0,0,24,168,1,0,0,0,26,170,1,0,0,0,28,176,1,0,0,0,
-	30,184,1,0,0,0,32,192,1,0,0,0,34,200,1,0,0,0,36,209,1,0,0,0,38,218,1,0,
-	0,0,40,227,1,0,0,0,42,240,1,0,0,0,44,242,1,0,0,0,46,254,1,0,0,0,48,256,
-	1,0,0,0,50,258,1,0,0,0,52,260,1,0,0,0,54,262,1,0,0,0,56,264,1,0,0,0,58,
-	266,1,0,0,0,60,268,1,0,0,0,62,64,3,2,1,0,63,62,1,0,0,0,64,67,1,0,0,0,65,
-	63,1,0,0,0,65,66,1,0,0,0,66,68,1,0,0,0,67,65,1,0,0,0,68,69,5,0,0,1,69,1,
-	1,0,0,0,70,79,3,4,2,0,71,79,3,6,3,0,72,79,3,12,6,0,73,79,3,14,7,0,74,79,
-	3,16,8,0,75,79,3,18,9,0,76,79,3,20,10,0,77,79,3,22,11,0,78,70,1,0,0,0,78,
-	71,1,0,0,0,78,72,1,0,0,0,78,73,1,0,0,0,78,74,1,0,0,0,78,75,1,0,0,0,78,76,
-	1,0,0,0,78,77,1,0,0,0,79,3,1,0,0,0,80,81,7,0,0,0,81,84,5,47,0,0,82,83,5,
-	4,0,0,83,85,3,48,24,0,84,82,1,0,0,0,84,85,1,0,0,0,85,88,1,0,0,0,86,87,5,
-	5,0,0,87,89,3,24,12,0,88,86,1,0,0,0,88,89,1,0,0,0,89,90,1,0,0,0,90,91,5,
-	50,0,0,91,5,1,0,0,0,92,93,5,6,0,0,93,94,5,47,0,0,94,96,5,7,0,0,95,97,3,
-	8,4,0,96,95,1,0,0,0,96,97,1,0,0,0,97,98,1,0,0,0,98,101,5,8,0,0,99,100,5,
-	4,0,0,100,102,3,48,24,0,101,99,1,0,0,0,101,102,1,0,0,0,102,103,1,0,0,0,
-	103,104,3,22,11,0,104,7,1,0,0,0,105,110,3,10,5,0,106,107,5,9,0,0,107,109,
-	3,10,5,0,108,106,1,0,0,0,109,112,1,0,0,0,110,108,1,0,0,0,110,111,1,0,0,
-	0,111,9,1,0,0,0,112,110,1,0,0,0,113,116,5,47,0,0,114,115,5,4,0,0,115,117,
-	3,48,24,0,116,114,1,0,0,0,116,117,1,0,0,0,117,11,1,0,0,0,118,119,3,24,12,
-	0,119,120,5,50,0,0,120,13,1,0,0,0,121,122,5,10,0,0,122,123,5,7,0,0,123,
-	124,3,24,12,0,124,125,5,8,0,0,125,128,3,2,1,0,126,127,5,11,0,0,127,129,
-	3,2,1,0,128,126,1,0,0,0,128,129,1,0,0,0,129,15,1,0,0,0,130,131,5,12,0,0,
-	131,134,5,7,0,0,132,135,3,4,2,0,133,135,3,12,6,0,134,132,1,0,0,0,134,133,
-	1,0,0,0,134,135,1,0,0,0,135,136,1,0,0,0,136,138,5,13,0,0,137,139,3,24,12,
-	0,138,137,1,0,0,0,138,139,1,0,0,0,139,140,1,0,0,0,140,142,5,13,0,0,141,
-	143,3,24,12,0,142,141,1,0,0,0,142,143,1,0,0,0,143,144,1,0,0,0,144,145,5,
-	8,0,0,145,146,3,2,1,0,146,17,1,0,0,0,147,148,5,14,0,0,148,149,5,7,0,0,149,
-	150,3,24,12,0,150,151,5,8,0,0,151,152,3,2,1,0,152,19,1,0,0,0,153,155,5,
-	15,0,0,154,156,3,24,12,0,155,154,1,0,0,0,155,156,1,0,0,0,156,157,1,0,0,
-	0,157,158,5,50,0,0,158,21,1,0,0,0,159,163,5,16,0,0,160,162,3,2,1,0,161,
-	160,1,0,0,0,162,165,1,0,0,0,163,161,1,0,0,0,163,164,1,0,0,0,164,166,1,0,
-	0,0,165,163,1,0,0,0,166,167,5,17,0,0,167,23,1,0,0,0,168,169,3,26,13,0,169,
-	25,1,0,0,0,170,174,3,28,14,0,171,172,3,50,25,0,172,173,3,26,13,0,173,175,
-	1,0,0,0,174,171,1,0,0,0,174,175,1,0,0,0,175,27,1,0,0,0,176,182,3,30,15,
-	0,177,178,5,18,0,0,178,179,3,24,12,0,179,180,5,4,0,0,180,181,3,28,14,0,
-	181,183,1,0,0,0,182,177,1,0,0,0,182,183,1,0,0,0,183,29,1,0,0,0,184,189,
-	3,32,16,0,185,186,5,19,0,0,186,188,3,32,16,0,187,185,1,0,0,0,188,191,1,
-	0,0,0,189,187,1,0,0,0,189,190,1,0,0,0,190,31,1,0,0,0,191,189,1,0,0,0,192,
-	197,3,34,17,0,193,194,5,20,0,0,194,196,3,34,17,0,195,193,1,0,0,0,196,199,
-	1,0,0,0,197,195,1,0,0,0,197,198,1,0,0,0,198,33,1,0,0,0,199,197,1,0,0,0,
-	200,206,3,36,18,0,201,202,3,52,26,0,202,203,3,36,18,0,203,205,1,0,0,0,204,
-	201,1,0,0,0,205,208,1,0,0,0,206,204,1,0,0,0,206,207,1,0,0,0,207,35,1,0,
-	0,0,208,206,1,0,0,0,209,215,3,38,19,0,210,211,3,54,27,0,211,212,3,38,19,
-	0,212,214,1,0,0,0,213,210,1,0,0,0,214,217,1,0,0,0,215,213,1,0,0,0,215,216,
-	1,0,0,0,216,37,1,0,0,0,217,215,1,0,0,0,218,224,3,40,20,0,219,220,3,56,28,
-	0,220,221,3,40,20,0,221,223,1,0,0,0,222,219,1,0,0,0,223,226,1,0,0,0,224,
-	222,1,0,0,0,224,225,1,0,0,0,225,39,1,0,0,0,226,224,1,0,0,0,227,233,3,42,
-	21,0,228,229,3,58,29,0,229,230,3,42,21,0,230,232,1,0,0,0,231,228,1,0,0,
-	0,232,235,1,0,0,0,233,231,1,0,0,0,233,234,1,0,0,0,234,41,1,0,0,0,235,233,
-	1,0,0,0,236,241,3,44,22,0,237,238,3,60,30,0,238,239,3,42,21,0,239,241,1,
-	0,0,0,240,236,1,0,0,0,240,237,1,0,0,0,241,43,1,0,0,0,242,243,3,46,23,0,
-	243,45,1,0,0,0,244,255,5,47,0,0,245,255,5,48,0,0,246,255,5,49,0,0,247,255,
-	5,21,0,0,248,255,5,22,0,0,249,255,5,23,0,0,250,251,5,7,0,0,251,252,3,24,
-	12,0,252,253,5,8,0,0,253,255,1,0,0,0,254,244,1,0,0,0,254,245,1,0,0,0,254,
-	246,1,0,0,0,254,247,1,0,0,0,254,248,1,0,0,0,254,249,1,0,0,0,254,250,1,0,
-	0,0,255,47,1,0,0,0,256,257,7,1,0,0,257,49,1,0,0,0,258,259,7,2,0,0,259,51,
-	1,0,0,0,260,261,7,3,0,0,261,53,1,0,0,0,262,263,7,4,0,0,263,55,1,0,0,0,264,
-	265,7,5,0,0,265,57,1,0,0,0,266,267,7,6,0,0,267,59,1,0,0,0,268,269,7,7,0,
-	0,269,61,1,0,0,0,24,65,78,84,88,96,101,110,116,128,134,138,142,155,163,
-	174,182,189,197,206,215,224,233,240,254];
+	64,8,0,10,0,12,0,67,9,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,77,8,1,1,2,
+	1,2,1,2,1,2,3,2,83,8,2,1,2,1,2,3,2,87,8,2,1,2,1,2,1,3,1,3,1,3,1,3,3,3,95,
+	8,3,1,3,1,3,1,3,3,3,100,8,3,1,3,1,3,1,4,1,4,1,4,5,4,107,8,4,10,4,12,4,110,
+	9,4,1,5,1,5,1,5,3,5,115,8,5,1,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,3,7,
+	127,8,7,1,8,1,8,1,8,1,8,3,8,133,8,8,1,8,1,8,3,8,137,8,8,1,8,1,8,3,8,141,
+	8,8,1,8,1,8,1,8,1,9,1,9,1,9,1,9,1,9,1,9,1,10,1,10,3,10,154,8,10,1,10,1,
+	10,1,11,1,11,5,11,160,8,11,10,11,12,11,163,9,11,1,11,1,11,1,12,1,12,1,13,
+	1,13,1,13,1,13,3,13,173,8,13,1,14,1,14,1,14,1,14,1,14,1,14,3,14,181,8,14,
+	1,15,1,15,1,15,5,15,186,8,15,10,15,12,15,189,9,15,1,16,1,16,1,16,5,16,194,
+	8,16,10,16,12,16,197,9,16,1,17,1,17,1,17,1,17,5,17,203,8,17,10,17,12,17,
+	206,9,17,1,18,1,18,1,18,1,18,5,18,212,8,18,10,18,12,18,215,9,18,1,19,1,
+	19,1,19,1,19,5,19,221,8,19,10,19,12,19,224,9,19,1,20,1,20,1,20,1,20,5,20,
+	230,8,20,10,20,12,20,233,9,20,1,21,1,21,1,21,1,21,3,21,239,8,21,1,22,1,
+	22,1,23,1,23,1,23,1,23,1,23,1,23,1,23,1,23,1,23,1,23,3,23,253,8,23,1,24,
+	1,24,1,25,1,25,1,26,1,26,1,27,1,27,1,28,1,28,1,29,1,29,1,30,1,30,1,30,0,
+	0,31,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,
+	48,50,52,54,56,58,60,0,8,1,0,1,3,2,0,24,27,47,47,2,0,5,5,28,32,1,0,33,36,
+	1,0,37,40,1,0,41,42,1,0,43,45,2,0,42,42,46,46,273,0,65,1,0,0,0,2,76,1,0,
+	0,0,4,78,1,0,0,0,6,90,1,0,0,0,8,103,1,0,0,0,10,111,1,0,0,0,12,116,1,0,0,
+	0,14,119,1,0,0,0,16,128,1,0,0,0,18,145,1,0,0,0,20,151,1,0,0,0,22,157,1,
+	0,0,0,24,166,1,0,0,0,26,168,1,0,0,0,28,174,1,0,0,0,30,182,1,0,0,0,32,190,
+	1,0,0,0,34,198,1,0,0,0,36,207,1,0,0,0,38,216,1,0,0,0,40,225,1,0,0,0,42,
+	238,1,0,0,0,44,240,1,0,0,0,46,252,1,0,0,0,48,254,1,0,0,0,50,256,1,0,0,0,
+	52,258,1,0,0,0,54,260,1,0,0,0,56,262,1,0,0,0,58,264,1,0,0,0,60,266,1,0,
+	0,0,62,64,3,2,1,0,63,62,1,0,0,0,64,67,1,0,0,0,65,63,1,0,0,0,65,66,1,0,0,
+	0,66,1,1,0,0,0,67,65,1,0,0,0,68,77,3,4,2,0,69,77,3,6,3,0,70,77,3,12,6,0,
+	71,77,3,14,7,0,72,77,3,16,8,0,73,77,3,18,9,0,74,77,3,20,10,0,75,77,3,22,
+	11,0,76,68,1,0,0,0,76,69,1,0,0,0,76,70,1,0,0,0,76,71,1,0,0,0,76,72,1,0,
+	0,0,76,73,1,0,0,0,76,74,1,0,0,0,76,75,1,0,0,0,77,3,1,0,0,0,78,79,7,0,0,
+	0,79,82,5,47,0,0,80,81,5,4,0,0,81,83,3,48,24,0,82,80,1,0,0,0,82,83,1,0,
+	0,0,83,86,1,0,0,0,84,85,5,5,0,0,85,87,3,24,12,0,86,84,1,0,0,0,86,87,1,0,
+	0,0,87,88,1,0,0,0,88,89,5,50,0,0,89,5,1,0,0,0,90,91,5,6,0,0,91,92,5,47,
+	0,0,92,94,5,7,0,0,93,95,3,8,4,0,94,93,1,0,0,0,94,95,1,0,0,0,95,96,1,0,0,
+	0,96,99,5,8,0,0,97,98,5,4,0,0,98,100,3,48,24,0,99,97,1,0,0,0,99,100,1,0,
+	0,0,100,101,1,0,0,0,101,102,3,22,11,0,102,7,1,0,0,0,103,108,3,10,5,0,104,
+	105,5,9,0,0,105,107,3,10,5,0,106,104,1,0,0,0,107,110,1,0,0,0,108,106,1,
+	0,0,0,108,109,1,0,0,0,109,9,1,0,0,0,110,108,1,0,0,0,111,114,5,47,0,0,112,
+	113,5,4,0,0,113,115,3,48,24,0,114,112,1,0,0,0,114,115,1,0,0,0,115,11,1,
+	0,0,0,116,117,3,24,12,0,117,118,5,50,0,0,118,13,1,0,0,0,119,120,5,10,0,
+	0,120,121,5,7,0,0,121,122,3,24,12,0,122,123,5,8,0,0,123,126,3,2,1,0,124,
+	125,5,11,0,0,125,127,3,2,1,0,126,124,1,0,0,0,126,127,1,0,0,0,127,15,1,0,
+	0,0,128,129,5,12,0,0,129,132,5,7,0,0,130,133,3,4,2,0,131,133,3,12,6,0,132,
+	130,1,0,0,0,132,131,1,0,0,0,132,133,1,0,0,0,133,134,1,0,0,0,134,136,5,13,
+	0,0,135,137,3,24,12,0,136,135,1,0,0,0,136,137,1,0,0,0,137,138,1,0,0,0,138,
+	140,5,13,0,0,139,141,3,24,12,0,140,139,1,0,0,0,140,141,1,0,0,0,141,142,
+	1,0,0,0,142,143,5,8,0,0,143,144,3,2,1,0,144,17,1,0,0,0,145,146,5,14,0,0,
+	146,147,5,7,0,0,147,148,3,24,12,0,148,149,5,8,0,0,149,150,3,2,1,0,150,19,
+	1,0,0,0,151,153,5,15,0,0,152,154,3,24,12,0,153,152,1,0,0,0,153,154,1,0,
+	0,0,154,155,1,0,0,0,155,156,5,50,0,0,156,21,1,0,0,0,157,161,5,16,0,0,158,
+	160,3,2,1,0,159,158,1,0,0,0,160,163,1,0,0,0,161,159,1,0,0,0,161,162,1,0,
+	0,0,162,164,1,0,0,0,163,161,1,0,0,0,164,165,5,17,0,0,165,23,1,0,0,0,166,
+	167,3,26,13,0,167,25,1,0,0,0,168,172,3,28,14,0,169,170,3,50,25,0,170,171,
+	3,26,13,0,171,173,1,0,0,0,172,169,1,0,0,0,172,173,1,0,0,0,173,27,1,0,0,
+	0,174,180,3,30,15,0,175,176,5,18,0,0,176,177,3,24,12,0,177,178,5,4,0,0,
+	178,179,3,28,14,0,179,181,1,0,0,0,180,175,1,0,0,0,180,181,1,0,0,0,181,29,
+	1,0,0,0,182,187,3,32,16,0,183,184,5,19,0,0,184,186,3,32,16,0,185,183,1,
+	0,0,0,186,189,1,0,0,0,187,185,1,0,0,0,187,188,1,0,0,0,188,31,1,0,0,0,189,
+	187,1,0,0,0,190,195,3,34,17,0,191,192,5,20,0,0,192,194,3,34,17,0,193,191,
+	1,0,0,0,194,197,1,0,0,0,195,193,1,0,0,0,195,196,1,0,0,0,196,33,1,0,0,0,
+	197,195,1,0,0,0,198,204,3,36,18,0,199,200,3,52,26,0,200,201,3,36,18,0,201,
+	203,1,0,0,0,202,199,1,0,0,0,203,206,1,0,0,0,204,202,1,0,0,0,204,205,1,0,
+	0,0,205,35,1,0,0,0,206,204,1,0,0,0,207,213,3,38,19,0,208,209,3,54,27,0,
+	209,210,3,38,19,0,210,212,1,0,0,0,211,208,1,0,0,0,212,215,1,0,0,0,213,211,
+	1,0,0,0,213,214,1,0,0,0,214,37,1,0,0,0,215,213,1,0,0,0,216,222,3,40,20,
+	0,217,218,3,56,28,0,218,219,3,40,20,0,219,221,1,0,0,0,220,217,1,0,0,0,221,
+	224,1,0,0,0,222,220,1,0,0,0,222,223,1,0,0,0,223,39,1,0,0,0,224,222,1,0,
+	0,0,225,231,3,42,21,0,226,227,3,58,29,0,227,228,3,42,21,0,228,230,1,0,0,
+	0,229,226,1,0,0,0,230,233,1,0,0,0,231,229,1,0,0,0,231,232,1,0,0,0,232,41,
+	1,0,0,0,233,231,1,0,0,0,234,239,3,44,22,0,235,236,3,60,30,0,236,237,3,42,
+	21,0,237,239,1,0,0,0,238,234,1,0,0,0,238,235,1,0,0,0,239,43,1,0,0,0,240,
+	241,3,46,23,0,241,45,1,0,0,0,242,253,5,47,0,0,243,253,5,48,0,0,244,253,
+	5,49,0,0,245,253,5,21,0,0,246,253,5,22,0,0,247,253,5,23,0,0,248,249,5,7,
+	0,0,249,250,3,24,12,0,250,251,5,8,0,0,251,253,1,0,0,0,252,242,1,0,0,0,252,
+	243,1,0,0,0,252,244,1,0,0,0,252,245,1,0,0,0,252,246,1,0,0,0,252,247,1,0,
+	0,0,252,248,1,0,0,0,253,47,1,0,0,0,254,255,7,1,0,0,255,49,1,0,0,0,256,257,
+	7,2,0,0,257,51,1,0,0,0,258,259,7,3,0,0,259,53,1,0,0,0,260,261,7,4,0,0,261,
+	55,1,0,0,0,262,263,7,5,0,0,263,57,1,0,0,0,264,265,7,6,0,0,265,59,1,0,0,
+	0,266,267,7,7,0,0,267,61,1,0,0,0,24,65,76,82,86,94,99,108,114,126,132,136,
+	140,153,161,172,180,187,195,204,213,222,231,238,252];
 
 	private static __ATN: ATN;
 	public static get _ATN(): ATN {
@@ -1629,9 +1626,6 @@ export class ProgramContext extends ParserRuleContext {
 	constructor(parser?: LuminaParser, parent?: ParserRuleContext, invokingState?: number) {
 		super(parent, invokingState);
     	this.parser = parser;
-	}
-	public EOF(): TerminalNode {
-		return this.getToken(LuminaParser.EOF, 0);
 	}
 	public statement_list(): StatementContext[] {
 		return this.getTypedRuleContexts(StatementContext) as StatementContext[];

@@ -5,7 +5,7 @@ cd src\antlr || exit /b 1
 java -jar ..\..\lib\antlr-4.13.1-complete.jar ^
     -visitor ^
     -Dlanguage=TypeScript ^
-    -o ..\js\generated ^
+    -o generated ^
     Lumina.g4
 
 
