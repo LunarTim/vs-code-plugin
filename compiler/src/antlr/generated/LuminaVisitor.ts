@@ -6,6 +6,7 @@ import {ParseTreeVisitor} from 'antlr4';
 import { ProgramContext } from "./LuminaParser";
 import { StatementContext } from "./LuminaParser";
 import { VariableDeclarationContext } from "./LuminaParser";
+import { VariableAssignmentContext } from "./LuminaParser";
 import { FunctionDeclarationContext } from "./LuminaParser";
 import { ParameterListContext } from "./LuminaParser";
 import { ParameterContext } from "./LuminaParser";
@@ -30,7 +31,15 @@ import { ArrayExpressionContext } from "./LuminaParser";
 import { UnaryExpressionContext } from "./LuminaParser";
 import { PostfixExpressionContext } from "./LuminaParser";
 import { PrimaryExpressionContext } from "./LuminaParser";
+import { MethodCallContext } from "./LuminaParser";
+import { NonNullAssertionContext } from "./LuminaParser";
 import { TypeContext } from "./LuminaParser";
+import { ParseContext } from "./LuminaParser";
+import { ParseIntContext } from "./LuminaParser";
+import { ParseFloatContext } from "./LuminaParser";
+import { ParseStringContext } from "./LuminaParser";
+import { ParseBooleanContext } from "./LuminaParser";
+import { ParseNullContext } from "./LuminaParser";
 import { AssignmentOperatorContext } from "./LuminaParser";
 import { EqualityOperatorContext } from "./LuminaParser";
 import { RelationalOperatorContext } from "./LuminaParser";
@@ -65,6 +74,12 @@ export default class LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitVariableDeclaration?: (ctx: VariableDeclarationContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.variableAssignment`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitVariableAssignment?: (ctx: VariableAssignmentContext) => Result;
 	/**
 	 * Visit a parse tree produced by `LuminaParser.functionDeclaration`.
 	 * @param ctx the parse tree
@@ -210,11 +225,59 @@ export default class LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	 */
 	visitPrimaryExpression?: (ctx: PrimaryExpressionContext) => Result;
 	/**
+	 * Visit a parse tree produced by `LuminaParser.methodCall`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitMethodCall?: (ctx: MethodCallContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.nonNullAssertion`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNonNullAssertion?: (ctx: NonNullAssertionContext) => Result;
+	/**
 	 * Visit a parse tree produced by `LuminaParser.type`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitType?: (ctx: TypeContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.parse`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitParse?: (ctx: ParseContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.parseInt`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitParseInt?: (ctx: ParseIntContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.parseFloat`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitParseFloat?: (ctx: ParseFloatContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.parseString`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitParseString?: (ctx: ParseStringContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.parseBoolean`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitParseBoolean?: (ctx: ParseBooleanContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.parseNull`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitParseNull?: (ctx: ParseNullContext) => Result;
 	/**
 	 * Visit a parse tree produced by `LuminaParser.assignmentOperator`.
 	 * @param ctx the parse tree

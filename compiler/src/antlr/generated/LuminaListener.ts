@@ -6,6 +6,7 @@ import {ParseTreeListener} from "antlr4";
 import { ProgramContext } from "./LuminaParser";
 import { StatementContext } from "./LuminaParser";
 import { VariableDeclarationContext } from "./LuminaParser";
+import { VariableAssignmentContext } from "./LuminaParser";
 import { FunctionDeclarationContext } from "./LuminaParser";
 import { ParameterListContext } from "./LuminaParser";
 import { ParameterContext } from "./LuminaParser";
@@ -30,7 +31,15 @@ import { ArrayExpressionContext } from "./LuminaParser";
 import { UnaryExpressionContext } from "./LuminaParser";
 import { PostfixExpressionContext } from "./LuminaParser";
 import { PrimaryExpressionContext } from "./LuminaParser";
+import { MethodCallContext } from "./LuminaParser";
+import { NonNullAssertionContext } from "./LuminaParser";
 import { TypeContext } from "./LuminaParser";
+import { ParseContext } from "./LuminaParser";
+import { ParseIntContext } from "./LuminaParser";
+import { ParseFloatContext } from "./LuminaParser";
+import { ParseStringContext } from "./LuminaParser";
+import { ParseBooleanContext } from "./LuminaParser";
+import { ParseNullContext } from "./LuminaParser";
 import { AssignmentOperatorContext } from "./LuminaParser";
 import { EqualityOperatorContext } from "./LuminaParser";
 import { RelationalOperatorContext } from "./LuminaParser";
@@ -74,6 +83,16 @@ export default class LuminaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitVariableDeclaration?: (ctx: VariableDeclarationContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.variableAssignment`.
+	 * @param ctx the parse tree
+	 */
+	enterVariableAssignment?: (ctx: VariableAssignmentContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.variableAssignment`.
+	 * @param ctx the parse tree
+	 */
+	exitVariableAssignment?: (ctx: VariableAssignmentContext) => void;
 	/**
 	 * Enter a parse tree produced by `LuminaParser.functionDeclaration`.
 	 * @param ctx the parse tree
@@ -315,6 +334,26 @@ export default class LuminaListener extends ParseTreeListener {
 	 */
 	exitPrimaryExpression?: (ctx: PrimaryExpressionContext) => void;
 	/**
+	 * Enter a parse tree produced by `LuminaParser.methodCall`.
+	 * @param ctx the parse tree
+	 */
+	enterMethodCall?: (ctx: MethodCallContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.methodCall`.
+	 * @param ctx the parse tree
+	 */
+	exitMethodCall?: (ctx: MethodCallContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.nonNullAssertion`.
+	 * @param ctx the parse tree
+	 */
+	enterNonNullAssertion?: (ctx: NonNullAssertionContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.nonNullAssertion`.
+	 * @param ctx the parse tree
+	 */
+	exitNonNullAssertion?: (ctx: NonNullAssertionContext) => void;
+	/**
 	 * Enter a parse tree produced by `LuminaParser.type`.
 	 * @param ctx the parse tree
 	 */
@@ -324,6 +363,66 @@ export default class LuminaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitType?: (ctx: TypeContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.parse`.
+	 * @param ctx the parse tree
+	 */
+	enterParse?: (ctx: ParseContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.parse`.
+	 * @param ctx the parse tree
+	 */
+	exitParse?: (ctx: ParseContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.parseInt`.
+	 * @param ctx the parse tree
+	 */
+	enterParseInt?: (ctx: ParseIntContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.parseInt`.
+	 * @param ctx the parse tree
+	 */
+	exitParseInt?: (ctx: ParseIntContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.parseFloat`.
+	 * @param ctx the parse tree
+	 */
+	enterParseFloat?: (ctx: ParseFloatContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.parseFloat`.
+	 * @param ctx the parse tree
+	 */
+	exitParseFloat?: (ctx: ParseFloatContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.parseString`.
+	 * @param ctx the parse tree
+	 */
+	enterParseString?: (ctx: ParseStringContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.parseString`.
+	 * @param ctx the parse tree
+	 */
+	exitParseString?: (ctx: ParseStringContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.parseBoolean`.
+	 * @param ctx the parse tree
+	 */
+	enterParseBoolean?: (ctx: ParseBooleanContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.parseBoolean`.
+	 * @param ctx the parse tree
+	 */
+	exitParseBoolean?: (ctx: ParseBooleanContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.parseNull`.
+	 * @param ctx the parse tree
+	 */
+	enterParseNull?: (ctx: ParseNullContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.parseNull`.
+	 * @param ctx the parse tree
+	 */
+	exitParseNull?: (ctx: ParseNullContext) => void;
 	/**
 	 * Enter a parse tree produced by `LuminaParser.assignmentOperator`.
 	 * @param ctx the parse tree

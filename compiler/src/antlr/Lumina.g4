@@ -1,7 +1,7 @@
 grammar Lumina;
 
 // Parser rules
-program: (statement)*;
+program: (statement)* EOF;
 
 statement
     : variableDeclaration
@@ -16,7 +16,11 @@ statement
     ;
 
 variableDeclaration
-    : ('let' | 'const' | 'var') IDENTIFIER (':' type)? ('=' expression)? SEMICOLON
+    : ('let' | 'const' | 'var') IDENTIFIER (':' type)? (assignmentOperator expression)? SEMICOLON
+    ;
+
+variableAssignment
+    : IDENTIFIER ('.' IDENTIFIER)* assignmentOperator expression SEMICOLON
     ;
 
 functionDeclaration
@@ -28,11 +32,11 @@ parameterList
     ;
 
 parameter
-    : IDENTIFIER (':' type)?
+    : IDENTIFIER (':' type)? ('=' expression)?
     ;
 
 expressionStatement
-    : expression SEMICOLON
+    : expression SEMICOLON?
     ;
 
 ifStatement
@@ -40,7 +44,8 @@ ifStatement
     ;
 
 forStatement
-    : 'for' '(' (variableDeclaration | expressionStatement)? (IDENTIFIER  (relationalOperator | equalityOperator) (IDENTIFIER | NUMBER))? SEMICOLON (IDENTIFIER unaryExpression)? ')' statement
+    : 'for' '(' (variableDeclaration | expressionStatement)? (IDENTIFIER  (relationalOperator | equalityOperator) expression)? SEMICOLON (IDENTIFIER unaryExpression)? ')' statement
+    | 'for' '(' ('const' | 'let' | 'var') IDENTIFIER 'of' expression ')' statement
     ;
 
 whileStatement
@@ -84,7 +89,7 @@ equalityExpression
     ;
 
 relationalExpression
-    : additiveExpression (relationalOperator additiveExpression)*
+    : additiveExpression postfixExpression? (relationalOperator additiveExpression postfixExpression?)*
     ;
 
 additiveExpression
@@ -111,6 +116,8 @@ unaryExpression
 
 postfixExpression
     : primaryExpression
+    | methodCall
+    | nonNullAssertion
     ;
 
 primaryExpression
@@ -123,6 +130,16 @@ primaryExpression
     | '(' expression ')'
     | lambdaExpression
     | arrayExpression
+    | parse
+    | '!' ('.' expression)?
+    ;
+
+methodCall
+    : primaryExpression ('.' IDENTIFIER)* '(' (expression (',' expression)*)? ')'
+    ;
+
+nonNullAssertion
+    : primaryExpression
     ;
 
 type
@@ -132,6 +149,34 @@ type
     | 'any'
     | IDENTIFIER
     | type '[' ']'
+    ;
+
+parse
+    : parseInt
+    | parseFloat
+    | parseString
+    | parseBoolean
+    | parseNull
+    ;
+
+parseInt
+    : 'parseInt' '(' expression ')'
+    ;
+
+parseFloat
+    : 'parseFloat' '(' expression ')'
+    ;
+
+parseString
+    : 'parseString' '(' expression ')'
+    ;
+
+parseBoolean
+    : 'parseBoolean' '(' expression ')'
+    ;
+
+parseNull
+    : 'parseNull' '(' expression ')'
     ;
 
 assignmentOperator
@@ -163,7 +208,7 @@ IDENTIFIER: [a-zA-Z_$][a-zA-Z0-9_$]*;
 NUMBER: [0-9]+ ('.' [0-9]+)?;
 STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
 SEMICOLON: ';';
-PUNCTUATION: SEMICOLON | ',' | '.' | '(' | ')' | '{' | '}' | '[' | ']';
+
 WS: [ \t\r\n]+ -> skip;
 COMMENT: '//' ~[\r\n]* -> skip;
 MULTILINE_COMMENT: '/*' .*? '*/' -> skip;

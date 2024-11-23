@@ -161,30 +161,80 @@ describe('tester', () => {
         expect(output).toBeDefined();
     });
 
+    it('should not give warning declaring shorter if statement', () => {
+        const input = 'if (missingIndex > 0) { return missingIndex; }';
+        const output = runLexer(input);
+        expect(output).toBeDefined();
+    });
+
+    it('should not give warning declaring if statement', () => {
+        const input = 'if (missingIndex.length > 0) { return missingIndex; }';
+        const output = runLexer(input);
+        expect(output).toBeDefined();
+    });
+
     it('should not give warning difficult query', () => {
         const input = `
-        function validateIndex(data: GeneralTableItem[]) {
-            const missingIndex: number[] = [];
-            const maxIndex = parseInt(document.getElementById("MaxIndex")!.getAttribute("data-index-max")!);
+function validateIndex(data: GeneralTableItem[]) {
+    const missingIndex: number[] = [];
+    const maxIndex = Number(document.getElementById("MaxIndex")!.getAttribute("data-index-max")!);
 
-            for (let i = 1; i < maxIndex + 1; i++) {
-                let found = false;
-                for (const item of data) {
-                    if (item['index'] === i) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    missingIndex.push(i);
-                }
+    for (let i = 1; i < maxIndex + 1; i++) {
+        let found = false;
+        for (const item of data) {
+            if (item['index'] === i) {
+                found = true;
+                break;
             }
-            if (missingIndex.length > 0) {
-                const indexAlert = document.getElementById("indexAlert");
-                const wrapper = document.createElement('div')
-                indexAlert!.append(wrapper)
-            }
-        }`
+        }
+        if (!found) {
+            missingIndex.push(i);
+        }
+    }
+    if (missingIndex.length > 0) {
+        const indexAlert = document.getElementById("indexAlert");
+        const wrapper = document.createElement('div');
+        indexAlert!.append(wrapper);
+    }
+}`
+        const output = runLexer(input);
+        expect(output).toBeDefined();
+    });
+
+    it('should not give warning declaring function', () => {
+        const input = `
+        function createButtonCell(id: number, type: string, editLink: string = "") {
+    const cell = document.createElement("td");
+    cell.setAttribute("data-col-buttons", "true");
+    const div = document.createElement("div");
+    div.classList.add("d-flex", "justify-content-end", "gap-2");
+    let button = document.createElement("button");
+    button.classList.add("btn", "btn-danger", "rounded-2", "text-white");
+    button.setAttribute("data-bs-toggle", "modal");
+    button.setAttribute("data-bs-target", "#deleteModal");
+    button.setAttribute("data-bs-id", id.toString());
+    button.setAttribute("data-bs-type", type);
+    button.innerText = "Delete";
+    let icon = document.createElement("i");
+    icon.classList.add("bi", "bi-trash");
+    button.append(icon);
+    div.append(button);
+    button = document.createElement("button");
+    button.classList.add("btn", "btn-primary", "rounded-2", "text-white");
+    button.setAttribute("data-bs-id", id.toString())
+    button.innerText = "Edit";
+    button.addEventListener("click", () => {
+        window.location.href = editLink === "" ? true : false;
+    });
+    icon = document.createElement("i");
+    icon.classList.add("bi", "bi-pencil");
+    button.append(icon);
+    div.append(button);
+    cell.append(div)
+    return cell;
+}
+
+        `;
         const output = runLexer(input);
         expect(output).toBeDefined();
     });
