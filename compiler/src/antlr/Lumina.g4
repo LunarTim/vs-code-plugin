@@ -11,11 +11,12 @@ statement
     | forStatement
     | whileStatement
     | returnStatement
+    | printStatement
     | block
     ;
 
 variableDeclaration
-    : ('let' | 'const' | 'var') IDENTIFIER (':' type)? ('=' expression)? PUNCTUATION
+    : ('let' | 'const' | 'var') IDENTIFIER (':' type)? ('=' expression)? SEMICOLON
     ;
 
 functionDeclaration
@@ -31,7 +32,7 @@ parameter
     ;
 
 expressionStatement
-    : expression PUNCTUATION
+    : expression SEMICOLON
     ;
 
 ifStatement
@@ -39,7 +40,7 @@ ifStatement
     ;
 
 forStatement
-    : 'for' '(' (variableDeclaration | expressionStatement)? ';' expression? ';' expression? ')' statement
+    : 'for' '(' (variableDeclaration | expressionStatement)? (IDENTIFIER  (relationalOperator | equalityOperator) (IDENTIFIER | NUMBER))? SEMICOLON (IDENTIFIER unaryExpression)? ')' statement
     ;
 
 whileStatement
@@ -47,11 +48,15 @@ whileStatement
     ;
 
 returnStatement
-    : 'return' expression? PUNCTUATION
+    : 'return' expression? SEMICOLON
+    ;
+
+printStatement
+    : 'print' '(' expression ')' SEMICOLON
     ;
 
 block
-    : '{' statement* '}'
+    : '{' statement* SEMICOLON? '}'
     ;
 
 expression
@@ -90,8 +95,17 @@ multiplicativeExpression
     : unaryExpression (multiplicativeOperator unaryExpression)*
     ;
 
+lambdaExpression
+    : '(' parameterList? ')' '=>' expression
+    ;
+
+arrayExpression
+    : '[' (expression (',' expression)*)? ']'
+    ;
+
 unaryExpression
     : postfixExpression
+    | unaryOperator
     | unaryOperator unaryExpression
     ;
 
@@ -107,6 +121,8 @@ primaryExpression
     | 'false'
     | 'null'
     | '(' expression ')'
+    | lambdaExpression
+    | arrayExpression
     ;
 
 type
@@ -115,6 +131,7 @@ type
     | 'boolean'
     | 'any'
     | IDENTIFIER
+    | type '[' ']'
     ;
 
 assignmentOperator
@@ -138,14 +155,15 @@ multiplicativeOperator
     ;
 
 unaryOperator
-    : '!' | '-'
+    : '!' | '-' | '+' | '++' | '--'
     ;
 
 // Lexer rules
 IDENTIFIER: [a-zA-Z_$][a-zA-Z0-9_$]*;
 NUMBER: [0-9]+ ('.' [0-9]+)?;
 STRING: '"' (~["\\] | '\\' .)* '"' | '\'' (~['\\] | '\\' .)* '\'';
-PUNCTUATION: ';' | ',' | '.' | '(' | ')' | '{' | '}' | '[' | ']';
+SEMICOLON: ';';
+PUNCTUATION: SEMICOLON | ',' | '.' | '(' | ')' | '{' | '}' | '[' | ']';
 WS: [ \t\r\n]+ -> skip;
 COMMENT: '//' ~[\r\n]* -> skip;
 MULTILINE_COMMENT: '/*' .*? '*/' -> skip;

@@ -14,6 +14,7 @@ import { IfStatementContext } from "./LuminaParser";
 import { ForStatementContext } from "./LuminaParser";
 import { WhileStatementContext } from "./LuminaParser";
 import { ReturnStatementContext } from "./LuminaParser";
+import { PrintStatementContext } from "./LuminaParser";
 import { BlockContext } from "./LuminaParser";
 import { ExpressionContext } from "./LuminaParser";
 import { AssignmentExpressionContext } from "./LuminaParser";
@@ -24,6 +25,8 @@ import { EqualityExpressionContext } from "./LuminaParser";
 import { RelationalExpressionContext } from "./LuminaParser";
 import { AdditiveExpressionContext } from "./LuminaParser";
 import { MultiplicativeExpressionContext } from "./LuminaParser";
+import { LambdaExpressionContext } from "./LuminaParser";
+import { ArrayExpressionContext } from "./LuminaParser";
 import { UnaryExpressionContext } from "./LuminaParser";
 import { PostfixExpressionContext } from "./LuminaParser";
 import { PrimaryExpressionContext } from "./LuminaParser";
@@ -152,6 +155,16 @@ export default class LuminaListener extends ParseTreeListener {
 	 */
 	exitReturnStatement?: (ctx: ReturnStatementContext) => void;
 	/**
+	 * Enter a parse tree produced by `LuminaParser.printStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterPrintStatement?: (ctx: PrintStatementContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.printStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitPrintStatement?: (ctx: PrintStatementContext) => void;
+	/**
 	 * Enter a parse tree produced by `LuminaParser.block`.
 	 * @param ctx the parse tree
 	 */
@@ -251,6 +264,26 @@ export default class LuminaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitMultiplicativeExpression?: (ctx: MultiplicativeExpressionContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.lambdaExpression`.
+	 * @param ctx the parse tree
+	 */
+	enterLambdaExpression?: (ctx: LambdaExpressionContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.lambdaExpression`.
+	 * @param ctx the parse tree
+	 */
+	exitLambdaExpression?: (ctx: LambdaExpressionContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.arrayExpression`.
+	 * @param ctx the parse tree
+	 */
+	enterArrayExpression?: (ctx: ArrayExpressionContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.arrayExpression`.
+	 * @param ctx the parse tree
+	 */
+	exitArrayExpression?: (ctx: ArrayExpressionContext) => void;
 	/**
 	 * Enter a parse tree produced by `LuminaParser.unaryExpression`.
 	 * @param ctx the parse tree

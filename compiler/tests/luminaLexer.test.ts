@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import LuminaLexer from '../src/antlr/generated/LuminaLexer';
-import LuminaParser from '../src/antlr/generated/LuminaParser';
+import LuminaParser, { ProgramContext } from '../src/antlr/generated/LuminaParser';
 import { CharStreams, CommonTokenStream }  from 'antlr4';
 
 
@@ -119,21 +119,84 @@ describe('LuminaLexer', () => {
 });
 
 describe('tester', () => {
-    it('should give output', () => {
-        const input = CharStreams.fromString('let a = 10;');
-        const lexer = new LuminaLexer(input);
-        const tokenStream = new CommonTokenStream(lexer);
-        const parser = new LuminaParser(tokenStream);
-        const tree = parser.program();
-        expect(tree).toBeDefined();
+    it('should not give warning declaring variable', () => {
+        const input = 'let a = 10;';
+        const output = runLexer(input);
+        expect(output).toBeDefined();
     });
 
-    it('should give output', () => {
-        const input = CharStreams.fromString('function add(a, b) { return a + b; }');
-        const lexer = new LuminaLexer(input);
-        const tokenStream = new CommonTokenStream(lexer);
-        const parser = new LuminaParser(tokenStream);
-        const tree = parser.program();
-        expect(tree).toBeDefined();
+    it('should not give warning declaring functiont', () => {
+        const input = 'function add(a, b) { return a + b; }';
+        const output = runLexer(input);
+        expect(output).toBeDefined();
+    });
+
+    it('should not give warning declaring if statement', () => {
+        const input = 'if (a > b) { return a; }';
+        const output = runLexer(input);
+        expect(output).toBeDefined();
+    });
+
+    it('should not give warning declaring while statement', () => {
+        const input = 'while (a > b) { return a; }';
+        const output = runLexer(input);
+        expect(output).toBeDefined();
+    });
+
+    it('should not give warning declaring for statement', () => {
+        const input = 'for (let i = 0; i < 10; i++) { return i; }';
+        const output = runLexer(input);
+        expect(output).toBeDefined();
+    });
+
+    it('should not give warning declaring return statement', () => {
+        const input = 'return a;';
+        const output = runLexer(input);
+        expect(output).toBeDefined();
+    });
+
+    it('should not give warning declaring print statement', () => {
+        const input = 'print(a);';
+        const output = runLexer(input);
+        expect(output).toBeDefined();
+    });
+
+    it('should not give warning difficult query', () => {
+        const input = `
+        function validateIndex(data: GeneralTableItem[]) {
+            const missingIndex: number[] = [];
+            const maxIndex = parseInt(document.getElementById("MaxIndex")!.getAttribute("data-index-max")!);
+
+            for (let i = 1; i < maxIndex + 1; i++) {
+                let found = false;
+                for (const item of data) {
+                    if (item['index'] === i) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    missingIndex.push(i);
+                }
+            }
+            if (missingIndex.length > 0) {
+                const indexAlert = document.getElementById("indexAlert");
+                const wrapper = document.createElement('div')
+                indexAlert!.append(wrapper)
+            }
+        }`
+        const output = runLexer(input);
+        expect(output).toBeDefined();
     });
 });
+
+
+
+function runLexer(input: string): ProgramContext {
+    const chars = CharStreams.fromString(input);
+    const lexer = new LuminaLexer(chars);
+    const tokenStream = new CommonTokenStream(lexer);
+    const parser = new LuminaParser(tokenStream);
+    const tree = parser.program();
+    return tree;
+}

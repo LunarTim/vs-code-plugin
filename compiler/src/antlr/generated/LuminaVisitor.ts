@@ -14,6 +14,7 @@ import { IfStatementContext } from "./LuminaParser";
 import { ForStatementContext } from "./LuminaParser";
 import { WhileStatementContext } from "./LuminaParser";
 import { ReturnStatementContext } from "./LuminaParser";
+import { PrintStatementContext } from "./LuminaParser";
 import { BlockContext } from "./LuminaParser";
 import { ExpressionContext } from "./LuminaParser";
 import { AssignmentExpressionContext } from "./LuminaParser";
@@ -24,6 +25,8 @@ import { EqualityExpressionContext } from "./LuminaParser";
 import { RelationalExpressionContext } from "./LuminaParser";
 import { AdditiveExpressionContext } from "./LuminaParser";
 import { MultiplicativeExpressionContext } from "./LuminaParser";
+import { LambdaExpressionContext } from "./LuminaParser";
+import { ArrayExpressionContext } from "./LuminaParser";
 import { UnaryExpressionContext } from "./LuminaParser";
 import { PostfixExpressionContext } from "./LuminaParser";
 import { PrimaryExpressionContext } from "./LuminaParser";
@@ -111,6 +114,12 @@ export default class LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	 */
 	visitReturnStatement?: (ctx: ReturnStatementContext) => Result;
 	/**
+	 * Visit a parse tree produced by `LuminaParser.printStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPrintStatement?: (ctx: PrintStatementContext) => Result;
+	/**
 	 * Visit a parse tree produced by `LuminaParser.block`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -170,6 +179,18 @@ export default class LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitMultiplicativeExpression?: (ctx: MultiplicativeExpressionContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.lambdaExpression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLambdaExpression?: (ctx: LambdaExpressionContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.arrayExpression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitArrayExpression?: (ctx: ArrayExpressionContext) => Result;
 	/**
 	 * Visit a parse tree produced by `LuminaParser.unaryExpression`.
 	 * @param ctx the parse tree
