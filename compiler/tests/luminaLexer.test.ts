@@ -223,9 +223,7 @@ function validateIndex(data: GeneralTableItem[]) {
     button.classList.add("btn", "btn-primary", "rounded-2", "text-white");
     button.setAttribute("data-bs-id", id.toString())
     button.innerText = "Edit";
-    button.addEventListener("click", () => {
-        window.location.href = editLink === "" ? true : false;
-    });
+    button.addEventListener("click", () => {window.location.href = editLink === "" ? true : false;});
     icon = document.createElement("i");
     icon.classList.add("bi", "bi-pencil");
     button.append(icon);

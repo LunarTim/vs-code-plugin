@@ -1,10 +1,11 @@
 grammar Lumina;
 
 // Parser rules
-program: (statement)* EOF;
+program: statement* EOF;
 
 statement
     : variableDeclaration
+    | variableAssignment
     | functionDeclaration
     | expressionStatement
     | ifStatement
@@ -32,7 +33,7 @@ parameterList
     ;
 
 parameter
-    : IDENTIFIER (':' type)? ('=' expression)?
+    : IDENTIFIER (':' type)? (assignmentOperator expression)?
     ;
 
 expressionStatement
@@ -61,7 +62,7 @@ printStatement
     ;
 
 block
-    : '{' statement* SEMICOLON? '}'
+    : '{' statement* '}'
     ;
 
 expression
@@ -101,7 +102,7 @@ multiplicativeExpression
     ;
 
 lambdaExpression
-    : '(' parameterList? ')' '=>' expression
+    : '(' parameterList? ')' '=>' block
     ;
 
 arrayExpression
@@ -135,7 +136,7 @@ primaryExpression
     ;
 
 methodCall
-    : primaryExpression ('.' IDENTIFIER)* '(' (expression (',' expression)*)? ')'
+    : primaryExpression ('.' IDENTIFIER)* '(' (primaryExpression ',')? (expression (',' expression)*)? ')'
     ;
 
 nonNullAssertion
