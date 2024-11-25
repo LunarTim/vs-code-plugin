@@ -1,5 +1,5 @@
-import runLexer from './antlr/generated/LuminaLexer';
-import parse from './antlr/generated/LuminaParser';
+import LuminaLexer from './antlr/generated/LuminaLexer';
+import LuminaParser from './antlr/generated/LuminaParser';
 import { analyze } from './semanticAnalyzer';
 import { getDiagnostics } from './diagnostics';
 import { getCodeCompletions } from './codeCompletion';
@@ -12,12 +12,12 @@ interface CustomSyntaxError {
     length: number;
     severity: 'error';
 }
-    const syntaxErrors: CustomSyntaxError[] = [];
+
 export function compile(source: string) {
     const chars = CharStreams.fromString(source);
-    const lexer = new runLexer(chars);
+    const lexer = new LuminaLexer(chars);
     const tokens = new CommonTokenStream(lexer);
-    const parser = new parse(tokens);
+    const parser = new LuminaParser(tokens);
 
     // Collect syntax errors
     const syntaxErrors: CustomSyntaxError[] = [];
@@ -41,7 +41,7 @@ export function compile(source: string) {
                 message: msg,
                 line,
                 character: charPositionInLine,
-                length: offendingSymbol ? offendingSymbol.text.length : 1,
+                length: offendingSymbol ? (offendingSymbol as any).text.length : 1,
                 severity: 'error'
             });
         }
