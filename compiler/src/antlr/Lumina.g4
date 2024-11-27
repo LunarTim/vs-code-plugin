@@ -116,9 +116,19 @@ unaryExpression
     ;
 
 postfixExpression
-    : primaryExpression
+    : primaryExpression postfixOperation*
     | methodCall
     | nonNullAssertion
+    ;
+
+postfixOperation
+    : '.' IDENTIFIER
+    | '[' expression ']'
+    | '(' argumentList? ')'
+    ;
+
+argumentList
+    : expression (',' expression)*
     ;
 
 primaryExpression

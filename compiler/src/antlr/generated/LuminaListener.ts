@@ -30,6 +30,8 @@ import { LambdaExpressionContext } from "./LuminaParser";
 import { ArrayExpressionContext } from "./LuminaParser";
 import { UnaryExpressionContext } from "./LuminaParser";
 import { PostfixExpressionContext } from "./LuminaParser";
+import { PostfixOperationContext } from "./LuminaParser";
+import { ArgumentListContext } from "./LuminaParser";
 import { PrimaryExpressionContext } from "./LuminaParser";
 import { MethodCallContext } from "./LuminaParser";
 import { NonNullAssertionContext } from "./LuminaParser";
@@ -323,6 +325,26 @@ export default class LuminaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitPostfixExpression?: (ctx: PostfixExpressionContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.postfixOperation`.
+	 * @param ctx the parse tree
+	 */
+	enterPostfixOperation?: (ctx: PostfixOperationContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.postfixOperation`.
+	 * @param ctx the parse tree
+	 */
+	exitPostfixOperation?: (ctx: PostfixOperationContext) => void;
+	/**
+	 * Enter a parse tree produced by `LuminaParser.argumentList`.
+	 * @param ctx the parse tree
+	 */
+	enterArgumentList?: (ctx: ArgumentListContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.argumentList`.
+	 * @param ctx the parse tree
+	 */
+	exitArgumentList?: (ctx: ArgumentListContext) => void;
 	/**
 	 * Enter a parse tree produced by `LuminaParser.primaryExpression`.
 	 * @param ctx the parse tree

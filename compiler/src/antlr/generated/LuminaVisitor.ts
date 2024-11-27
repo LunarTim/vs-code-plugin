@@ -30,6 +30,8 @@ import { LambdaExpressionContext } from "./LuminaParser";
 import { ArrayExpressionContext } from "./LuminaParser";
 import { UnaryExpressionContext } from "./LuminaParser";
 import { PostfixExpressionContext } from "./LuminaParser";
+import { PostfixOperationContext } from "./LuminaParser";
+import { ArgumentListContext } from "./LuminaParser";
 import { PrimaryExpressionContext } from "./LuminaParser";
 import { MethodCallContext } from "./LuminaParser";
 import { NonNullAssertionContext } from "./LuminaParser";
@@ -218,6 +220,18 @@ export default class LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitPostfixExpression?: (ctx: PostfixExpressionContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.postfixOperation`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPostfixOperation?: (ctx: PostfixOperationContext) => Result;
+	/**
+	 * Visit a parse tree produced by `LuminaParser.argumentList`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitArgumentList?: (ctx: ArgumentListContext) => Result;
 	/**
 	 * Visit a parse tree produced by `LuminaParser.primaryExpression`.
 	 * @param ctx the parse tree
