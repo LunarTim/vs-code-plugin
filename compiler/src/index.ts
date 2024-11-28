@@ -5,6 +5,7 @@ import LuminaParser from './antlr/generated/LuminaParser';
 import LuminaListener from './antlr/generated/LuminaListener';
 import { analyze } from './semanticAnalyzer';
 import { getCodeCompletions } from './codeCompletion';
+import { LuminaVisitor } from './LuminaVisitor';
 
 interface SyntaxErrorListener {
     syntaxError(
@@ -111,19 +112,26 @@ export function compile(source: string) {
         parser.addErrorListener(errorListener);
 
         const tree = parser.program();
-        const syntaxErrors = errorListener.getErrors();
-        const semanticErrors = analyze(tree);
-        const allDiagnostics = [...syntaxErrors, ...semanticErrors];
+        const visitor = new LuminaVisitor();
+        const ast = visitor.visit(tree);
+        const visitorErrors = visitor.getErrors().map(error => ({
+            message: error,
+            severity: 'error'
+        }));
 
-        // Pass diagnostics to getCodeCompletions
+        const syntaxErrors = errorListener.getErrors();
+        const allDiagnostics = [...syntaxErrors, ...visitorErrors];
+
         const completions = getCodeCompletions(tree, allDiagnostics);
 
         return {
+            ast,
             diagnostics: allDiagnostics,
             completions: completions
         };
     } catch (error: any) {
         return {
+            ast: null,
             diagnostics: [{
                 message: error.message,
                 severity: 'error'
