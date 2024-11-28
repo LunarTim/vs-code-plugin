@@ -1,7 +1,8 @@
 {
-  "name": "compiler",
+  "name": "lumina-compiler",
   "author": "Tim Hofman",
   "version": "1.0.0",
+  "private": true,
   "main": "src/extension.ts",
   "scripts": {
     "build": "tsc",

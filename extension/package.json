@@ -1,8 +1,35 @@
 {
-    "name": "extension",
+    "name": "lumina-language",
+    "displayName": "Lumina Language Support",
+    "description": "Lumina Language Support for Visual Studio Code",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.63.0"
+    },
+    "activationEvents": [
+        "onLanguage:lumina"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "lumina",
+                "extensions": [
+                    ".lum"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ]
+    },
     "author": "Tim Hofman",
-    "main": "src/index.ts",
+    "main": "./dist/extention.js",
+    "dependencies": {
+        "lumina-compiler": "file:../compiler/dist/index.js",
+        "vscode-languageclient": "^8.1.0",
+        "vscode-languageserver": "^8.1.0",
+        "vscode-languageserver-textdocument": "^1.0.8"
+    },
     "devDependencies": {
+        "@types/node": "^16.18.121",
         "@types/vscode": "^1.95.0",
         "@vitest/coverage-c8": "^0.33.0",
         "@vitest/ui": "^2.1.5",
@@ -11,6 +38,6 @@
     },
     "scripts": {
         "build": "tsc",
-        "test": "vitest --run"
+        "watch": "tsc -w"
     }
 }

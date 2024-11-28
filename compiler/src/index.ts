@@ -4,7 +4,7 @@ import LuminaLexer from './antlr/generated/LuminaLexer';
 import LuminaParser from './antlr/generated/LuminaParser';
 import LuminaListener from './antlr/generated/LuminaListener';
 import { analyze } from './semanticAnalyzer';
-import { getCodeCompletions } from './codeCompletion';
+//import { getCodeCompletions, Completion } from './codeCompletion';
 import { LuminaVisitor } from './LuminaVisitor';
 
 interface SyntaxErrorListener {
@@ -100,7 +100,13 @@ class ErrorListener implements SyntaxErrorListener {
 
 
 
-export function compile(source: string) {
+export interface CompileResult {
+    ast: any;
+    diagnostics: any[];
+    //completions: Completion[];
+}
+
+export function compile(source: string): CompileResult {
     try {
         const chars = new CharStream(source);
         const lexer = new LuminaLexer(chars);
@@ -122,12 +128,12 @@ export function compile(source: string) {
         const syntaxErrors = errorListener.getErrors();
         const allDiagnostics = [...syntaxErrors, ...visitorErrors];
 
-        const completions = getCodeCompletions(tree, allDiagnostics);
+        //const completions = getCodeCompletions(tree, allDiagnostics);
 
         return {
             ast,
             diagnostics: allDiagnostics,
-            completions: completions
+            //completions: completions
         };
     } catch (error: any) {
         return {
@@ -136,7 +142,7 @@ export function compile(source: string) {
                 message: error.message,
                 severity: 'error'
             }],
-            completions: []
+            //completions: []
         };
     }
 }
