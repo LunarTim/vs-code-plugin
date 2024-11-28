@@ -27,6 +27,30 @@ import {
     MethodCallContext,
     TypeContext
 } from './antlr/generated/LuminaParser';
+import {
+    ASTNode,
+    ProgramNode,
+    StatementNode,
+    VariableDeclarationNode,
+    VariableAssignmentNode,
+    FunctionDeclarationNode,
+    ExpressionStatementNode,
+    IfStatementNode,
+    ForStatementNode,
+    WhileStatementNode,
+    ReturnStatementNode,
+    PrintStatementNode,
+    BlockNode,
+    ExpressionNode,
+    LiteralNode,
+    IdentifierNode,
+    BinaryExpressionNode,
+    CallExpressionNode,
+    UnaryExpressionNode,
+    ArrayExpressionNode,
+    LambdaExpressionNode,
+    TypeNode
+} from './ast';
 
 export interface SymbolTable {
     [key: string]: {
@@ -36,107 +60,91 @@ export interface SymbolTable {
     };
 }
 
-export class LuminaVisitor extends ParseTreeVisitor<any> {
+export class LuminaVisitor extends ParseTreeVisitor<ASTNode> {
     private symbolTable: SymbolTable = {};
     private errors: string[] = [];
 
-    visitProgram(ctx: ProgramContext): any {
-        return this.visitChildren(ctx);
+    visitProgram(ctx: ProgramContext): ProgramNode {
+        const statements = [];
+        for (let i = 0; i < ctx.statement_list().length; i++) {
+            const stmt = ctx.statement_list()[i];
+            if (stmt) {
+                statements.push(this.visit(stmt) as StatementNode);
+            }
+        }
+        return {
+            type: 'Program',
+            body: statements
+        };
     }
 
-    visitStatement(ctx: StatementContext): any {
-        return this.visitChildren(ctx);
-    }
-
-    visitVariableDeclaration(ctx: VariableDeclarationContext): any {
+    visitVariableDeclaration(ctx: VariableDeclarationContext): VariableDeclarationNode {
         const identifier = ctx.IDENTIFIER().getText();
         const typeCtx = ctx.type_();
-        const type = typeCtx ? this.visit(typeCtx) : 'any';
-        const isConstant = ctx.getText().startsWith("const" || "let" || "var");
+        const type = typeCtx ? this.visit(typeCtx) as TypeNode : undefined;
+        const text = ctx.getText();
+        const isConstant = text.startsWith('const');
 
         if (this.symbolTable[identifier]) {
             this.errors.push(`Variable '${identifier}' is already declared`);
-            return;
         }
 
         this.symbolTable[identifier] = {
-            type,
+            type: type?.name || 'any',
             isConstant
         };
 
         const expression = ctx.expression();
-        if (expression) {
-            const value = this.visit(expression);
-            this.symbolTable[identifier].value = value;
+        const initializer = expression ? this.visitExpression(expression) : undefined;
+
+        if (initializer) {
+            this.symbolTable[identifier].value = initializer;
         }
 
-        return null;
+        return {
+            type: 'VariableDeclaration',
+            kind: isConstant ? 'const' : text.startsWith('let') ? 'let' : 'var',
+            identifier: { type: 'Identifier', name: identifier },
+            varType: type,
+            initializer
+        };
     }
 
-    visitVariableAssignment(ctx: VariableAssignmentContext): any {
+    visitVariableAssignment(ctx: VariableAssignmentContext): VariableAssignmentNode {
         const identifier = ctx.IDENTIFIER(0).getText();
         if (!this.symbolTable[identifier]) {
             this.errors.push(`Variable '${identifier}' is not declared`);
-            return;
         }
 
-        if (this.symbolTable[identifier].isConstant) {
+        if (this.symbolTable[identifier]?.isConstant) {
             this.errors.push(`Cannot reassign constant '${identifier}'`);
-            return;
         }
 
-        const value = this.visit(ctx.expression());
-        this.symbolTable[identifier].value = value;
-        return value;
-    }
-
-    visitFunctionDeclaration(ctx: FunctionDeclarationContext): any {
-        const identifier = ctx.IDENTIFIER().getText();
-        const returnType = ctx.type_() ? this.visit(ctx.type_()) : 'void';
-
+        const value = this.visit(ctx.expression()) as ExpressionNode;
         if (this.symbolTable[identifier]) {
-            this.errors.push(`Function '${identifier}' is already declared`);
-            return;
+            this.symbolTable[identifier].value = value;
         }
 
-        this.symbolTable[identifier] = {
-            type: 'function',
-            value: {
-                returnType,
-                parameters: ctx.parameterList() ? this.visit(ctx.parameterList()) : []
-            }
+        return {
+            type: 'VariableAssignment',
+            identifier: { type: 'Identifier', name: identifier },
+            operator: { type: 'AssignmentOperator', operator: '=' },
+            value
         };
-
-        return null;
     }
 
-    visitExpression(ctx: ExpressionContext): any {
-        return this.visitChildren(ctx);
+    visitType(ctx: TypeContext): TypeNode {
+        return {
+            type: 'Type',
+            name: ctx.getText()
+        };
     }
 
-    visitPrimaryExpression(ctx: PrimaryExpressionContext): any {
-        if (ctx.IDENTIFIER()) {
-            const identifier = ctx.IDENTIFIER().getText();
-            if (!this.symbolTable[identifier]) {
-                this.errors.push(`Variable '${identifier}' is not declared`);
-                return null;
-            }
-            return this.symbolTable[identifier].value;
-        }
-        return this.visitChildren(ctx);
-    }
-
-    visitType(ctx: TypeContext): string {
-        return ctx.getText();
-    }
-
-    visitMethodCall(ctx: MethodCallContext): any {
-        const identifier = ctx.primaryExpression(0).getText();
-        if (!this.symbolTable[identifier]) {
-            this.errors.push(`Function '${identifier}' is not declared`);
-            return null;
-        }
-        return null;
+    visitExpression(ctx: ExpressionContext): ExpressionNode {
+        return {
+            type: 'Literal',
+            value: ctx.getText()
+        } as LiteralNode;
     }
 
     getErrors(): string[] {
