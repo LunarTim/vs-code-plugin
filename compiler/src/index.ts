@@ -1,56 +1,136 @@
+// src/index.ts
+import { CharStream, CommonTokenStream } from 'antlr4';
 import LuminaLexer from './antlr/generated/LuminaLexer';
 import LuminaParser from './antlr/generated/LuminaParser';
+import LuminaListener from './antlr/generated/LuminaListener';
 import { analyze } from './semanticAnalyzer';
-import { getDiagnostics } from './diagnostics';
 import { getCodeCompletions } from './codeCompletion';
-import { CharStreams, CommonTokenStream } from 'antlr4';
 
-interface CustomSyntaxError {
-    message: string;
-    line: number;
-    character: number;
-    length: number;
-    severity: 'error';
+interface SyntaxErrorListener {
+    syntaxError(
+        recognizer: any,
+        offendingSymbol: any,
+        line: number,
+        column: number,
+        msg: string,
+        e: any
+    ): void;
+    reportAmbiguity(
+        recognizer: any,
+        dfa: any,
+        startIndex: number,
+        stopIndex: number,
+        exact: boolean,
+        ambigAlts: any,
+        configs: any
+    ): void;
+    reportAttemptingFullContext(
+        recognizer: any,
+        dfa: any,
+        startIndex: number,
+        stopIndex: number,
+        conflictingAlts: any,
+        configs: any
+    ): void;
+    reportContextSensitivity(
+        recognizer: any,
+        dfa: any,
+        startIndex: number,
+        stopIndex: number,
+        prediction: number,
+        configs: any
+    ): void;
 }
+
+
+
+class ErrorListener implements SyntaxErrorListener {
+    private errors: any[] = [];
+
+    syntaxError(
+        recognizer: any,
+        offendingSymbol: any,
+        line: number,
+        column: number,
+        msg: string,
+        e: any
+    ): void {
+        // Store error
+        this.errors.push({
+            message: msg,
+            line: line,
+            column: column,
+            severity: 'error'
+        });
+    }
+
+    reportAmbiguity(
+        recognizer: any,
+        dfa: any,
+        startIndex: number,
+        stopIndex: number,
+        exact: boolean,
+        ambigAlts: any,
+        configs: any
+    ): void { }
+
+    reportAttemptingFullContext(
+        recognizer: any,
+        dfa: any,
+        startIndex: number,
+        stopIndex: number,
+        conflictingAlts: any,
+        configs: any
+    ): void { }
+
+    reportContextSensitivity(
+        recognizer: any,
+        dfa: any,
+        startIndex: number,
+        stopIndex: number,
+        prediction: number,
+        configs: any
+    ): void { }
+
+    getErrors() {
+        return this.errors;
+    }
+}
+
+
 
 export function compile(source: string) {
-    const chars = CharStreams.fromString(source);
-    const lexer = new LuminaLexer(chars);
-    const tokens = new CommonTokenStream(lexer);
-    const parser = new LuminaParser(tokens);
+    try {
+        const chars = new CharStream(source);
+        const lexer = new LuminaLexer(chars);
+        const tokens = new CommonTokenStream(lexer);
+        const parser = new LuminaParser(tokens);
 
-    // Collect syntax errors
-    const syntaxErrors: CustomSyntaxError[] = [];
-    lexer.removeErrorListeners();
-    lexer.addErrorListener({
-        syntaxError: (recognizer, offendingSymbol, line, charPositionInLine, msg, e) => {
-            syntaxErrors.push({
-                message: msg,
-                line,
-                character: charPositionInLine,
-                length: offendingSymbol ? (offendingSymbol as any).text.length : 1,
+        const errorListener = new ErrorListener();
+        parser.removeErrorListeners();
+        parser.addErrorListener(errorListener);
+
+        const tree = parser.program();
+        const syntaxErrors = errorListener.getErrors();
+        const semanticErrors = analyze(tree);
+        const allDiagnostics = [...syntaxErrors, ...semanticErrors];
+
+        // Pass diagnostics to getCodeCompletions
+        const completions = getCodeCompletions(tree, allDiagnostics);
+
+        return {
+            diagnostics: allDiagnostics,
+            completions: completions
+        };
+    } catch (error: any) {
+        return {
+            diagnostics: [{
+                message: error.message,
                 severity: 'error'
-            });
-        }
-    });
-
-    parser.removeErrorListeners();
-    parser.addErrorListener({
-        syntaxError: (recognizer, offendingSymbol, line, charPositionInLine, msg, e) => {
-            syntaxErrors.push({
-                message: msg,
-                line,
-                character: charPositionInLine,
-                length: offendingSymbol ? (offendingSymbol as any).text.length : 1,
-                severity: 'error'
-            });
-        }
-    });
-
-    const ast = parser.program();
-    const semanticErrors = analyze(ast);
-    const diagnostics = getDiagnostics([...syntaxErrors, ...semanticErrors]);
-    const completions = getCodeCompletions(ast);
-
-    return { diagnostics, completions };
+            }],
+            completions: []
+        };
+    }
 }
+
+
