@@ -39,7 +39,13 @@ connection.onCompletion(params => {
     if (!document) return [];
 
     const result = compile(document.getText());
-    return getCompletions(result.diagnostics);
+    const context = {
+        document,
+        position: params.position,
+        variables: new Map(), // You may need to populate this map with actual variables
+        functions: new Map()  // You may need to populate this map with actual functions
+    };
+    return getCompletions(context);
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
