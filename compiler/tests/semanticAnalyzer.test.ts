@@ -9,22 +9,30 @@ describe('Semantic Analyzer', () => {
                 {
                     type: 'VariableDeclaration',
                     children: [
-                        { type: 'Identifier', text: 'x', line: 1, character: 0, length: 1 }
+                        {
+                            type: 'Identifier',
+                            name: 'x',
+                            line: 1,
+                            character: 0,
+                            length: 1,
+                            parent: { type: 'VariableDeclaration' }
+                        }
                     ]
                 },
                 {
                     type: 'Identifier',
-                    text: 'y',
+                    name: 'y',
                     line: 2,
                     character: 0,
-                    length: 1
+                    length: 1,
+                    parent: { type: 'Program' }
                 }
             ]
         };
         const errors = analyze(ast);
         expect(errors).toEqual<SemanticError[]>([
             {
-                message: 'Variable y is not defined',
+                message: "Variable 'y' is not defined",
                 line: 2,
                 character: 0,
                 length: 1,
@@ -40,13 +48,27 @@ describe('Semantic Analyzer', () => {
                 {
                     type: 'VariableDeclaration',
                     children: [
-                        { type: 'Identifier', text: 'x', line: 1, character: 0, length: 1 }
+                        { 
+                            type: 'Identifier', 
+                            name: 'x', 
+                            line: 1, 
+                            character: 0, 
+                            length: 1,
+                            parent: { type: 'VariableDeclaration' }
+                        }
                     ]
                 },
                 {
                     type: 'VariableDeclaration',
                     children: [
-                        { type: 'Identifier', text: 'x', line: 2, character: 0, length: 1 }
+                        { 
+                            type: 'Identifier', 
+                            name: 'x', 
+                            line: 2, 
+                            character: 0, 
+                            length: 1,
+                            parent: { type: 'VariableDeclaration' }
+                        }
                     ]
                 }
             ]
@@ -54,7 +76,7 @@ describe('Semantic Analyzer', () => {
         const errors = analyze(ast);
         expect(errors).toEqual<SemanticError[]>([
             {
-                message: 'Variable x is already declared',
+                message: "Variable 'x' is already declared in this scope",
                 line: 2,
                 character: 0,
                 length: 1,

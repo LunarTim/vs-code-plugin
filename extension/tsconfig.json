@@ -15,7 +15,8 @@
     ]
   },
   "include": [
-    "src"
+    "src",
+    "tests/extension.test.ts"
   ],
   "exclude": [
     "node_modules",
