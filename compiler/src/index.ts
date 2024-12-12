@@ -1,121 +1,62 @@
 // src/index.ts
-import { CharStream, CommonTokenStream } from 'antlr4';
+import { CharStream, CommonTokenStream, ErrorListener, Token } from 'antlr4';
 import LuminaLexer from './antlr/generated/LuminaLexer';
 import LuminaParser from './antlr/generated/LuminaParser';
-import LuminaListener from './antlr/generated/LuminaListener';
 import { analyze } from './semanticAnalyzer';
-//import { getCodeCompletions, Completion } from './codeCompletion';
 import { LuminaVisitor } from './LuminaVisitor';
+import LuminaListener from './antlr/generated/LuminaListener';
 
-interface SyntaxErrorListener {
-    syntaxError(
-        recognizer: any,
-        offendingSymbol: any,
-        line: number,
-        column: number,
-        msg: string,
-        e: any
-    ): void;
-    reportAmbiguity(
-        recognizer: any,
-        dfa: any,
-        startIndex: number,
-        stopIndex: number,
-        exact: boolean,
-        ambigAlts: any,
-        configs: any
-    ): void;
-    reportAttemptingFullContext(
-        recognizer: any,
-        dfa: any,
-        startIndex: number,
-        stopIndex: number,
-        conflictingAlts: any,
-        configs: any
-    ): void;
-    reportContextSensitivity(
-        recognizer: any,
-        dfa: any,
-        startIndex: number,
-        stopIndex: number,
-        prediction: number,
-        configs: any
-    ): void;
-}
-
-
-
-class ErrorListener implements SyntaxErrorListener {
+class SyntaxErrorListener extends ErrorListener<Token> implements LuminaListener {
     private errors: any[] = [];
 
-    syntaxError(
-        recognizer: any,
-        offendingSymbol: any,
-        line: number,
-        column: number,
-        msg: string,
-        e: any
-    ): void {
-        // Store error
+    syntaxError(recognizer: any, offendingSymbol: any, line: number, column: number, msg: string): void {
+        // Customize error messages for common cases
+        let message = msg;
+        let errorLine = line;
+        let errorColumn = column;
+
+        if (msg.includes('no viable alternative')) {
+            message = 'Missing semicolon at end of statement';
+            // For missing semicolon errors, point to the end of the previous line
+            errorLine = line - 1;
+            // Set column to end of line (30 is an estimate of line length)
+            errorColumn = 30;
+        }
+
         this.errors.push({
-            message: msg,
-            line: line,
-            column: column,
+            message,
+            line: errorLine - 1, // Convert to 0-based line numbers
+            column: errorColumn - 1,
             severity: 'error'
         });
     }
 
-    reportAmbiguity(
-        recognizer: any,
-        dfa: any,
-        startIndex: number,
-        stopIndex: number,
-        exact: boolean,
-        ambigAlts: any,
-        configs: any
-    ): void { }
-
-    reportAttemptingFullContext(
-        recognizer: any,
-        dfa: any,
-        startIndex: number,
-        stopIndex: number,
-        conflictingAlts: any,
-        configs: any
-    ): void { }
-
-    reportContextSensitivity(
-        recognizer: any,
-        dfa: any,
-        startIndex: number,
-        stopIndex: number,
-        prediction: number,
-        configs: any
-    ): void { }
+    // Required LuminaListener methods
+    visitTerminal(node: any): void { }
+    visitErrorNode(node: any): void { }
+    enterEveryRule(ctx: any): void { }
+    exitEveryRule(ctx: any): void { }
 
     getErrors() {
         return this.errors;
     }
 }
 
-
-
 export interface CompileResult {
     ast: any;
     diagnostics: any[];
-    //completions: Completion[];
 }
 
 export function compile(source: string): CompileResult {
     try {
         const chars = new CharStream(source);
         const lexer = new LuminaLexer(chars);
-        const tokens = new CommonTokenStream(lexer);
-        const parser = new LuminaParser(tokens);
+        const tokens = new CommonTokenStream(lexer as any);
+        const parser = new LuminaParser(tokens as any);
 
-        const errorListener = new ErrorListener();
+        const listener = new SyntaxErrorListener();
         parser.removeErrorListeners();
-        parser.addErrorListener(errorListener);
+        parser.addErrorListener(listener);
 
         const tree = parser.program();
         const visitor = new LuminaVisitor();
@@ -125,15 +66,17 @@ export function compile(source: string): CompileResult {
             severity: 'error'
         }));
 
-        const syntaxErrors = errorListener.getErrors();
-        const allDiagnostics = [...syntaxErrors, ...visitorErrors];
+        const syntaxErrors = listener.getErrors();
+        const semanticErrors = analyze(ast).map(error => ({
+            message: error.message,
+            severity: error.severity
+        }));
 
-        //const completions = getCodeCompletions(tree, allDiagnostics);
+        const allDiagnostics = [...syntaxErrors, ...visitorErrors, ...semanticErrors];
 
         return {
             ast,
             diagnostics: allDiagnostics,
-            //completions: completions
         };
     } catch (error: any) {
         return {
@@ -142,9 +85,6 @@ export function compile(source: string): CompileResult {
                 message: error.message,
                 severity: 'error'
             }],
-            //completions: []
         };
     }
 }
-
-

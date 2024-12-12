@@ -3,7 +3,8 @@
   "author": "Tim Hofman",
   "version": "1.0.0",
   "private": true,
-  "main": "src/extension.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "vitest",
@@ -12,7 +13,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.9.3",
-    "@vitest/coverage-istanbul": "^2.1.5",
+    "@vitest/coverage-istanbul": "^2.1.8",
     "typescript": "^4.0.0",
     "vsce": "^1.83.0",
     "vscode": "^1.1.37"
@@ -20,10 +21,10 @@
   "dependencies": {
     "@types/antlr4": "^4.11.6",
     "@vitest/coverage-c8": "^0.33.0",
-    "@vitest/ui": "^2.1.5",
+    "@vitest/ui": "^2.1.8",
     "antlr4": "^4.13.1",
     "antlr4ts": "^0.5.0-alpha.4",
     "antlr4ts-cli": "^0.5.0-alpha.4",
-    "vitest": "^2.1.5"
+    "vitest": "^2.1.8"
   }
 }

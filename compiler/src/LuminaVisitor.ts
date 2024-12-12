@@ -95,7 +95,10 @@ export class LuminaVisitor extends ParseTreeVisitor<ASTNode> {
         };
 
         const expression = ctx.expression();
-        const initializer = expression ? this.visitExpression(expression) : undefined;
+        const initializer = expression ? {
+            type: 'Literal',
+            value: expression.getText()
+        } as LiteralNode : undefined;
 
         if (initializer) {
             this.symbolTable[identifier].value = initializer;

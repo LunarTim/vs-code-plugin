@@ -17,7 +17,7 @@ statement
     ;
 
 variableDeclaration
-    : ('let' | 'const' | 'var') IDENTIFIER (':' type)? (assignmentOperator expression)? SEMICOLON
+    : ('let' | 'const' | 'var') IDENTIFIER (':' type)? assignmentOperator expression SEMICOLON
     ;
 
 variableAssignment
