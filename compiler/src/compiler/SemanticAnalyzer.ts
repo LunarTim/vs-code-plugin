@@ -18,7 +18,8 @@ import {
     IncrementStatementContext,
     IncrementExprContext,
     FunctionCallContext,
-    FunctionCallExprContext
+    FunctionCallExprContext,
+    PropertyAccessExprContext
 } from '../grammar/generated/LuminaParser';
 import { Diagnostic } from './Compiler';
 import { DiagnosticSeverity } from './types';
@@ -31,6 +32,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         kind: string;
         line: number;
         column: number;
+        isConst?: boolean;
     }> = new Map();
 
     visitProgram(ctx: ProgramContext): void {
@@ -56,32 +58,73 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
             const identifier = ctx.IDENTIFIER();
             const type = ctx.type();
             const expr = ctx.expression();
+            const declarationType = ctx.children?.[0].text; // 'let', 'const', or 'var'
 
             if (identifier) {
                 const name = identifier.text;
-                const declaredType = type ? type.text : this.inferType(expr);
+                const declaredType = type ? type.text : undefined;
                 
-                this.symbolTable.set(name, {
-                    type: declaredType || 'any',
-                    used: false,
-                    kind: 'Variable',
-                    line: identifier.symbol.line,
-                    column: identifier.symbol.charPositionInLine
+                // For const declarations, require an initializer
+                if (declarationType === 'const' && !expr) {
+                    this.addDiagnostic({
+                        message: 'Const declarations must be initialized',
+                        line: ctx.start.line,
+                        column: ctx.start.charPositionInLine,
+                        severity: DiagnosticSeverity.Error
+                    });
+                    return;
+                }
+
+                // If there's no declared type but there is an expression, infer the type
+                const inferredType = this.inferType(expr);
+                const effectiveType = declaredType || inferredType || 'any';
+
+                console.log('Variable Declaration:', {
+                    name,
+                    declaredType,
+                    inferredType,
+                    effectiveType,
+                    hasExpr: !!expr
                 });
 
-                if (expr) {
-                    const exprType = this.getExpressionType(expr);
-                    if (declaredType && exprType && declaredType !== exprType) {
+                // Check type compatibility before adding to symbol table
+                if (expr && declaredType && inferredType) {
+                    console.log('Type Checking:', {
+                        declaredType,
+                        inferredType,
+                        expr: expr.text
+                    });
+                    if (declaredType !== inferredType) {
                         this.addDiagnostic({
-                            message: `Type '${exprType}' is not assignable to type '${declaredType}'`,
+                            message: `Type '${inferredType}' is not assignable to type '${declaredType}'`,
                             line: ctx.start.line,
                             column: expr.start.charPositionInLine,
                             severity: DiagnosticSeverity.Error
                         });
                     }
                 }
+
+                this.symbolTable.set(name, {
+                    type: effectiveType,
+                    used: false,
+                    kind: 'Variable',
+                    line: identifier.symbol.line,
+                    column: identifier.symbol.charPositionInLine,
+                    isConst: declarationType === 'const'
+                });
+
+                // If there's no type annotation, add a warning
+                if (!declaredType) {
+                    this.addDiagnostic({
+                        message: 'Variable declaration should specify a type',
+                        line: ctx.start.line,
+                        column: ctx.start.charPositionInLine,
+                        severity: DiagnosticSeverity.Warning
+                    });
+                }
             }
         } catch (error) {
+            console.error('Error in visitVariableDeclaration:', error);
             // Silently ignore errors for incomplete declarations during typing
         }
     }
@@ -98,6 +141,17 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
             if (!symbol) {
                 this.addDiagnostic({
                     message: `Cannot find name '${name}'`,
+                    line: ctx.start.line,
+                    column: ctx.start.charPositionInLine,
+                    severity: DiagnosticSeverity.Error
+                });
+                return;
+            }
+
+            // Check for const reassignment
+            if (symbol.isConst) {
+                this.addDiagnostic({
+                    message: `Cannot assign to '${name}' because it is a constant`,
                     line: ctx.start.line,
                     column: ctx.start.charPositionInLine,
                     severity: DiagnosticSeverity.Error
@@ -146,6 +200,17 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 return;
             }
 
+            // Check for const increment
+            if (symbol.isConst) {
+                this.addDiagnostic({
+                    message: `Cannot increment '${name}' because it is a constant`,
+                    line: ctx.start.line,
+                    column: ctx.start.charPositionInLine,
+                    severity: DiagnosticSeverity.Error
+                });
+                return;
+            }
+
             if (symbol.type !== 'number') {
                 this.addDiagnostic({
                     message: `The ${ctx.children?.[1].text} operator can only be applied to numeric types`,
@@ -170,6 +235,10 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
     private getExpressionType(ctx: ExpressionContext): string | undefined {
         if (ctx instanceof LiteralExprContext) {
             const literal = ctx.literal();
+            console.log('Literal Expression:', {
+                text: ctx.text,
+                literalType: literal.constructor.name
+            });
             if (literal instanceof NumberLiteralContext) return 'number';
             if (literal instanceof StringLiteralContext) return 'string';
             if (literal instanceof BooleanLiteralContext) return 'boolean';
@@ -180,6 +249,27 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 this.symbolTable.set(ctx.IDENTIFIER().text, symbol);
                 return symbol.type;
             }
+        } else if (ctx instanceof PropertyAccessExprContext) {
+            const objType = this.getExpressionType(ctx.expression());
+            const prop = ctx.IDENTIFIER().text;
+
+            if (objType === 'string') {
+                if (prop === 'length') return 'number';
+                this.addDiagnostic({
+                    message: `Property '${prop}' does not exist on type 'string'`,
+                    line: ctx.start.line,
+                    column: ctx.start.charPositionInLine,
+                    severity: DiagnosticSeverity.Error
+                });
+            } else {
+                this.addDiagnostic({
+                    message: `Property '${prop}' does not exist on type '${objType}'`,
+                    line: ctx.start.line,
+                    column: ctx.start.charPositionInLine,
+                    severity: DiagnosticSeverity.Error
+                });
+            }
+            return undefined;
         } else if (ctx instanceof FunctionCallExprContext) {
             const functionCall = ctx.functionCall();
             const name = functionCall.IDENTIFIER().text;

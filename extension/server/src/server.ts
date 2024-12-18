@@ -16,7 +16,8 @@ import {
 	TextDocumentSyncKind,
 	InitializeResult,
 	DocumentDiagnosticReportKind,
-	type DocumentDiagnosticReport
+	type DocumentDiagnosticReport,
+	InsertTextFormat
 } from 'vscode-languageserver/node';
 
 import {
@@ -229,7 +230,7 @@ connection.onDidChangeWatchedFiles(_change => {
 	connection.console.log('We received a file change event');
 });
 
-// Define our language keywords
+// Define our language keywords and templates
 const keywords = [
 	'let',
 	'function',
@@ -240,8 +241,33 @@ const keywords = [
 	'number',
 	'string',
 	'boolean',
-	'void'
+	'void',
+	'console',
+	'log'
 ];
+
+const liveTemplates = new Map<string, { snippet: string, description: string }>([
+	['log', { 
+		snippet: 'console.log($1);',
+		description: 'Console log statement'
+	}],
+	['fi', { 
+		snippet: 'if ($1) {\n\t$2\n}',
+		description: 'If statement'
+	}],
+	['elfi', { 
+		snippet: 'if ($1) {\n\t$2\n} else {\n\t$3\n}',
+		description: 'Else statement'
+	}],
+	['fori', { 
+		snippet: 'for (let ${1:i}: number = 0; ${1:i} < ${2:length}; ${1:i}++) {\n\t$3\n}',
+		description: 'For loop'
+	}],
+	['fn', { 
+		snippet: 'function ${1:name}(${2:params}): ${3:type} {\n\t$4\n}',
+		description: 'Function declaration'
+	}]
+]);
 
 // Store document symbols (variables and functions)
 const documentSymbols = new Map<string, Map<string, { kind: CompletionItemKind; type?: string }>>();
@@ -259,20 +285,19 @@ connection.onCompletion(
 		const line = text.split('\n')[position.line];
 		const linePrefix = line.slice(0, position.character);
 
-		// Get document symbols from compiler
-		const compilerResults = await compiler.compile(text);
-		const symbols = new Map(
-			Array.from(compilerResults.symbols.entries()).map(([name, info]) => [
-				name,
-				{
-					kind: info.kind === 'Function' ? CompletionItemKind.Function : CompletionItemKind.Variable,
-					type: info.type
-				}
-			])
-		);
-		documentSymbols.set(document.uri, symbols);
-
 		const completions: CompletionItem[] = [];
+
+		// Add live template completions
+		liveTemplates.forEach((template, trigger) => {
+			completions.push({
+				label: trigger,
+				kind: CompletionItemKind.Snippet,
+				detail: template.description,
+				insertText: template.snippet,
+				insertTextFormat: InsertTextFormat.Snippet,
+				data: { type: 'template' }
+			});
+		});
 
 		// Add keyword completions
 		keywords.forEach(keyword => {

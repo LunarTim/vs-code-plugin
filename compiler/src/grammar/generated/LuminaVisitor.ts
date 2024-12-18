@@ -7,6 +7,7 @@ import { LiteralExprContext } from "./LuminaParser";
 import { IdentifierExprContext } from "./LuminaParser";
 import { IncrementExprContext } from "./LuminaParser";
 import { FunctionCallExprContext } from "./LuminaParser";
+import { PropertyAccessExprContext } from "./LuminaParser";
 import { ParenExprContext } from "./LuminaParser";
 import { BinaryExprContext } from "./LuminaParser";
 import { LogicalAndExprContext } from "./LuminaParser";
@@ -73,6 +74,14 @@ export interface LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitFunctionCallExpr?: (ctx: FunctionCallExprContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `propertyAccessExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPropertyAccessExpr?: (ctx: PropertyAccessExprContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `parenExpr`

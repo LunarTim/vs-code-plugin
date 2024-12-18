@@ -17,7 +17,7 @@ statement
     ;
 
 variableDeclaration
-    : 'let' IDENTIFIER (':' type)? ('=' expression)? ';'
+    : ('let' | 'const' | 'var') IDENTIFIER (':' type)? ('=' expression)? ';'
     ;
 
 assignmentStatement
@@ -72,6 +72,7 @@ expression
     | IDENTIFIER                              #identifierExpr
     | IDENTIFIER ('++' | '--')                #incrementExpr
     | functionCall                            #functionCallExpr
+    | expression '.' IDENTIFIER               #propertyAccessExpr
     | '(' expression ')'                      #parenExpr
     | expression op=('*'|'/') expression      #binaryExpr
     | expression op=('+'|'-') expression      #binaryExpr

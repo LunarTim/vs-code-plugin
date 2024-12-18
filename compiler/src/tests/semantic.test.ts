@@ -21,6 +21,83 @@ describe('Semantic Analyzer', () => {
     }
 
     describe('Variable Declaration Analysis', () => {
+        test('should analyze valid variable declarations', () => {
+            const validCases = [
+                'let x: number = 42;',
+                'const y: string = "hello";',
+                'var z: boolean = true;'
+            ];
+
+            validCases.forEach(input => {
+                analyzer = new SemanticAnalyzer();
+                const tree = parse(input);
+                analyzer.visit(tree);
+                expect(analyzer.getDiagnostics()).toHaveLength(0);
+            });
+        });
+
+        test('should detect missing initializer in const declarations', () => {
+            const tree = parse('const x: number;');
+            analyzer.visit(tree);
+
+            const diagnostics = analyzer.getDiagnostics();
+            expect(diagnostics).toHaveLength(1);
+            expect(diagnostics[0]).toMatchObject({
+                message: 'Const declarations must be initialized',
+                severity: DiagnosticSeverity.Error
+            });
+        });
+
+        test('should prevent const reassignment', () => {
+            const tree = parse(`
+                const x: number = 42;
+                x = 10;
+            `);
+            analyzer.visit(tree);
+
+            const diagnostics = analyzer.getDiagnostics();
+            expect(diagnostics).toHaveLength(1);
+            expect(diagnostics[0]).toMatchObject({
+                message: "Cannot assign to 'x' because it is a constant",
+                severity: DiagnosticSeverity.Error
+            });
+        });
+
+        test('should prevent const increment', () => {
+            const tree = parse(`
+                const x: number = 42;
+                x++;
+            `);
+            analyzer.visit(tree);
+
+            const diagnostics = analyzer.getDiagnostics();
+            expect(diagnostics).toHaveLength(1);
+            expect(diagnostics[0]).toMatchObject({
+                message: "Cannot increment 'x' because it is a constant",
+                severity: DiagnosticSeverity.Error
+            });
+        });
+
+        test('should allow var and let reassignment', () => {
+            const validCases = [
+                `
+                let x: number = 42;
+                x = 10;
+                `,
+                `
+                var y: number = 42;
+                y = 10;
+                `
+            ];
+
+            validCases.forEach(input => {
+                analyzer = new SemanticAnalyzer();
+                const tree = parse(input);
+                analyzer.visit(tree);
+                expect(analyzer.getDiagnostics()).toHaveLength(0);
+            });
+        });
+
         test('should analyze valid variable declaration', () => {
             const tree = parse('let x: number = 42;');
             analyzer.visit(tree);
@@ -73,6 +150,16 @@ describe('Semantic Analyzer', () => {
                     input: 'let x: boolean = 42;',
                     expectedType: 'number',
                     declaredType: 'boolean'
+                },
+                {
+                    input: 'var x: boolean = 42;',
+                    expectedType: 'number',
+                    declaredType: 'boolean'
+                },
+                {
+                    input: 'const x: string = 42;',
+                    expectedType: 'number',
+                    declaredType: 'string'
                 }
             ];
 
