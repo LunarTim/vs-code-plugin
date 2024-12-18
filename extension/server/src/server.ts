@@ -169,7 +169,17 @@ documents.onDidChangeContent(change => {
 async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
 	try {
 		const text = textDocument.getText();
+		console.log('Validating document:', {
+			uri: textDocument.uri,
+			version: textDocument.version,
+			length: text.length
+		});
+
 		const compilerResult = compiler.compile(text);
+		console.log('Compiler result:', {
+			diagnosticsCount: compilerResult.diagnostics.length,
+			diagnostics: compilerResult.diagnostics
+		});
 		
 		return compilerResult.diagnostics.map(diagnostic => {
 			// Convert 1-based line numbers to 0-based for VSCode
@@ -181,25 +191,57 @@ async function validateTextDocument(textDocument: TextDocument): Promise<Diagnos
 			const lineText = lines[line] || '';
 			
 			// Calculate the range based on the message type
-			let endCharacter = column + 1;
+			let endCharacter = column;
+			
 			if (diagnostic.message.includes('is declared but never used')) {
-				// Find the identifier in the warning message
+				// For unused variable warnings, highlight the variable name
 				const match = diagnostic.message.match(/Variable '([^']+)'/);
 				if (match) {
-					endCharacter = column + match[1].length;
-				}
-			} else if (diagnostic.message.includes('is not assignable to type')) {
-				// For type errors, highlight the value after the equals sign
-				const equalsIndex = lineText.indexOf('=', column);
-				if (equalsIndex !== -1) {
-					const valueStart = equalsIndex + 1;
-					const valueMatch = lineText.slice(valueStart).match(/\s*([^;]+)/);
-					if (valueMatch) {
-						column = valueStart + valueMatch[0].indexOf(valueMatch[1]);
-						endCharacter = column + valueMatch[1].length;
+					const variableName = match[1];
+					const variableStart = lineText.indexOf(variableName);
+					if (variableStart !== -1) {
+						column = variableStart;
+						endCharacter = variableStart + variableName.length;
 					}
 				}
+			} else if (diagnostic.message.includes('is not assignable to type')) {
+				// For type mismatch errors, highlight the value
+				const equalsIndex = lineText.indexOf('=');
+				if (equalsIndex !== -1) {
+					// Find the value after the equals sign
+					const afterEquals = lineText.slice(equalsIndex + 1).trim();
+					const valueMatch = afterEquals.match(/^([^;]+)/);
+					if (valueMatch) {
+						const value = valueMatch[1].trim();
+						column = equalsIndex + 1 + lineText.slice(equalsIndex + 1).indexOf(value);
+						endCharacter = column + value.length;
+					}
+				}
+			} else if (diagnostic.message.includes('Expected')) {
+				// For syntax errors like missing semicolons, highlight the current position
+				endCharacter = column + 1;
+			} else {
+				// For other diagnostics, try to determine the appropriate range
+				const tokenMatch = lineText.slice(column).match(/[a-zA-Z0-9_]+|[^a-zA-Z0-9_\s]+/);
+				if (tokenMatch) {
+					endCharacter = column + tokenMatch[0].length;
+				} else {
+					endCharacter = column + 1;
+				}
 			}
+
+			console.log('Creating diagnostic:', {
+				message: diagnostic.message,
+				line,
+				column,
+				endCharacter,
+				severity: diagnostic.severity,
+				lineText,
+				range: {
+					start: { line, character: column },
+					end: { line, character: endCharacter }
+				}
+			});
 
 			return {
 				severity: diagnostic.severity as DiagnosticSeverity,

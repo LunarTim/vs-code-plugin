@@ -42,6 +42,7 @@ export class Compiler {
             const lexerErrorListener = new LexerErrorListener();
             const parserErrorListener = new ParserErrorListener();
             
+            // Remove default listeners and add our custom ones
             lexer.removeErrorListeners();
             parser.removeErrorListeners();
             
@@ -49,40 +50,15 @@ export class Compiler {
             parser.addErrorListener(parserErrorListener);
 
             // Parse the input
-            parser.removeErrorListeners(); // Remove default error listeners
-            parser.errorHandler = new DefaultErrorStrategy(); // Use default strategy for error handling
-            const tree = parser.program();
-
-            // If parsing fails due to incomplete input, return empty result
-            if (!tree) {
-                return { diagnostics: [], symbols: new Map() };
-            }
-
-            // Perform semantic analysis
-            this.semanticAnalyzer.visit(tree);
-
-            // Collect diagnostics
-            const diagnostics = [
-                ...lexerErrorListener.getErrors(),
-                ...parserErrorListener.getErrors(),
-                ...this.semanticAnalyzer.getDiagnostics()
-            ];
-
-            // Get symbols from semantic analyzer
-            const symbols = this.semanticAnalyzer.getSymbols();
-
-            return {
-                diagnostics,
-                symbols
-            };
-        } catch (error: unknown) {
-            // Only report errors for complete statements
-            if (sourceCode.trim().endsWith(';')) {
-                console.error('Compilation error:', error);
-                const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred during compilation';
+            parser.errorHandler = new DefaultErrorStrategy();
+            let tree;
+            try {
+                tree = parser.program();
+            } catch (parseError) {
+                console.error('Parse error:', parseError);
                 return {
                     diagnostics: [{
-                        message: errorMessage,
+                        message: parseError instanceof Error ? parseError.message : 'Parse error occurred',
                         line: 1,
                         column: 0,
                         severity: DiagnosticSeverity.Error
@@ -90,7 +66,56 @@ export class Compiler {
                     symbols: new Map()
                 };
             }
-            return { diagnostics: [], symbols: new Map() };
+
+            // Collect syntax errors
+            const syntaxErrors = [
+                ...lexerErrorListener.getErrors(),
+                ...parserErrorListener.getErrors()
+            ];
+
+            if (syntaxErrors.length > 0) {
+                return {
+                    diagnostics: syntaxErrors,
+                    symbols: new Map()
+                };
+            }
+
+            // Perform semantic analysis if syntax is valid
+            try {
+                this.semanticAnalyzer.visit(tree);
+            } catch (semanticError) {
+                console.error('Semantic analysis error:', semanticError);
+                return {
+                    diagnostics: [{
+                        message: semanticError instanceof Error ? semanticError.message : 'Semantic analysis error occurred',
+                        line: 1,
+                        column: 0,
+                        severity: DiagnosticSeverity.Error
+                    }],
+                    symbols: new Map()
+                };
+            }
+
+            // Get diagnostics and symbols
+            const semanticDiagnostics = this.semanticAnalyzer.getDiagnostics();
+            const symbols = this.semanticAnalyzer.getSymbols();
+
+            return {
+                diagnostics: [...syntaxErrors, ...semanticDiagnostics],
+                symbols
+            };
+        } catch (error: unknown) {
+            console.error('Compilation error:', error);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred during compilation';
+            return {
+                diagnostics: [{
+                    message: errorMessage,
+                    line: 1,
+                    column: 0,
+                    severity: DiagnosticSeverity.Error
+                }],
+                symbols: new Map()
+            };
         }
     }
 } 
