@@ -7,15 +7,21 @@ program
 
 statement
     : variableDeclaration
+    | variableAssignment
     | functionDeclaration
     | expressionStatement
     | ifStatement
     | forStatement
+    | whileStatement
     | returnStatement
     ;
 
 variableDeclaration
-    : 'let' IDENTIFIER (':' type)? ('=' expression)? ';'
+    : ('let' | 'const' | 'var') IDENTIFIER (':' type)? ('=' expression)? ';'
+    ;
+
+variableAssignment
+    : IDENTIFIER ('='|'+='|'-='|'*='|'/=') expression ';'
     ;
 
 functionDeclaration
@@ -51,6 +57,12 @@ ifStatement
 
 forStatement
     : 'for' '(' variableDeclaration expression ';' expression ')' block
+    | 'for' '(' ('var' | 'let' | 'const') IDENTIFIER ':' type ';' expression ';' expression ')' block
+    | 'for' '(' ('var' | 'let' | 'const') IDENTIFIER 'of' expression ')' block
+    ;
+
+whileStatement
+    : 'while' '(' expression ')' block
     ;
 
 returnStatement
@@ -60,7 +72,12 @@ returnStatement
 expression
     : literal                                  #literalExpr
     | IDENTIFIER                              #identifierExpr
+    | IDENTIFIER ('++' | '--')                 #incrementDecrementExpr
+    | IDENTIFIER ('+=' | '-=' | '*=' | '/=') expression #assignmentExpr
     | functionCall                            #functionCallExpr
+    | expression '.' IDENTIFIER               #propertyAccessExpr
+    | expression '[' expression ']'            #indexAccessExpr
+    | expression '(' argumentList? ')'        #functionCallExpr
     | expression ('*'|'/') expression         #multiplicativeExpr
     | expression ('+'|'-') expression         #additiveExpr
     | expression ('=='|'!='|'<'|'>'|'<='|'>=') expression  #comparisonExpr

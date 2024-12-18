@@ -5,7 +5,11 @@ import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
 import { LiteralExprContext } from "./LuminaParser";
 import { IdentifierExprContext } from "./LuminaParser";
+import { IncrementDecrementExprContext } from "./LuminaParser";
+import { AssignmentExprContext } from "./LuminaParser";
 import { FunctionCallExprContext } from "./LuminaParser";
+import { PropertyAccessExprContext } from "./LuminaParser";
+import { IndexAccessExprContext } from "./LuminaParser";
 import { MultiplicativeExprContext } from "./LuminaParser";
 import { AdditiveExprContext } from "./LuminaParser";
 import { ComparisonExprContext } from "./LuminaParser";
@@ -18,6 +22,7 @@ import { BooleanLiteralContext } from "./LuminaParser";
 import { ProgramContext } from "./LuminaParser";
 import { StatementContext } from "./LuminaParser";
 import { VariableDeclarationContext } from "./LuminaParser";
+import { VariableAssignmentContext } from "./LuminaParser";
 import { FunctionDeclarationContext } from "./LuminaParser";
 import { ParameterListContext } from "./LuminaParser";
 import { ParameterContext } from "./LuminaParser";
@@ -26,6 +31,7 @@ import { BlockContext } from "./LuminaParser";
 import { ExpressionStatementContext } from "./LuminaParser";
 import { IfStatementContext } from "./LuminaParser";
 import { ForStatementContext } from "./LuminaParser";
+import { WhileStatementContext } from "./LuminaParser";
 import { ReturnStatementContext } from "./LuminaParser";
 import { ExpressionContext } from "./LuminaParser";
 import { FunctionCallContext } from "./LuminaParser";
@@ -58,12 +64,44 @@ export interface LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitIdentifierExpr?: (ctx: IdentifierExprContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by the `incrementDecrementExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitIncrementDecrementExpr?: (ctx: IncrementDecrementExprContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `assignmentExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitAssignmentExpr?: (ctx: AssignmentExprContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `functionCallExpr`
 	 * labeled alternative in `LuminaParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitFunctionCallExpr?: (ctx: FunctionCallExprContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `propertyAccessExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPropertyAccessExpr?: (ctx: PropertyAccessExprContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `indexAccessExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitIndexAccessExpr?: (ctx: IndexAccessExprContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `multiplicativeExpr`
@@ -159,6 +197,13 @@ export interface LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitVariableDeclaration?: (ctx: VariableDeclarationContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `LuminaParser.variableAssignment`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitVariableAssignment?: (ctx: VariableAssignmentContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `LuminaParser.functionDeclaration`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -213,6 +258,13 @@ export interface LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitForStatement?: (ctx: ForStatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LuminaParser.whileStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitWhileStatement?: (ctx: WhileStatementContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `LuminaParser.returnStatement`.

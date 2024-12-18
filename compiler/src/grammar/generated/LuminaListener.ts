@@ -5,7 +5,11 @@ import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
 import { LiteralExprContext } from "./LuminaParser";
 import { IdentifierExprContext } from "./LuminaParser";
+import { IncrementDecrementExprContext } from "./LuminaParser";
+import { AssignmentExprContext } from "./LuminaParser";
 import { FunctionCallExprContext } from "./LuminaParser";
+import { PropertyAccessExprContext } from "./LuminaParser";
+import { IndexAccessExprContext } from "./LuminaParser";
 import { MultiplicativeExprContext } from "./LuminaParser";
 import { AdditiveExprContext } from "./LuminaParser";
 import { ComparisonExprContext } from "./LuminaParser";
@@ -18,6 +22,7 @@ import { BooleanLiteralContext } from "./LuminaParser";
 import { ProgramContext } from "./LuminaParser";
 import { StatementContext } from "./LuminaParser";
 import { VariableDeclarationContext } from "./LuminaParser";
+import { VariableAssignmentContext } from "./LuminaParser";
 import { FunctionDeclarationContext } from "./LuminaParser";
 import { ParameterListContext } from "./LuminaParser";
 import { ParameterContext } from "./LuminaParser";
@@ -26,6 +31,7 @@ import { BlockContext } from "./LuminaParser";
 import { ExpressionStatementContext } from "./LuminaParser";
 import { IfStatementContext } from "./LuminaParser";
 import { ForStatementContext } from "./LuminaParser";
+import { WhileStatementContext } from "./LuminaParser";
 import { ReturnStatementContext } from "./LuminaParser";
 import { ExpressionContext } from "./LuminaParser";
 import { FunctionCallContext } from "./LuminaParser";
@@ -65,6 +71,32 @@ export interface LuminaListener extends ParseTreeListener {
 	exitIdentifierExpr?: (ctx: IdentifierExprContext) => void;
 
 	/**
+	 * Enter a parse tree produced by the `incrementDecrementExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterIncrementDecrementExpr?: (ctx: IncrementDecrementExprContext) => void;
+	/**
+	 * Exit a parse tree produced by the `incrementDecrementExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitIncrementDecrementExpr?: (ctx: IncrementDecrementExprContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `assignmentExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterAssignmentExpr?: (ctx: AssignmentExprContext) => void;
+	/**
+	 * Exit a parse tree produced by the `assignmentExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitAssignmentExpr?: (ctx: AssignmentExprContext) => void;
+
+	/**
 	 * Enter a parse tree produced by the `functionCallExpr`
 	 * labeled alternative in `LuminaParser.expression`.
 	 * @param ctx the parse tree
@@ -76,6 +108,32 @@ export interface LuminaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitFunctionCallExpr?: (ctx: FunctionCallExprContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `propertyAccessExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterPropertyAccessExpr?: (ctx: PropertyAccessExprContext) => void;
+	/**
+	 * Exit a parse tree produced by the `propertyAccessExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitPropertyAccessExpr?: (ctx: PropertyAccessExprContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `indexAccessExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterIndexAccessExpr?: (ctx: IndexAccessExprContext) => void;
+	/**
+	 * Exit a parse tree produced by the `indexAccessExpr`
+	 * labeled alternative in `LuminaParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitIndexAccessExpr?: (ctx: IndexAccessExprContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `multiplicativeExpr`
@@ -228,6 +286,17 @@ export interface LuminaListener extends ParseTreeListener {
 	exitVariableDeclaration?: (ctx: VariableDeclarationContext) => void;
 
 	/**
+	 * Enter a parse tree produced by `LuminaParser.variableAssignment`.
+	 * @param ctx the parse tree
+	 */
+	enterVariableAssignment?: (ctx: VariableAssignmentContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.variableAssignment`.
+	 * @param ctx the parse tree
+	 */
+	exitVariableAssignment?: (ctx: VariableAssignmentContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `LuminaParser.functionDeclaration`.
 	 * @param ctx the parse tree
 	 */
@@ -314,6 +383,17 @@ export interface LuminaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitForStatement?: (ctx: ForStatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LuminaParser.whileStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterWhileStatement?: (ctx: WhileStatementContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.whileStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitWhileStatement?: (ctx: WhileStatementContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `LuminaParser.returnStatement`.
