@@ -4,6 +4,7 @@ import { LuminaParser } from '../grammar/generated/LuminaParser';
 import { LexerErrorListener, ParserErrorListener } from './ErrorListener';
 import { DiagnosticSeverity } from './types';
 import { SemanticAnalyzer } from './SemanticAnalyzer';
+import { DefaultErrorStrategy } from 'antlr4ts/DefaultErrorStrategy';
 
 export interface Diagnostic {
     message: string;
@@ -12,87 +13,84 @@ export interface Diagnostic {
     severity: DiagnosticSeverity;
 }
 
+export interface CompilerResult {
+    diagnostics: Diagnostic[];
+    symbols: Map<string, { kind: string; type?: string }>;
+}
+
 export class Compiler {
-    private diagnostics: Diagnostic[] = [];
+    private semanticAnalyzer: SemanticAnalyzer;
+    private errorListener: ParserErrorListener;
 
-    compile(input: string): { diagnostics: Diagnostic[] } {
-        this.diagnostics = [];
+    constructor() {
+        this.semanticAnalyzer = new SemanticAnalyzer();
+        this.errorListener = new ParserErrorListener();
+    }
 
+    compile(sourceCode: string): CompilerResult {
         try {
-            // Create the lexer and parser
-            const inputStream: CharStream = CharStreams.fromString(input);
+            if (!sourceCode.trim()) {
+                return { diagnostics: [], symbols: new Map() };
+            }
+
+            const inputStream = CharStreams.fromString(sourceCode);
             const lexer = new LuminaLexer(inputStream);
-
-            // Add error listener to lexer
-            const lexerErrorListener = new LexerErrorListener();
-            lexer.removeErrorListeners();
-            lexer.addErrorListener(lexerErrorListener);
-
             const tokenStream = new CommonTokenStream(lexer);
             const parser = new LuminaParser(tokenStream);
 
-            // Add error listener to parser
+            // Set up error handling
+            const lexerErrorListener = new LexerErrorListener();
             const parserErrorListener = new ParserErrorListener();
+            
+            lexer.removeErrorListeners();
             parser.removeErrorListeners();
+            
+            lexer.addErrorListener(lexerErrorListener);
             parser.addErrorListener(parserErrorListener);
 
             // Parse the input
+            parser.removeErrorListeners(); // Remove default error listeners
+            parser.errorHandler = new DefaultErrorStrategy(); // Use default strategy for error handling
             const tree = parser.program();
 
-            // Add any lexer errors to diagnostics
-            this.diagnostics.push(...lexerErrorListener.getErrors());
-
-            // Add any parser errors to diagnostics
-            const parserErrors = parserErrorListener.getErrors();
-            this.diagnostics.push(...parserErrors);
-
-            // Always perform semantic analysis
-            const analyzer = new SemanticAnalyzer();
-            analyzer.visit(tree);
-            
-            // Add semantic diagnostics, filtering out duplicates
-            const semanticDiagnostics = analyzer.getDiagnostics();
-            const hasSimilarError = (diagnostic: Diagnostic) => 
-                this.diagnostics.some(existing => 
-                    existing.line === diagnostic.line && 
-                    ((existing.message === diagnostic.message) ||
-                     (existing.message.includes('identifier') && 
-                      diagnostic.message.includes('identifier') && 
-                      existing.severity === DiagnosticSeverity.Error))
-                );
-
-            for (const diagnostic of semanticDiagnostics) {
-                if (!hasSimilarError(diagnostic)) {
-                    this.diagnostics.push(diagnostic);
-                }
+            // If parsing fails due to incomplete input, return empty result
+            if (!tree) {
+                return { diagnostics: [], symbols: new Map() };
             }
 
-            // Sort diagnostics by severity (errors first) and line number
-            this.diagnostics.sort((a, b) => {
-                if (a.severity !== b.severity) {
-                    return a.severity - b.severity;
-                }
-                return a.line - b.line;
-            });
+            // Perform semantic analysis
+            this.semanticAnalyzer.visit(tree);
+
+            // Collect diagnostics
+            const diagnostics = [
+                ...lexerErrorListener.getErrors(),
+                ...parserErrorListener.getErrors(),
+                ...this.semanticAnalyzer.getDiagnostics()
+            ];
+
+            // Get symbols from semantic analyzer
+            const symbols = this.semanticAnalyzer.getSymbols();
 
             return {
-                diagnostics: this.diagnostics
+                diagnostics,
+                symbols
             };
-        } catch (error) {
-            this.diagnostics.push({
-                message: error instanceof Error ? error.message : 'Unknown error occurred',
-                line: 1,
-                column: 0,
-                severity: DiagnosticSeverity.Error
-            });
-
-            return {
-                diagnostics: this.diagnostics
-            };
+        } catch (error: unknown) {
+            // Only report errors for complete statements
+            if (sourceCode.trim().endsWith(';')) {
+                console.error('Compilation error:', error);
+                const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred during compilation';
+                return {
+                    diagnostics: [{
+                        message: errorMessage,
+                        line: 1,
+                        column: 0,
+                        severity: DiagnosticSeverity.Error
+                    }],
+                    symbols: new Map()
+                };
+            }
+            return { diagnostics: [], symbols: new Map() };
         }
-    }
-
-    addDiagnostic(diagnostic: Diagnostic): void {
-        this.diagnostics.push(diagnostic);
     }
 } 

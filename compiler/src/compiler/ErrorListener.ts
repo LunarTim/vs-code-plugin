@@ -21,36 +21,27 @@ abstract class BaseErrorListener {
 
 export class LexerErrorListener extends BaseErrorListener implements ANTLRErrorListener<number> {
     syntaxError(recognizer: Recognizer<number, any>, offendingSymbol: number | undefined, line: number, charPositionInLine: number, msg: string, e: RecognitionException | undefined): void {
-        if (msg.includes('token recognition error')) {
-            const match = msg.match(/token recognition error at: '(.+)'/);
-            const invalidChar = match ? match[1] : '@';
-            this.addError(line, charPositionInLine, `Invalid character '${invalidChar}' in input`);
-        } else {
-            this.addError(line, charPositionInLine, msg);
-        }
+        const errorMsg = msg.includes('token recognition error') 
+            ? `Invalid character in input: ${msg.split("'")[1]}`
+            : 'Syntax error: Invalid token';
+        this.addError(line, charPositionInLine, errorMsg);
     }
 }
 
 export class ParserErrorListener extends BaseErrorListener implements ANTLRErrorListener<Token> {
     syntaxError(recognizer: Recognizer<Token, any>, offendingSymbol: Token | undefined, line: number, charPositionInLine: number, msg: string, e: RecognitionException | undefined): void {
         let errorMessage = msg;
-        let position = charPositionInLine;
 
-        if (msg.includes('missing IDENTIFIER')) {
-            errorMessage = 'Variable declaration must have an identifier';
-            if (offendingSymbol) {
-                position = Math.max(0, offendingSymbol.charPositionInLine - 4);
-            }
+        if (msg.includes('missing')) {
+            const expected = msg.split("missing")[1].split("at")[0].trim();
+            errorMessage = `Expected ${expected}`;
         } else if (msg.includes('extraneous input')) {
-            const match = msg.match(/extraneous input '(.+)' expecting/);
-            const invalidToken = match ? match[1] : '';
-            errorMessage = `Unexpected token '${invalidToken}'`;
-        } else if (msg.includes('mismatched input')) {
-            const match = msg.match(/mismatched input '(.+)' expecting/);
-            const invalidToken = match ? match[1] : '';
-            errorMessage = `Unexpected token '${invalidToken}'`;
+            const unexpected = msg.split("'")[1];
+            errorMessage = `Unexpected token '${unexpected}'`;
+        } else if (msg.includes('no viable alternative')) {
+            errorMessage = 'Invalid syntax';
         }
 
-        this.addError(line, position, errorMessage);
+        this.addError(line, charPositionInLine, errorMessage);
     }
 } 

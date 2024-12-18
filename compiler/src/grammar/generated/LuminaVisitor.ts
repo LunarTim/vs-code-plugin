@@ -5,24 +5,20 @@ import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
 import { LiteralExprContext } from "./LuminaParser";
 import { IdentifierExprContext } from "./LuminaParser";
-import { IncrementDecrementExprContext } from "./LuminaParser";
-import { AssignmentExprContext } from "./LuminaParser";
+import { IncrementExprContext } from "./LuminaParser";
 import { FunctionCallExprContext } from "./LuminaParser";
-import { PropertyAccessExprContext } from "./LuminaParser";
-import { IndexAccessExprContext } from "./LuminaParser";
-import { MultiplicativeExprContext } from "./LuminaParser";
-import { AdditiveExprContext } from "./LuminaParser";
-import { ComparisonExprContext } from "./LuminaParser";
+import { ParenExprContext } from "./LuminaParser";
+import { BinaryExprContext } from "./LuminaParser";
 import { LogicalAndExprContext } from "./LuminaParser";
 import { LogicalOrExprContext } from "./LuminaParser";
-import { ParenExprContext } from "./LuminaParser";
 import { NumberLiteralContext } from "./LuminaParser";
 import { StringLiteralContext } from "./LuminaParser";
 import { BooleanLiteralContext } from "./LuminaParser";
 import { ProgramContext } from "./LuminaParser";
 import { StatementContext } from "./LuminaParser";
 import { VariableDeclarationContext } from "./LuminaParser";
-import { VariableAssignmentContext } from "./LuminaParser";
+import { AssignmentStatementContext } from "./LuminaParser";
+import { IncrementStatementContext } from "./LuminaParser";
 import { FunctionDeclarationContext } from "./LuminaParser";
 import { ParameterListContext } from "./LuminaParser";
 import { ParameterContext } from "./LuminaParser";
@@ -31,7 +27,6 @@ import { BlockContext } from "./LuminaParser";
 import { ExpressionStatementContext } from "./LuminaParser";
 import { IfStatementContext } from "./LuminaParser";
 import { ForStatementContext } from "./LuminaParser";
-import { WhileStatementContext } from "./LuminaParser";
 import { ReturnStatementContext } from "./LuminaParser";
 import { ExpressionContext } from "./LuminaParser";
 import { FunctionCallContext } from "./LuminaParser";
@@ -64,20 +59,12 @@ export interface LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitIdentifierExpr?: (ctx: IdentifierExprContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `incrementDecrementExpr`
+	 * Visit a parse tree produced by the `incrementExpr`
 	 * labeled alternative in `LuminaParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitIncrementDecrementExpr?: (ctx: IncrementDecrementExprContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `assignmentExpr`
-	 * labeled alternative in `LuminaParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitAssignmentExpr?: (ctx: AssignmentExprContext) => Result;
+	visitIncrementExpr?: (ctx: IncrementExprContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `functionCallExpr`
@@ -88,44 +75,20 @@ export interface LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitFunctionCallExpr?: (ctx: FunctionCallExprContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `propertyAccessExpr`
+	 * Visit a parse tree produced by the `parenExpr`
 	 * labeled alternative in `LuminaParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitPropertyAccessExpr?: (ctx: PropertyAccessExprContext) => Result;
+	visitParenExpr?: (ctx: ParenExprContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `indexAccessExpr`
+	 * Visit a parse tree produced by the `binaryExpr`
 	 * labeled alternative in `LuminaParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitIndexAccessExpr?: (ctx: IndexAccessExprContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `multiplicativeExpr`
-	 * labeled alternative in `LuminaParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitMultiplicativeExpr?: (ctx: MultiplicativeExprContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `additiveExpr`
-	 * labeled alternative in `LuminaParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitAdditiveExpr?: (ctx: AdditiveExprContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `comparisonExpr`
-	 * labeled alternative in `LuminaParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitComparisonExpr?: (ctx: ComparisonExprContext) => Result;
+	visitBinaryExpr?: (ctx: BinaryExprContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `logicalAndExpr`
@@ -142,14 +105,6 @@ export interface LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitLogicalOrExpr?: (ctx: LogicalOrExprContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `parenExpr`
-	 * labeled alternative in `LuminaParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitParenExpr?: (ctx: ParenExprContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `numberLiteral`
@@ -197,11 +152,18 @@ export interface LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitVariableDeclaration?: (ctx: VariableDeclarationContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `LuminaParser.variableAssignment`.
+	 * Visit a parse tree produced by `LuminaParser.assignmentStatement`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitVariableAssignment?: (ctx: VariableAssignmentContext) => Result;
+	visitAssignmentStatement?: (ctx: AssignmentStatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LuminaParser.incrementStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitIncrementStatement?: (ctx: IncrementStatementContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `LuminaParser.functionDeclaration`.
@@ -258,13 +220,6 @@ export interface LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitForStatement?: (ctx: ForStatementContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `LuminaParser.whileStatement`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitWhileStatement?: (ctx: WhileStatementContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `LuminaParser.returnStatement`.

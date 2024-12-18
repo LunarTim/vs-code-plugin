@@ -64,33 +64,26 @@ export class LuminaParser extends Parser {
 	public static readonly T__33 = 34;
 	public static readonly T__34 = 35;
 	public static readonly T__35 = 36;
-	public static readonly T__36 = 37;
-	public static readonly T__37 = 38;
-	public static readonly T__38 = 39;
-	public static readonly T__39 = 40;
-	public static readonly T__40 = 41;
-	public static readonly T__41 = 42;
-	public static readonly T__42 = 43;
-	public static readonly NUMBER = 44;
-	public static readonly STRING = 45;
-	public static readonly BOOLEAN = 46;
-	public static readonly IDENTIFIER = 47;
-	public static readonly WS = 48;
-	public static readonly COMMENT = 49;
-	public static readonly MULTILINE_COMMENT = 50;
+	public static readonly NUMBER = 37;
+	public static readonly STRING = 38;
+	public static readonly BOOLEAN = 39;
+	public static readonly IDENTIFIER = 40;
+	public static readonly WS = 41;
+	public static readonly COMMENT = 42;
+	public static readonly MULTILINE_COMMENT = 43;
 	public static readonly RULE_program = 0;
 	public static readonly RULE_statement = 1;
 	public static readonly RULE_variableDeclaration = 2;
-	public static readonly RULE_variableAssignment = 3;
-	public static readonly RULE_functionDeclaration = 4;
-	public static readonly RULE_parameterList = 5;
-	public static readonly RULE_parameter = 6;
-	public static readonly RULE_type = 7;
-	public static readonly RULE_block = 8;
-	public static readonly RULE_expressionStatement = 9;
-	public static readonly RULE_ifStatement = 10;
-	public static readonly RULE_forStatement = 11;
-	public static readonly RULE_whileStatement = 12;
+	public static readonly RULE_assignmentStatement = 3;
+	public static readonly RULE_incrementStatement = 4;
+	public static readonly RULE_functionDeclaration = 5;
+	public static readonly RULE_parameterList = 6;
+	public static readonly RULE_parameter = 7;
+	public static readonly RULE_type = 8;
+	public static readonly RULE_block = 9;
+	public static readonly RULE_expressionStatement = 10;
+	public static readonly RULE_ifStatement = 11;
+	public static readonly RULE_forStatement = 12;
 	public static readonly RULE_returnStatement = 13;
 	public static readonly RULE_expression = 14;
 	public static readonly RULE_functionCall = 15;
@@ -98,21 +91,20 @@ export class LuminaParser extends Parser {
 	public static readonly RULE_literal = 17;
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
-		"program", "statement", "variableDeclaration", "variableAssignment", "functionDeclaration", 
-		"parameterList", "parameter", "type", "block", "expressionStatement", 
-		"ifStatement", "forStatement", "whileStatement", "returnStatement", "expression", 
-		"functionCall", "argumentList", "literal",
+		"program", "statement", "variableDeclaration", "assignmentStatement", 
+		"incrementStatement", "functionDeclaration", "parameterList", "parameter", 
+		"type", "block", "expressionStatement", "ifStatement", "forStatement", 
+		"returnStatement", "expression", "functionCall", "argumentList", "literal",
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
-		undefined, "'let'", "'const'", "'var'", "':'", "'='", "';'", "'+='", "'-='", 
-		"'*='", "'/='", "'function'", "'('", "')'", "','", "'number'", "'string'", 
-		"'boolean'", "'void'", "'{'", "'}'", "'if'", "'else'", "'for'", "'of'", 
-		"'while'", "'return'", "'++'", "'--'", "'.'", "'['", "']'", "'*'", "'/'", 
-		"'+'", "'-'", "'=='", "'!='", "'<'", "'>'", "'<='", "'>='", "'&&'", "'||'",
+		undefined, "'let'", "':'", "'='", "';'", "'+='", "'-='", "'*='", "'/='", 
+		"'++'", "'--'", "'function'", "'('", "')'", "','", "'number'", "'string'", 
+		"'boolean'", "'void'", "'{'", "'}'", "'if'", "'else'", "'for'", "'return'", 
+		"'*'", "'/'", "'+'", "'-'", "'=='", "'!='", "'<'", "'>'", "'<='", "'>='", 
+		"'&&'", "'||'",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
-		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
 		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
 		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
 		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
@@ -158,7 +150,7 @@ export class LuminaParser extends Parser {
 			this.state = 39;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LuminaParser.T__0) | (1 << LuminaParser.T__1) | (1 << LuminaParser.T__2) | (1 << LuminaParser.T__10) | (1 << LuminaParser.T__11) | (1 << LuminaParser.T__20) | (1 << LuminaParser.T__22) | (1 << LuminaParser.T__24) | (1 << LuminaParser.T__25))) !== 0) || ((((_la - 44)) & ~0x1F) === 0 && ((1 << (_la - 44)) & ((1 << (LuminaParser.NUMBER - 44)) | (1 << (LuminaParser.STRING - 44)) | (1 << (LuminaParser.BOOLEAN - 44)) | (1 << (LuminaParser.IDENTIFIER - 44)))) !== 0)) {
+			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LuminaParser.T__0) | (1 << LuminaParser.T__10) | (1 << LuminaParser.T__11) | (1 << LuminaParser.T__20) | (1 << LuminaParser.T__22) | (1 << LuminaParser.T__23))) !== 0) || ((((_la - 37)) & ~0x1F) === 0 && ((1 << (_la - 37)) & ((1 << (LuminaParser.NUMBER - 37)) | (1 << (LuminaParser.STRING - 37)) | (1 << (LuminaParser.BOOLEAN - 37)) | (1 << (LuminaParser.IDENTIFIER - 37)))) !== 0)) {
 				{
 				{
 				this.state = 36;
@@ -207,7 +199,7 @@ export class LuminaParser extends Parser {
 				this.enterOuterAlt(_localctx, 2);
 				{
 				this.state = 45;
-				this.variableAssignment();
+				this.assignmentStatement();
 				}
 				break;
 
@@ -215,7 +207,7 @@ export class LuminaParser extends Parser {
 				this.enterOuterAlt(_localctx, 3);
 				{
 				this.state = 46;
-				this.functionDeclaration();
+				this.incrementStatement();
 				}
 				break;
 
@@ -223,7 +215,7 @@ export class LuminaParser extends Parser {
 				this.enterOuterAlt(_localctx, 4);
 				{
 				this.state = 47;
-				this.expressionStatement();
+				this.functionDeclaration();
 				}
 				break;
 
@@ -231,7 +223,7 @@ export class LuminaParser extends Parser {
 				this.enterOuterAlt(_localctx, 5);
 				{
 				this.state = 48;
-				this.ifStatement();
+				this.expressionStatement();
 				}
 				break;
 
@@ -239,7 +231,7 @@ export class LuminaParser extends Parser {
 				this.enterOuterAlt(_localctx, 6);
 				{
 				this.state = 49;
-				this.forStatement();
+				this.ifStatement();
 				}
 				break;
 
@@ -247,7 +239,7 @@ export class LuminaParser extends Parser {
 				this.enterOuterAlt(_localctx, 7);
 				{
 				this.state = 50;
-				this.whileStatement();
+				this.forStatement();
 				}
 				break;
 
@@ -283,26 +275,16 @@ export class LuminaParser extends Parser {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 54;
-			_la = this._input.LA(1);
-			if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LuminaParser.T__0) | (1 << LuminaParser.T__1) | (1 << LuminaParser.T__2))) !== 0))) {
-			this._errHandler.recoverInline(this);
-			} else {
-				if (this._input.LA(1) === Token.EOF) {
-					this.matchedEOF = true;
-				}
-
-				this._errHandler.reportMatch(this);
-				this.consume();
-			}
+			this.match(LuminaParser.T__0);
 			this.state = 55;
 			this.match(LuminaParser.IDENTIFIER);
 			this.state = 58;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if (_la === LuminaParser.T__3) {
+			if (_la === LuminaParser.T__1) {
 				{
 				this.state = 56;
-				this.match(LuminaParser.T__3);
+				this.match(LuminaParser.T__1);
 				this.state = 57;
 				this.type();
 				}
@@ -311,17 +293,17 @@ export class LuminaParser extends Parser {
 			this.state = 62;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if (_la === LuminaParser.T__4) {
+			if (_la === LuminaParser.T__2) {
 				{
 				this.state = 60;
-				this.match(LuminaParser.T__4);
+				this.match(LuminaParser.T__2);
 				this.state = 61;
 				this.expression(0);
 				}
 			}
 
 			this.state = 64;
-			this.match(LuminaParser.T__5);
+			this.match(LuminaParser.T__3);
 			}
 		}
 		catch (re) {
@@ -339,9 +321,9 @@ export class LuminaParser extends Parser {
 		return _localctx;
 	}
 	// @RuleVersion(0)
-	public variableAssignment(): VariableAssignmentContext {
-		let _localctx: VariableAssignmentContext = new VariableAssignmentContext(this._ctx, this.state);
-		this.enterRule(_localctx, 6, LuminaParser.RULE_variableAssignment);
+	public assignmentStatement(): AssignmentStatementContext {
+		let _localctx: AssignmentStatementContext = new AssignmentStatementContext(this._ctx, this.state);
+		this.enterRule(_localctx, 6, LuminaParser.RULE_assignmentStatement);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
@@ -350,7 +332,7 @@ export class LuminaParser extends Parser {
 			this.match(LuminaParser.IDENTIFIER);
 			this.state = 67;
 			_la = this._input.LA(1);
-			if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LuminaParser.T__4) | (1 << LuminaParser.T__6) | (1 << LuminaParser.T__7) | (1 << LuminaParser.T__8) | (1 << LuminaParser.T__9))) !== 0))) {
+			if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LuminaParser.T__2) | (1 << LuminaParser.T__4) | (1 << LuminaParser.T__5) | (1 << LuminaParser.T__6) | (1 << LuminaParser.T__7))) !== 0))) {
 			this._errHandler.recoverInline(this);
 			} else {
 				if (this._input.LA(1) === Token.EOF) {
@@ -363,7 +345,47 @@ export class LuminaParser extends Parser {
 			this.state = 68;
 			this.expression(0);
 			this.state = 69;
-			this.match(LuminaParser.T__5);
+			this.match(LuminaParser.T__3);
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				_localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return _localctx;
+	}
+	// @RuleVersion(0)
+	public incrementStatement(): IncrementStatementContext {
+		let _localctx: IncrementStatementContext = new IncrementStatementContext(this._ctx, this.state);
+		this.enterRule(_localctx, 8, LuminaParser.RULE_incrementStatement);
+		let _la: number;
+		try {
+			this.enterOuterAlt(_localctx, 1);
+			{
+			this.state = 71;
+			this.match(LuminaParser.IDENTIFIER);
+			this.state = 72;
+			_la = this._input.LA(1);
+			if (!(_la === LuminaParser.T__8 || _la === LuminaParser.T__9)) {
+			this._errHandler.recoverInline(this);
+			} else {
+				if (this._input.LA(1) === Token.EOF) {
+					this.matchedEOF = true;
+				}
+
+				this._errHandler.reportMatch(this);
+				this.consume();
+			}
+			this.state = 73;
+			this.match(LuminaParser.T__3);
 			}
 		}
 		catch (re) {
@@ -383,42 +405,42 @@ export class LuminaParser extends Parser {
 	// @RuleVersion(0)
 	public functionDeclaration(): FunctionDeclarationContext {
 		let _localctx: FunctionDeclarationContext = new FunctionDeclarationContext(this._ctx, this.state);
-		this.enterRule(_localctx, 8, LuminaParser.RULE_functionDeclaration);
+		this.enterRule(_localctx, 10, LuminaParser.RULE_functionDeclaration);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 71;
-			this.match(LuminaParser.T__10);
-			this.state = 72;
-			this.match(LuminaParser.IDENTIFIER);
-			this.state = 73;
-			this.match(LuminaParser.T__11);
 			this.state = 75;
+			this.match(LuminaParser.T__10);
+			this.state = 76;
+			this.match(LuminaParser.IDENTIFIER);
+			this.state = 77;
+			this.match(LuminaParser.T__11);
+			this.state = 79;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === LuminaParser.IDENTIFIER) {
 				{
-				this.state = 74;
+				this.state = 78;
 				this.parameterList();
 				}
 			}
 
-			this.state = 77;
+			this.state = 81;
 			this.match(LuminaParser.T__12);
-			this.state = 80;
+			this.state = 84;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if (_la === LuminaParser.T__3) {
+			if (_la === LuminaParser.T__1) {
 				{
-				this.state = 78;
-				this.match(LuminaParser.T__3);
-				this.state = 79;
+				this.state = 82;
+				this.match(LuminaParser.T__1);
+				this.state = 83;
 				this.type();
 				}
 			}
 
-			this.state = 82;
+			this.state = 86;
 			this.block();
 			}
 		}
@@ -439,26 +461,26 @@ export class LuminaParser extends Parser {
 	// @RuleVersion(0)
 	public parameterList(): ParameterListContext {
 		let _localctx: ParameterListContext = new ParameterListContext(this._ctx, this.state);
-		this.enterRule(_localctx, 10, LuminaParser.RULE_parameterList);
+		this.enterRule(_localctx, 12, LuminaParser.RULE_parameterList);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 84;
+			this.state = 88;
 			this.parameter();
-			this.state = 89;
+			this.state = 93;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === LuminaParser.T__13) {
 				{
 				{
-				this.state = 85;
+				this.state = 89;
 				this.match(LuminaParser.T__13);
-				this.state = 86;
+				this.state = 90;
 				this.parameter();
 				}
 				}
-				this.state = 91;
+				this.state = 95;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -481,15 +503,15 @@ export class LuminaParser extends Parser {
 	// @RuleVersion(0)
 	public parameter(): ParameterContext {
 		let _localctx: ParameterContext = new ParameterContext(this._ctx, this.state);
-		this.enterRule(_localctx, 12, LuminaParser.RULE_parameter);
+		this.enterRule(_localctx, 14, LuminaParser.RULE_parameter);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 92;
+			this.state = 96;
 			this.match(LuminaParser.IDENTIFIER);
-			this.state = 93;
-			this.match(LuminaParser.T__3);
-			this.state = 94;
+			this.state = 97;
+			this.match(LuminaParser.T__1);
+			this.state = 98;
 			this.type();
 			}
 		}
@@ -510,12 +532,12 @@ export class LuminaParser extends Parser {
 	// @RuleVersion(0)
 	public type(): TypeContext {
 		let _localctx: TypeContext = new TypeContext(this._ctx, this.state);
-		this.enterRule(_localctx, 14, LuminaParser.RULE_type);
+		this.enterRule(_localctx, 16, LuminaParser.RULE_type);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 96;
+			this.state = 100;
 			_la = this._input.LA(1);
 			if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LuminaParser.T__14) | (1 << LuminaParser.T__15) | (1 << LuminaParser.T__16) | (1 << LuminaParser.T__17))) !== 0))) {
 			this._errHandler.recoverInline(this);
@@ -546,28 +568,28 @@ export class LuminaParser extends Parser {
 	// @RuleVersion(0)
 	public block(): BlockContext {
 		let _localctx: BlockContext = new BlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 16, LuminaParser.RULE_block);
+		this.enterRule(_localctx, 18, LuminaParser.RULE_block);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 98;
-			this.match(LuminaParser.T__18);
 			this.state = 102;
+			this.match(LuminaParser.T__18);
+			this.state = 106;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LuminaParser.T__0) | (1 << LuminaParser.T__1) | (1 << LuminaParser.T__2) | (1 << LuminaParser.T__10) | (1 << LuminaParser.T__11) | (1 << LuminaParser.T__20) | (1 << LuminaParser.T__22) | (1 << LuminaParser.T__24) | (1 << LuminaParser.T__25))) !== 0) || ((((_la - 44)) & ~0x1F) === 0 && ((1 << (_la - 44)) & ((1 << (LuminaParser.NUMBER - 44)) | (1 << (LuminaParser.STRING - 44)) | (1 << (LuminaParser.BOOLEAN - 44)) | (1 << (LuminaParser.IDENTIFIER - 44)))) !== 0)) {
+			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LuminaParser.T__0) | (1 << LuminaParser.T__10) | (1 << LuminaParser.T__11) | (1 << LuminaParser.T__20) | (1 << LuminaParser.T__22) | (1 << LuminaParser.T__23))) !== 0) || ((((_la - 37)) & ~0x1F) === 0 && ((1 << (_la - 37)) & ((1 << (LuminaParser.NUMBER - 37)) | (1 << (LuminaParser.STRING - 37)) | (1 << (LuminaParser.BOOLEAN - 37)) | (1 << (LuminaParser.IDENTIFIER - 37)))) !== 0)) {
 				{
 				{
-				this.state = 99;
+				this.state = 103;
 				this.statement();
 				}
 				}
-				this.state = 104;
+				this.state = 108;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 105;
+			this.state = 109;
 			this.match(LuminaParser.T__19);
 			}
 		}
@@ -588,14 +610,14 @@ export class LuminaParser extends Parser {
 	// @RuleVersion(0)
 	public expressionStatement(): ExpressionStatementContext {
 		let _localctx: ExpressionStatementContext = new ExpressionStatementContext(this._ctx, this.state);
-		this.enterRule(_localctx, 18, LuminaParser.RULE_expressionStatement);
+		this.enterRule(_localctx, 20, LuminaParser.RULE_expressionStatement);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 107;
+			this.state = 111;
 			this.expression(0);
-			this.state = 108;
-			this.match(LuminaParser.T__5);
+			this.state = 112;
+			this.match(LuminaParser.T__3);
 			}
 		}
 		catch (re) {
@@ -615,29 +637,29 @@ export class LuminaParser extends Parser {
 	// @RuleVersion(0)
 	public ifStatement(): IfStatementContext {
 		let _localctx: IfStatementContext = new IfStatementContext(this._ctx, this.state);
-		this.enterRule(_localctx, 20, LuminaParser.RULE_ifStatement);
+		this.enterRule(_localctx, 22, LuminaParser.RULE_ifStatement);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 110;
-			this.match(LuminaParser.T__20);
-			this.state = 111;
-			this.match(LuminaParser.T__11);
-			this.state = 112;
-			this.expression(0);
-			this.state = 113;
-			this.match(LuminaParser.T__12);
 			this.state = 114;
-			this.block();
+			this.match(LuminaParser.T__20);
+			this.state = 115;
+			this.match(LuminaParser.T__11);
+			this.state = 116;
+			this.expression(0);
 			this.state = 117;
+			this.match(LuminaParser.T__12);
+			this.state = 118;
+			this.block();
+			this.state = 121;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === LuminaParser.T__21) {
 				{
-				this.state = 115;
+				this.state = 119;
 				this.match(LuminaParser.T__21);
-				this.state = 116;
+				this.state = 120;
 				this.block();
 				}
 			}
@@ -661,137 +683,25 @@ export class LuminaParser extends Parser {
 	// @RuleVersion(0)
 	public forStatement(): ForStatementContext {
 		let _localctx: ForStatementContext = new ForStatementContext(this._ctx, this.state);
-		this.enterRule(_localctx, 22, LuminaParser.RULE_forStatement);
-		let _la: number;
-		try {
-			this.state = 150;
-			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 9, this._ctx) ) {
-			case 1:
-				this.enterOuterAlt(_localctx, 1);
-				{
-				this.state = 119;
-				this.match(LuminaParser.T__22);
-				this.state = 120;
-				this.match(LuminaParser.T__11);
-				this.state = 121;
-				this.variableDeclaration();
-				this.state = 122;
-				this.expression(0);
-				this.state = 123;
-				this.match(LuminaParser.T__5);
-				this.state = 124;
-				this.expression(0);
-				this.state = 125;
-				this.match(LuminaParser.T__12);
-				this.state = 126;
-				this.block();
-				}
-				break;
-
-			case 2:
-				this.enterOuterAlt(_localctx, 2);
-				{
-				this.state = 128;
-				this.match(LuminaParser.T__22);
-				this.state = 129;
-				this.match(LuminaParser.T__11);
-				this.state = 130;
-				_la = this._input.LA(1);
-				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LuminaParser.T__0) | (1 << LuminaParser.T__1) | (1 << LuminaParser.T__2))) !== 0))) {
-				this._errHandler.recoverInline(this);
-				} else {
-					if (this._input.LA(1) === Token.EOF) {
-						this.matchedEOF = true;
-					}
-
-					this._errHandler.reportMatch(this);
-					this.consume();
-				}
-				this.state = 131;
-				this.match(LuminaParser.IDENTIFIER);
-				this.state = 132;
-				this.match(LuminaParser.T__3);
-				this.state = 133;
-				this.type();
-				this.state = 134;
-				this.match(LuminaParser.T__5);
-				this.state = 135;
-				this.expression(0);
-				this.state = 136;
-				this.match(LuminaParser.T__5);
-				this.state = 137;
-				this.expression(0);
-				this.state = 138;
-				this.match(LuminaParser.T__12);
-				this.state = 139;
-				this.block();
-				}
-				break;
-
-			case 3:
-				this.enterOuterAlt(_localctx, 3);
-				{
-				this.state = 141;
-				this.match(LuminaParser.T__22);
-				this.state = 142;
-				this.match(LuminaParser.T__11);
-				this.state = 143;
-				_la = this._input.LA(1);
-				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LuminaParser.T__0) | (1 << LuminaParser.T__1) | (1 << LuminaParser.T__2))) !== 0))) {
-				this._errHandler.recoverInline(this);
-				} else {
-					if (this._input.LA(1) === Token.EOF) {
-						this.matchedEOF = true;
-					}
-
-					this._errHandler.reportMatch(this);
-					this.consume();
-				}
-				this.state = 144;
-				this.match(LuminaParser.IDENTIFIER);
-				this.state = 145;
-				this.match(LuminaParser.T__23);
-				this.state = 146;
-				this.expression(0);
-				this.state = 147;
-				this.match(LuminaParser.T__12);
-				this.state = 148;
-				this.block();
-				}
-				break;
-			}
-		}
-		catch (re) {
-			if (re instanceof RecognitionException) {
-				_localctx.exception = re;
-				this._errHandler.reportError(this, re);
-				this._errHandler.recover(this, re);
-			} else {
-				throw re;
-			}
-		}
-		finally {
-			this.exitRule();
-		}
-		return _localctx;
-	}
-	// @RuleVersion(0)
-	public whileStatement(): WhileStatementContext {
-		let _localctx: WhileStatementContext = new WhileStatementContext(this._ctx, this.state);
-		this.enterRule(_localctx, 24, LuminaParser.RULE_whileStatement);
+		this.enterRule(_localctx, 24, LuminaParser.RULE_forStatement);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 152;
-			this.match(LuminaParser.T__24);
-			this.state = 153;
+			this.state = 123;
+			this.match(LuminaParser.T__22);
+			this.state = 124;
 			this.match(LuminaParser.T__11);
-			this.state = 154;
+			this.state = 125;
+			this.variableDeclaration();
+			this.state = 126;
 			this.expression(0);
-			this.state = 155;
+			this.state = 127;
+			this.match(LuminaParser.T__3);
+			this.state = 128;
+			this.expression(0);
+			this.state = 129;
 			this.match(LuminaParser.T__12);
-			this.state = 156;
+			this.state = 130;
 			this.block();
 			}
 		}
@@ -817,20 +727,20 @@ export class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 158;
-			this.match(LuminaParser.T__25);
-			this.state = 160;
+			this.state = 132;
+			this.match(LuminaParser.T__23);
+			this.state = 134;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if (_la === LuminaParser.T__11 || ((((_la - 44)) & ~0x1F) === 0 && ((1 << (_la - 44)) & ((1 << (LuminaParser.NUMBER - 44)) | (1 << (LuminaParser.STRING - 44)) | (1 << (LuminaParser.BOOLEAN - 44)) | (1 << (LuminaParser.IDENTIFIER - 44)))) !== 0)) {
+			if (((((_la - 12)) & ~0x1F) === 0 && ((1 << (_la - 12)) & ((1 << (LuminaParser.T__11 - 12)) | (1 << (LuminaParser.NUMBER - 12)) | (1 << (LuminaParser.STRING - 12)) | (1 << (LuminaParser.BOOLEAN - 12)) | (1 << (LuminaParser.IDENTIFIER - 12)))) !== 0)) {
 				{
-				this.state = 159;
+				this.state = 133;
 				this.expression(0);
 				}
 			}
 
-			this.state = 162;
-			this.match(LuminaParser.T__5);
+			this.state = 136;
+			this.match(LuminaParser.T__3);
 			}
 		}
 		catch (re) {
@@ -867,16 +777,16 @@ export class LuminaParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 177;
+			this.state = 148;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 11, this._ctx) ) {
+			switch ( this.interpreter.adaptivePredict(this._input, 10, this._ctx) ) {
 			case 1:
 				{
 				_localctx = new LiteralExprContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
 
-				this.state = 165;
+				this.state = 139;
 				this.literal();
 				}
 				break;
@@ -886,21 +796,21 @@ export class LuminaParser extends Parser {
 				_localctx = new IdentifierExprContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 166;
+				this.state = 140;
 				this.match(LuminaParser.IDENTIFIER);
 				}
 				break;
 
 			case 3:
 				{
-				_localctx = new IncrementDecrementExprContext(_localctx);
+				_localctx = new IncrementExprContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 167;
+				this.state = 141;
 				this.match(LuminaParser.IDENTIFIER);
-				this.state = 168;
+				this.state = 142;
 				_la = this._input.LA(1);
-				if (!(_la === LuminaParser.T__26 || _la === LuminaParser.T__27)) {
+				if (!(_la === LuminaParser.T__8 || _la === LuminaParser.T__9)) {
 				this._errHandler.recoverInline(this);
 				} else {
 					if (this._input.LA(1) === Token.EOF) {
@@ -915,56 +825,32 @@ export class LuminaParser extends Parser {
 
 			case 4:
 				{
-				_localctx = new AssignmentExprContext(_localctx);
+				_localctx = new FunctionCallExprContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 169;
-				this.match(LuminaParser.IDENTIFIER);
-				this.state = 170;
-				_la = this._input.LA(1);
-				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LuminaParser.T__6) | (1 << LuminaParser.T__7) | (1 << LuminaParser.T__8) | (1 << LuminaParser.T__9))) !== 0))) {
-				this._errHandler.recoverInline(this);
-				} else {
-					if (this._input.LA(1) === Token.EOF) {
-						this.matchedEOF = true;
-					}
-
-					this._errHandler.reportMatch(this);
-					this.consume();
-				}
-				this.state = 171;
-				this.expression(11);
+				this.state = 143;
+				this.functionCall();
 				}
 				break;
 
 			case 5:
 				{
-				_localctx = new FunctionCallExprContext(_localctx);
-				this._ctx = _localctx;
-				_prevctx = _localctx;
-				this.state = 172;
-				this.functionCall();
-				}
-				break;
-
-			case 6:
-				{
 				_localctx = new ParenExprContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 173;
+				this.state = 144;
 				this.match(LuminaParser.T__11);
-				this.state = 174;
+				this.state = 145;
 				this.expression(0);
-				this.state = 175;
+				this.state = 146;
 				this.match(LuminaParser.T__12);
 				}
 				break;
 			}
 			this._ctx._stop = this._input.tryLT(-1);
-			this.state = 210;
+			this.state = 167;
 			this._errHandler.sync(this);
-			_alt = this.interpreter.adaptivePredict(this._input, 14, this._ctx);
+			_alt = this.interpreter.adaptivePredict(this._input, 12, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
 				if (_alt === 1) {
 					if (this._parseListeners != null) {
@@ -972,21 +858,22 @@ export class LuminaParser extends Parser {
 					}
 					_prevctx = _localctx;
 					{
-					this.state = 208;
+					this.state = 165;
 					this._errHandler.sync(this);
-					switch ( this.interpreter.adaptivePredict(this._input, 13, this._ctx) ) {
+					switch ( this.interpreter.adaptivePredict(this._input, 11, this._ctx) ) {
 					case 1:
 						{
-						_localctx = new MultiplicativeExprContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, LuminaParser.RULE_expression);
-						this.state = 179;
-						if (!(this.precpred(this._ctx, 6))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
+						this.state = 150;
+						if (!(this.precpred(this._ctx, 5))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 5)");
 						}
-						this.state = 180;
+						this.state = 151;
+						(_localctx as BinaryExprContext)._op = this._input.LT(1);
 						_la = this._input.LA(1);
-						if (!(_la === LuminaParser.T__31 || _la === LuminaParser.T__32)) {
-						this._errHandler.recoverInline(this);
+						if (!(_la === LuminaParser.T__24 || _la === LuminaParser.T__25)) {
+							(_localctx as BinaryExprContext)._op = this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
 								this.matchedEOF = true;
@@ -995,23 +882,24 @@ export class LuminaParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 181;
-						this.expression(7);
+						this.state = 152;
+						this.expression(6);
 						}
 						break;
 
 					case 2:
 						{
-						_localctx = new AdditiveExprContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, LuminaParser.RULE_expression);
-						this.state = 182;
-						if (!(this.precpred(this._ctx, 5))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 5)");
+						this.state = 153;
+						if (!(this.precpred(this._ctx, 4))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 4)");
 						}
-						this.state = 183;
+						this.state = 154;
+						(_localctx as BinaryExprContext)._op = this._input.LT(1);
 						_la = this._input.LA(1);
-						if (!(_la === LuminaParser.T__33 || _la === LuminaParser.T__34)) {
-						this._errHandler.recoverInline(this);
+						if (!(_la === LuminaParser.T__26 || _la === LuminaParser.T__27)) {
+							(_localctx as BinaryExprContext)._op = this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
 								this.matchedEOF = true;
@@ -1020,23 +908,24 @@ export class LuminaParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 184;
-						this.expression(6);
+						this.state = 155;
+						this.expression(5);
 						}
 						break;
 
 					case 3:
 						{
-						_localctx = new ComparisonExprContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, LuminaParser.RULE_expression);
-						this.state = 185;
-						if (!(this.precpred(this._ctx, 4))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 4)");
+						this.state = 156;
+						if (!(this.precpred(this._ctx, 3))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 3)");
 						}
-						this.state = 186;
+						this.state = 157;
+						(_localctx as BinaryExprContext)._op = this._input.LT(1);
 						_la = this._input.LA(1);
-						if (!(((((_la - 36)) & ~0x1F) === 0 && ((1 << (_la - 36)) & ((1 << (LuminaParser.T__35 - 36)) | (1 << (LuminaParser.T__36 - 36)) | (1 << (LuminaParser.T__37 - 36)) | (1 << (LuminaParser.T__38 - 36)) | (1 << (LuminaParser.T__39 - 36)) | (1 << (LuminaParser.T__40 - 36)))) !== 0))) {
-						this._errHandler.recoverInline(this);
+						if (!(((((_la - 29)) & ~0x1F) === 0 && ((1 << (_la - 29)) & ((1 << (LuminaParser.T__28 - 29)) | (1 << (LuminaParser.T__29 - 29)) | (1 << (LuminaParser.T__30 - 29)) | (1 << (LuminaParser.T__31 - 29)) | (1 << (LuminaParser.T__32 - 29)) | (1 << (LuminaParser.T__33 - 29)))) !== 0))) {
+							(_localctx as BinaryExprContext)._op = this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
 								this.matchedEOF = true;
@@ -1045,8 +934,8 @@ export class LuminaParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 187;
-						this.expression(5);
+						this.state = 158;
+						this.expression(4);
 						}
 						break;
 
@@ -1054,14 +943,14 @@ export class LuminaParser extends Parser {
 						{
 						_localctx = new LogicalAndExprContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, LuminaParser.RULE_expression);
-						this.state = 188;
-						if (!(this.precpred(this._ctx, 3))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 3)");
+						this.state = 159;
+						if (!(this.precpred(this._ctx, 2))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 2)");
 						}
-						this.state = 189;
-						this.match(LuminaParser.T__41);
-						this.state = 190;
-						this.expression(4);
+						this.state = 160;
+						this.match(LuminaParser.T__34);
+						this.state = 161;
+						this.expression(3);
 						}
 						break;
 
@@ -1069,79 +958,22 @@ export class LuminaParser extends Parser {
 						{
 						_localctx = new LogicalOrExprContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, LuminaParser.RULE_expression);
-						this.state = 191;
-						if (!(this.precpred(this._ctx, 2))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 2)");
+						this.state = 162;
+						if (!(this.precpred(this._ctx, 1))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 1)");
 						}
-						this.state = 192;
-						this.match(LuminaParser.T__42);
-						this.state = 193;
-						this.expression(3);
-						}
-						break;
-
-					case 6:
-						{
-						_localctx = new PropertyAccessExprContext(new ExpressionContext(_parentctx, _parentState));
-						this.pushNewRecursionContext(_localctx, _startState, LuminaParser.RULE_expression);
-						this.state = 194;
-						if (!(this.precpred(this._ctx, 9))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 9)");
-						}
-						this.state = 195;
-						this.match(LuminaParser.T__28);
-						this.state = 196;
-						this.match(LuminaParser.IDENTIFIER);
-						}
-						break;
-
-					case 7:
-						{
-						_localctx = new IndexAccessExprContext(new ExpressionContext(_parentctx, _parentState));
-						this.pushNewRecursionContext(_localctx, _startState, LuminaParser.RULE_expression);
-						this.state = 197;
-						if (!(this.precpred(this._ctx, 8))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 8)");
-						}
-						this.state = 198;
-						this.match(LuminaParser.T__29);
-						this.state = 199;
-						this.expression(0);
-						this.state = 200;
-						this.match(LuminaParser.T__30);
-						}
-						break;
-
-					case 8:
-						{
-						_localctx = new FunctionCallExprContext(new ExpressionContext(_parentctx, _parentState));
-						this.pushNewRecursionContext(_localctx, _startState, LuminaParser.RULE_expression);
-						this.state = 202;
-						if (!(this.precpred(this._ctx, 7))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
-						}
-						this.state = 203;
-						this.match(LuminaParser.T__11);
-						this.state = 205;
-						this._errHandler.sync(this);
-						_la = this._input.LA(1);
-						if (_la === LuminaParser.T__11 || ((((_la - 44)) & ~0x1F) === 0 && ((1 << (_la - 44)) & ((1 << (LuminaParser.NUMBER - 44)) | (1 << (LuminaParser.STRING - 44)) | (1 << (LuminaParser.BOOLEAN - 44)) | (1 << (LuminaParser.IDENTIFIER - 44)))) !== 0)) {
-							{
-							this.state = 204;
-							this.argumentList();
-							}
-						}
-
-						this.state = 207;
-						this.match(LuminaParser.T__12);
+						this.state = 163;
+						this.match(LuminaParser.T__35);
+						this.state = 164;
+						this.expression(2);
 						}
 						break;
 					}
 					}
 				}
-				this.state = 212;
+				this.state = 169;
 				this._errHandler.sync(this);
-				_alt = this.interpreter.adaptivePredict(this._input, 14, this._ctx);
+				_alt = this.interpreter.adaptivePredict(this._input, 12, this._ctx);
 			}
 			}
 		}
@@ -1167,21 +999,21 @@ export class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 213;
+			this.state = 170;
 			this.match(LuminaParser.IDENTIFIER);
-			this.state = 214;
+			this.state = 171;
 			this.match(LuminaParser.T__11);
-			this.state = 216;
+			this.state = 173;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if (_la === LuminaParser.T__11 || ((((_la - 44)) & ~0x1F) === 0 && ((1 << (_la - 44)) & ((1 << (LuminaParser.NUMBER - 44)) | (1 << (LuminaParser.STRING - 44)) | (1 << (LuminaParser.BOOLEAN - 44)) | (1 << (LuminaParser.IDENTIFIER - 44)))) !== 0)) {
+			if (((((_la - 12)) & ~0x1F) === 0 && ((1 << (_la - 12)) & ((1 << (LuminaParser.T__11 - 12)) | (1 << (LuminaParser.NUMBER - 12)) | (1 << (LuminaParser.STRING - 12)) | (1 << (LuminaParser.BOOLEAN - 12)) | (1 << (LuminaParser.IDENTIFIER - 12)))) !== 0)) {
 				{
-				this.state = 215;
+				this.state = 172;
 				this.argumentList();
 				}
 			}
 
-			this.state = 218;
+			this.state = 175;
 			this.match(LuminaParser.T__12);
 			}
 		}
@@ -1207,21 +1039,21 @@ export class LuminaParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 220;
+			this.state = 177;
 			this.expression(0);
-			this.state = 225;
+			this.state = 182;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === LuminaParser.T__13) {
 				{
 				{
-				this.state = 221;
+				this.state = 178;
 				this.match(LuminaParser.T__13);
-				this.state = 222;
+				this.state = 179;
 				this.expression(0);
 				}
 				}
-				this.state = 227;
+				this.state = 184;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -1246,14 +1078,14 @@ export class LuminaParser extends Parser {
 		let _localctx: LiteralContext = new LiteralContext(this._ctx, this.state);
 		this.enterRule(_localctx, 34, LuminaParser.RULE_literal);
 		try {
-			this.state = 231;
+			this.state = 188;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case LuminaParser.NUMBER:
 				_localctx = new NumberLiteralContext(_localctx);
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 228;
+				this.state = 185;
 				this.match(LuminaParser.NUMBER);
 				}
 				break;
@@ -1261,7 +1093,7 @@ export class LuminaParser extends Parser {
 				_localctx = new StringLiteralContext(_localctx);
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 229;
+				this.state = 186;
 				this.match(LuminaParser.STRING);
 				}
 				break;
@@ -1269,7 +1101,7 @@ export class LuminaParser extends Parser {
 				_localctx = new BooleanLiteralContext(_localctx);
 				this.enterOuterAlt(_localctx, 3);
 				{
-				this.state = 230;
+				this.state = 187;
 				this.match(LuminaParser.BOOLEAN);
 				}
 				break;
@@ -1302,34 +1134,25 @@ export class LuminaParser extends Parser {
 	private expression_sempred(_localctx: ExpressionContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 0:
-			return this.precpred(this._ctx, 6);
-
-		case 1:
 			return this.precpred(this._ctx, 5);
 
-		case 2:
+		case 1:
 			return this.precpred(this._ctx, 4);
 
-		case 3:
+		case 2:
 			return this.precpred(this._ctx, 3);
 
-		case 4:
+		case 3:
 			return this.precpred(this._ctx, 2);
 
-		case 5:
-			return this.precpred(this._ctx, 9);
-
-		case 6:
-			return this.precpred(this._ctx, 8);
-
-		case 7:
-			return this.precpred(this._ctx, 7);
+		case 4:
+			return this.precpred(this._ctx, 1);
 		}
 		return true;
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x034\xEC\x04\x02" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03-\xC1\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
 		"\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x04\x11\t\x11\x04\x12\t\x12\x04" +
@@ -1337,101 +1160,81 @@ export class LuminaParser extends Parser {
 		"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x05\x03" +
 		"7\n\x03\x03\x04\x03\x04\x03\x04\x03\x04\x05\x04=\n\x04\x03\x04\x03\x04" +
 		"\x05\x04A\n\x04\x03\x04\x03\x04\x03\x05\x03\x05\x03\x05\x03\x05\x03\x05" +
-		"\x03\x06\x03\x06\x03\x06\x03\x06\x05\x06N\n\x06\x03\x06\x03\x06\x03\x06" +
-		"\x05\x06S\n\x06\x03\x06\x03\x06\x03\x07\x03\x07\x03\x07\x07\x07Z\n\x07" +
-		"\f\x07\x0E\x07]\v\x07\x03\b\x03\b\x03\b\x03\b\x03\t\x03\t\x03\n\x03\n" +
-		"\x07\ng\n\n\f\n\x0E\nj\v\n\x03\n\x03\n\x03\v\x03\v\x03\v\x03\f\x03\f\x03" +
-		"\f\x03\f\x03\f\x03\f\x03\f\x05\fx\n\f\x03\r\x03\r\x03\r\x03\r\x03\r\x03" +
-		"\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03" +
-		"\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03" +
-		"\r\x03\r\x05\r\x99\n\r\x03\x0E\x03\x0E\x03\x0E\x03\x0E\x03\x0E\x03\x0E" +
-		"\x03\x0F\x03\x0F\x05\x0F\xA3\n\x0F\x03\x0F\x03\x0F\x03\x10\x03\x10\x03" +
+		"\x03\x06\x03\x06\x03\x06\x03\x06\x03\x07\x03\x07\x03\x07\x03\x07\x05\x07" +
+		"R\n\x07\x03\x07\x03\x07\x03\x07\x05\x07W\n\x07\x03\x07\x03\x07\x03\b\x03" +
+		"\b\x03\b\x07\b^\n\b\f\b\x0E\ba\v\b\x03\t\x03\t\x03\t\x03\t\x03\n\x03\n" +
+		"\x03\v\x03\v\x07\vk\n\v\f\v\x0E\vn\v\v\x03\v\x03\v\x03\f\x03\f\x03\f\x03" +
+		"\r\x03\r\x03\r\x03\r\x03\r\x03\r\x03\r\x05\r|\n\r\x03\x0E\x03\x0E\x03" +
+		"\x0E\x03\x0E\x03\x0E\x03\x0E\x03\x0E\x03\x0E\x03\x0E\x03\x0F\x03\x0F\x05" +
+		"\x0F\x89\n\x0F\x03\x0F\x03\x0F\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10" +
+		"\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x05\x10\x97\n\x10\x03\x10\x03" +
 		"\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03" +
-		"\x10\x03\x10\x05\x10\xB4\n\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10" +
-		"\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10" +
-		"\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10" +
-		"\x03\x10\x03\x10\x03\x10\x05\x10\xD0\n\x10\x03\x10\x07\x10\xD3\n\x10\f" +
-		"\x10\x0E\x10\xD6\v\x10\x03\x11\x03\x11\x03\x11\x05\x11\xDB\n\x11\x03\x11" +
-		"\x03\x11\x03\x12\x03\x12\x03\x12\x07\x12\xE2\n\x12\f\x12\x0E\x12\xE5\v" +
-		"\x12\x03\x13\x03\x13\x03\x13\x05\x13\xEA\n\x13\x03\x13\x02\x02\x03\x1E" +
-		"\x14\x02\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02" +
-		"\x14\x02\x16\x02\x18\x02\x1A\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02\x02\n" +
-		"\x03\x02\x03\x05\x04\x02\x07\x07\t\f\x03\x02\x11\x14\x03\x02\x1D\x1E\x03" +
-		"\x02\t\f\x03\x02\"#\x03\x02$%\x03\x02&+\x02\xFD\x02)\x03\x02\x02\x02\x04" +
-		"6\x03\x02\x02\x02\x068\x03\x02\x02\x02\bD\x03\x02\x02\x02\nI\x03\x02\x02" +
-		"\x02\fV\x03\x02\x02\x02\x0E^\x03\x02\x02\x02\x10b\x03\x02\x02\x02\x12" +
-		"d\x03\x02\x02\x02\x14m\x03\x02\x02\x02\x16p\x03\x02\x02\x02\x18\x98\x03" +
-		"\x02\x02\x02\x1A\x9A\x03\x02\x02\x02\x1C\xA0\x03\x02\x02\x02\x1E\xB3\x03" +
-		"\x02\x02\x02 \xD7\x03\x02\x02\x02\"\xDE\x03\x02\x02\x02$\xE9\x03\x02\x02" +
-		"\x02&(\x05\x04\x03\x02\'&\x03\x02\x02\x02(+\x03\x02\x02\x02)\'\x03\x02" +
-		"\x02\x02)*\x03\x02\x02\x02*,\x03\x02\x02\x02+)\x03\x02\x02\x02,-\x07\x02" +
-		"\x02\x03-\x03\x03\x02\x02\x02.7\x05\x06\x04\x02/7\x05\b\x05\x0207\x05" +
-		"\n\x06\x0217\x05\x14\v\x0227\x05\x16\f\x0237\x05\x18\r\x0247\x05\x1A\x0E" +
-		"\x0257\x05\x1C\x0F\x026.\x03\x02\x02\x026/\x03\x02\x02\x0260\x03\x02\x02" +
-		"\x0261\x03\x02\x02\x0262\x03\x02\x02\x0263\x03\x02\x02\x0264\x03\x02\x02" +
-		"\x0265\x03\x02\x02\x027\x05\x03\x02\x02\x0289\t\x02\x02\x029<\x071\x02" +
-		"\x02:;\x07\x06\x02\x02;=\x05\x10\t\x02<:\x03\x02\x02\x02<=\x03\x02\x02" +
-		"\x02=@\x03\x02\x02\x02>?\x07\x07\x02\x02?A\x05\x1E\x10\x02@>\x03\x02\x02" +
-		"\x02@A\x03\x02\x02\x02AB\x03\x02\x02\x02BC\x07\b\x02\x02C\x07\x03\x02" +
-		"\x02\x02DE\x071\x02\x02EF\t\x03\x02\x02FG\x05\x1E\x10\x02GH\x07\b\x02" +
-		"\x02H\t\x03\x02\x02\x02IJ\x07\r\x02\x02JK\x071\x02\x02KM\x07\x0E\x02\x02" +
-		"LN\x05\f\x07\x02ML\x03\x02\x02\x02MN\x03\x02\x02\x02NO\x03\x02\x02\x02" +
-		"OR\x07\x0F\x02\x02PQ\x07\x06\x02\x02QS\x05\x10\t\x02RP\x03\x02\x02\x02" +
-		"RS\x03\x02\x02\x02ST\x03\x02\x02\x02TU\x05\x12\n\x02U\v\x03\x02\x02\x02" +
-		"V[\x05\x0E\b\x02WX\x07\x10\x02\x02XZ\x05\x0E\b\x02YW\x03\x02\x02\x02Z" +
-		"]\x03\x02\x02\x02[Y\x03\x02\x02\x02[\\\x03\x02\x02\x02\\\r\x03\x02\x02" +
-		"\x02][\x03\x02\x02\x02^_\x071\x02\x02_`\x07\x06\x02\x02`a\x05\x10\t\x02" +
-		"a\x0F\x03\x02\x02\x02bc\t\x04\x02\x02c\x11\x03\x02\x02\x02dh\x07\x15\x02" +
-		"\x02eg\x05\x04\x03\x02fe\x03\x02\x02\x02gj\x03\x02\x02\x02hf\x03\x02\x02" +
-		"\x02hi\x03\x02\x02\x02ik\x03\x02\x02\x02jh\x03\x02\x02\x02kl\x07\x16\x02" +
-		"\x02l\x13\x03\x02\x02\x02mn\x05\x1E\x10\x02no\x07\b\x02\x02o\x15\x03\x02" +
-		"\x02\x02pq\x07\x17\x02\x02qr\x07\x0E\x02\x02rs\x05\x1E\x10\x02st\x07\x0F" +
-		"\x02\x02tw\x05\x12\n\x02uv\x07\x18\x02\x02vx\x05\x12\n\x02wu\x03\x02\x02" +
-		"\x02wx\x03\x02\x02\x02x\x17\x03\x02\x02\x02yz\x07\x19\x02\x02z{\x07\x0E" +
-		"\x02\x02{|\x05\x06\x04\x02|}\x05\x1E\x10\x02}~\x07\b\x02\x02~\x7F\x05" +
-		"\x1E\x10\x02\x7F\x80\x07\x0F\x02\x02\x80\x81\x05\x12\n\x02\x81\x99\x03" +
-		"\x02\x02\x02\x82\x83\x07\x19\x02\x02\x83\x84\x07\x0E\x02\x02\x84\x85\t" +
-		"\x02\x02\x02\x85\x86\x071\x02\x02\x86\x87\x07\x06\x02\x02\x87\x88\x05" +
-		"\x10\t\x02\x88\x89\x07\b\x02\x02\x89\x8A\x05\x1E\x10\x02\x8A\x8B\x07\b" +
-		"\x02\x02\x8B\x8C\x05\x1E\x10\x02\x8C\x8D\x07\x0F\x02\x02\x8D\x8E\x05\x12" +
-		"\n\x02\x8E\x99\x03\x02\x02\x02\x8F\x90\x07\x19\x02\x02\x90\x91\x07\x0E" +
-		"\x02\x02\x91\x92\t\x02\x02\x02\x92\x93\x071\x02\x02\x93\x94\x07\x1A\x02" +
-		"\x02\x94\x95\x05\x1E\x10\x02\x95\x96\x07\x0F\x02\x02\x96\x97\x05\x12\n" +
-		"\x02\x97\x99\x03\x02\x02\x02\x98y\x03\x02\x02\x02\x98\x82\x03\x02\x02" +
-		"\x02\x98\x8F\x03\x02\x02\x02\x99\x19\x03\x02\x02\x02\x9A\x9B\x07\x1B\x02" +
-		"\x02\x9B\x9C\x07\x0E\x02\x02\x9C\x9D\x05\x1E\x10\x02\x9D\x9E\x07\x0F\x02" +
-		"\x02\x9E\x9F\x05\x12\n\x02\x9F\x1B\x03\x02\x02\x02\xA0\xA2\x07\x1C\x02" +
-		"\x02\xA1\xA3\x05\x1E\x10\x02\xA2\xA1\x03\x02\x02\x02\xA2\xA3\x03\x02\x02" +
-		"\x02\xA3\xA4\x03\x02\x02\x02\xA4\xA5\x07\b\x02\x02\xA5\x1D\x03\x02\x02" +
-		"\x02\xA6\xA7\b\x10\x01\x02\xA7\xB4\x05$\x13\x02\xA8\xB4\x071\x02\x02\xA9" +
-		"\xAA\x071\x02\x02\xAA\xB4\t\x05\x02\x02\xAB\xAC\x071\x02\x02\xAC\xAD\t" +
-		"\x06\x02\x02\xAD\xB4\x05\x1E\x10\r\xAE\xB4\x05 \x11\x02\xAF\xB0\x07\x0E" +
-		"\x02\x02\xB0\xB1\x05\x1E\x10\x02\xB1\xB2\x07\x0F\x02\x02\xB2\xB4\x03\x02" +
-		"\x02\x02\xB3\xA6\x03\x02\x02\x02\xB3\xA8\x03\x02\x02\x02\xB3\xA9\x03\x02" +
-		"\x02\x02\xB3\xAB\x03\x02\x02\x02\xB3\xAE\x03\x02\x02\x02\xB3\xAF\x03\x02" +
-		"\x02\x02\xB4\xD4\x03\x02\x02\x02\xB5\xB6\f\b\x02\x02\xB6\xB7\t\x07\x02" +
-		"\x02\xB7\xD3\x05\x1E\x10\t\xB8\xB9\f\x07\x02\x02\xB9\xBA\t\b\x02\x02\xBA" +
-		"\xD3\x05\x1E\x10\b\xBB\xBC\f\x06\x02\x02\xBC\xBD\t\t\x02\x02\xBD\xD3\x05" +
-		"\x1E\x10\x07\xBE\xBF\f\x05\x02\x02\xBF\xC0\x07,\x02\x02\xC0\xD3\x05\x1E" +
-		"\x10\x06\xC1\xC2\f\x04\x02\x02\xC2\xC3\x07-\x02\x02\xC3\xD3\x05\x1E\x10" +
-		"\x05\xC4\xC5\f\v\x02\x02\xC5\xC6\x07\x1F\x02\x02\xC6\xD3\x071\x02\x02" +
-		"\xC7\xC8\f\n\x02\x02\xC8\xC9\x07 \x02\x02\xC9\xCA\x05\x1E\x10\x02\xCA" +
-		"\xCB\x07!\x02\x02\xCB\xD3\x03\x02\x02\x02\xCC\xCD\f\t\x02\x02\xCD\xCF" +
-		"\x07\x0E\x02\x02\xCE\xD0\x05\"\x12\x02\xCF\xCE\x03\x02\x02\x02\xCF\xD0" +
-		"\x03\x02\x02\x02\xD0\xD1\x03\x02\x02\x02\xD1\xD3\x07\x0F\x02\x02\xD2\xB5" +
-		"\x03\x02\x02\x02\xD2\xB8\x03\x02\x02\x02\xD2\xBB\x03\x02\x02\x02\xD2\xBE" +
-		"\x03\x02\x02\x02\xD2\xC1\x03\x02\x02\x02\xD2\xC4\x03\x02\x02\x02\xD2\xC7" +
-		"\x03\x02\x02\x02\xD2\xCC\x03\x02\x02\x02\xD3\xD6\x03\x02\x02\x02\xD4\xD2" +
-		"\x03\x02\x02\x02\xD4\xD5\x03\x02\x02\x02\xD5\x1F\x03\x02\x02\x02\xD6\xD4" +
-		"\x03\x02\x02\x02\xD7\xD8\x071\x02\x02\xD8\xDA\x07\x0E\x02\x02\xD9\xDB" +
-		"\x05\"\x12\x02\xDA\xD9\x03\x02\x02\x02\xDA\xDB\x03\x02\x02\x02\xDB\xDC" +
-		"\x03\x02\x02\x02\xDC\xDD\x07\x0F\x02\x02\xDD!\x03\x02\x02\x02\xDE\xE3" +
-		"\x05\x1E\x10\x02\xDF\xE0\x07\x10\x02\x02\xE0\xE2\x05\x1E\x10\x02\xE1\xDF" +
-		"\x03\x02\x02\x02\xE2\xE5\x03\x02\x02\x02\xE3\xE1\x03\x02\x02\x02\xE3\xE4" +
-		"\x03\x02\x02\x02\xE4#\x03\x02\x02\x02\xE5\xE3\x03\x02\x02\x02\xE6\xEA" +
-		"\x07.\x02\x02\xE7\xEA\x07/\x02\x02\xE8\xEA\x070\x02\x02\xE9\xE6\x03\x02" +
-		"\x02\x02\xE9\xE7\x03\x02\x02\x02\xE9\xE8\x03\x02\x02\x02\xEA%\x03\x02" +
-		"\x02\x02\x14)6<@MR[hw\x98\xA2\xB3\xCF\xD2\xD4\xDA\xE3\xE9";
+		"\x10\x03\x10\x03\x10\x03\x10\x03\x10\x07\x10\xA8\n\x10\f\x10\x0E\x10\xAB" +
+		"\v\x10\x03\x11\x03\x11\x03\x11\x05\x11\xB0\n\x11\x03\x11\x03\x11\x03\x12" +
+		"\x03\x12\x03\x12\x07\x12\xB7\n\x12\f\x12\x0E\x12\xBA\v\x12\x03\x13\x03" +
+		"\x13\x03\x13\x05\x13\xBF\n\x13\x03\x13\x02\x02\x03\x1E\x14\x02\x02\x04" +
+		"\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16\x02" +
+		"\x18\x02\x1A\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02\x02\b\x04\x02\x05\x05" +
+		"\x07\n\x03\x02\v\f\x03\x02\x11\x14\x03\x02\x1B\x1C\x03\x02\x1D\x1E\x03" +
+		"\x02\x1F$\x02\xCB\x02)\x03\x02\x02\x02\x046\x03\x02\x02\x02\x068\x03\x02" +
+		"\x02\x02\bD\x03\x02\x02\x02\nI\x03\x02\x02\x02\fM\x03\x02\x02\x02\x0E" +
+		"Z\x03\x02\x02\x02\x10b\x03\x02\x02\x02\x12f\x03\x02\x02\x02\x14h\x03\x02" +
+		"\x02\x02\x16q\x03\x02\x02\x02\x18t\x03\x02\x02\x02\x1A}\x03\x02\x02\x02" +
+		"\x1C\x86\x03\x02\x02\x02\x1E\x96\x03\x02\x02\x02 \xAC\x03\x02\x02\x02" +
+		"\"\xB3\x03\x02\x02\x02$\xBE\x03\x02\x02\x02&(\x05\x04\x03\x02\'&\x03\x02" +
+		"\x02\x02(+\x03\x02\x02\x02)\'\x03\x02\x02\x02)*\x03\x02\x02\x02*,\x03" +
+		"\x02\x02\x02+)\x03\x02\x02\x02,-\x07\x02\x02\x03-\x03\x03\x02\x02\x02" +
+		".7\x05\x06\x04\x02/7\x05\b\x05\x0207\x05\n\x06\x0217\x05\f\x07\x0227\x05" +
+		"\x16\f\x0237\x05\x18\r\x0247\x05\x1A\x0E\x0257\x05\x1C\x0F\x026.\x03\x02" +
+		"\x02\x026/\x03\x02\x02\x0260\x03\x02\x02\x0261\x03\x02\x02\x0262\x03\x02" +
+		"\x02\x0263\x03\x02\x02\x0264\x03\x02\x02\x0265\x03\x02\x02\x027\x05\x03" +
+		"\x02\x02\x0289\x07\x03\x02\x029<\x07*\x02\x02:;\x07\x04\x02\x02;=\x05" +
+		"\x12\n\x02<:\x03\x02\x02\x02<=\x03\x02\x02\x02=@\x03\x02\x02\x02>?\x07" +
+		"\x05\x02\x02?A\x05\x1E\x10\x02@>\x03\x02\x02\x02@A\x03\x02\x02\x02AB\x03" +
+		"\x02\x02\x02BC\x07\x06\x02\x02C\x07\x03\x02\x02\x02DE\x07*\x02\x02EF\t" +
+		"\x02\x02\x02FG\x05\x1E\x10\x02GH\x07\x06\x02\x02H\t\x03\x02\x02\x02IJ" +
+		"\x07*\x02\x02JK\t\x03\x02\x02KL\x07\x06\x02\x02L\v\x03\x02\x02\x02MN\x07" +
+		"\r\x02\x02NO\x07*\x02\x02OQ\x07\x0E\x02\x02PR\x05\x0E\b\x02QP\x03\x02" +
+		"\x02\x02QR\x03\x02\x02\x02RS\x03\x02\x02\x02SV\x07\x0F\x02\x02TU\x07\x04" +
+		"\x02\x02UW\x05\x12\n\x02VT\x03\x02\x02\x02VW\x03\x02\x02\x02WX\x03\x02" +
+		"\x02\x02XY\x05\x14\v\x02Y\r\x03\x02\x02\x02Z_\x05\x10\t\x02[\\\x07\x10" +
+		"\x02\x02\\^\x05\x10\t\x02][\x03\x02\x02\x02^a\x03\x02\x02\x02_]\x03\x02" +
+		"\x02\x02_`\x03\x02\x02\x02`\x0F\x03\x02\x02\x02a_\x03\x02\x02\x02bc\x07" +
+		"*\x02\x02cd\x07\x04\x02\x02de\x05\x12\n\x02e\x11\x03\x02\x02\x02fg\t\x04" +
+		"\x02\x02g\x13\x03\x02\x02\x02hl\x07\x15\x02\x02ik\x05\x04\x03\x02ji\x03" +
+		"\x02\x02\x02kn\x03\x02\x02\x02lj\x03\x02\x02\x02lm\x03\x02\x02\x02mo\x03" +
+		"\x02\x02\x02nl\x03\x02\x02\x02op\x07\x16\x02\x02p\x15\x03\x02\x02\x02" +
+		"qr\x05\x1E\x10\x02rs\x07\x06\x02\x02s\x17\x03\x02\x02\x02tu\x07\x17\x02" +
+		"\x02uv\x07\x0E\x02\x02vw\x05\x1E\x10\x02wx\x07\x0F\x02\x02x{\x05\x14\v" +
+		"\x02yz\x07\x18\x02\x02z|\x05\x14\v\x02{y\x03\x02\x02\x02{|\x03\x02\x02" +
+		"\x02|\x19\x03\x02\x02\x02}~\x07\x19\x02\x02~\x7F\x07\x0E\x02\x02\x7F\x80" +
+		"\x05\x06\x04\x02\x80\x81\x05\x1E\x10\x02\x81\x82\x07\x06\x02\x02\x82\x83" +
+		"\x05\x1E\x10\x02\x83\x84\x07\x0F\x02\x02\x84\x85\x05\x14\v\x02\x85\x1B" +
+		"\x03\x02\x02\x02\x86\x88\x07\x1A\x02\x02\x87\x89\x05\x1E\x10\x02\x88\x87" +
+		"\x03\x02\x02\x02\x88\x89\x03\x02\x02\x02\x89\x8A\x03\x02\x02\x02\x8A\x8B" +
+		"\x07\x06\x02\x02\x8B\x1D\x03\x02\x02\x02\x8C\x8D\b\x10\x01\x02\x8D\x97" +
+		"\x05$\x13\x02\x8E\x97\x07*\x02\x02\x8F\x90\x07*\x02\x02\x90\x97\t\x03" +
+		"\x02\x02\x91\x97\x05 \x11\x02\x92\x93\x07\x0E\x02\x02\x93\x94\x05\x1E" +
+		"\x10\x02\x94\x95\x07\x0F\x02\x02\x95\x97\x03\x02\x02\x02\x96\x8C\x03\x02" +
+		"\x02\x02\x96\x8E\x03\x02\x02\x02\x96\x8F\x03\x02\x02\x02\x96\x91\x03\x02" +
+		"\x02\x02\x96\x92\x03\x02\x02\x02\x97\xA9\x03\x02\x02\x02\x98\x99\f\x07" +
+		"\x02\x02\x99\x9A\t\x05\x02\x02\x9A\xA8\x05\x1E\x10\b\x9B\x9C\f\x06\x02" +
+		"\x02\x9C\x9D\t\x06\x02\x02\x9D\xA8\x05\x1E\x10\x07\x9E\x9F\f\x05\x02\x02" +
+		"\x9F\xA0\t\x07\x02\x02\xA0\xA8\x05\x1E\x10\x06\xA1\xA2\f\x04\x02\x02\xA2" +
+		"\xA3\x07%\x02\x02\xA3\xA8\x05\x1E\x10\x05\xA4\xA5\f\x03\x02\x02\xA5\xA6" +
+		"\x07&\x02\x02\xA6\xA8\x05\x1E\x10\x04\xA7\x98\x03\x02\x02\x02\xA7\x9B" +
+		"\x03\x02\x02\x02\xA7\x9E\x03\x02\x02\x02\xA7\xA1\x03\x02\x02\x02\xA7\xA4" +
+		"\x03\x02\x02\x02\xA8\xAB\x03\x02\x02\x02\xA9\xA7\x03\x02\x02\x02\xA9\xAA" +
+		"\x03\x02\x02\x02\xAA\x1F\x03\x02\x02\x02\xAB\xA9\x03\x02\x02\x02\xAC\xAD" +
+		"\x07*\x02\x02\xAD\xAF\x07\x0E\x02\x02\xAE\xB0\x05\"\x12\x02\xAF\xAE\x03" +
+		"\x02\x02\x02\xAF\xB0\x03\x02\x02\x02\xB0\xB1\x03\x02\x02\x02\xB1\xB2\x07" +
+		"\x0F\x02\x02\xB2!\x03\x02\x02\x02\xB3\xB8\x05\x1E\x10\x02\xB4\xB5\x07" +
+		"\x10\x02\x02\xB5\xB7\x05\x1E\x10\x02\xB6\xB4\x03\x02\x02\x02\xB7\xBA\x03" +
+		"\x02\x02\x02\xB8\xB6\x03\x02\x02\x02\xB8\xB9\x03\x02\x02\x02\xB9#\x03" +
+		"\x02\x02\x02\xBA\xB8\x03\x02\x02\x02\xBB\xBF\x07\'\x02\x02\xBC\xBF\x07" +
+		"(\x02\x02\xBD\xBF\x07)\x02\x02\xBE\xBB\x03\x02\x02\x02\xBE\xBC\x03\x02" +
+		"\x02\x02\xBE\xBD\x03\x02\x02\x02\xBF%\x03\x02\x02\x02\x12)6<@QV_l{\x88" +
+		"\x96\xA7\xA9\xAF\xB8\xBE";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!LuminaParser.__ATN) {
@@ -1486,8 +1289,11 @@ export class StatementContext extends ParserRuleContext {
 	public variableDeclaration(): VariableDeclarationContext | undefined {
 		return this.tryGetRuleContext(0, VariableDeclarationContext);
 	}
-	public variableAssignment(): VariableAssignmentContext | undefined {
-		return this.tryGetRuleContext(0, VariableAssignmentContext);
+	public assignmentStatement(): AssignmentStatementContext | undefined {
+		return this.tryGetRuleContext(0, AssignmentStatementContext);
+	}
+	public incrementStatement(): IncrementStatementContext | undefined {
+		return this.tryGetRuleContext(0, IncrementStatementContext);
 	}
 	public functionDeclaration(): FunctionDeclarationContext | undefined {
 		return this.tryGetRuleContext(0, FunctionDeclarationContext);
@@ -1500,9 +1306,6 @@ export class StatementContext extends ParserRuleContext {
 	}
 	public forStatement(): ForStatementContext | undefined {
 		return this.tryGetRuleContext(0, ForStatementContext);
-	}
-	public whileStatement(): WhileStatementContext | undefined {
-		return this.tryGetRuleContext(0, WhileStatementContext);
 	}
 	public returnStatement(): ReturnStatementContext | undefined {
 		return this.tryGetRuleContext(0, ReturnStatementContext);
@@ -1571,7 +1374,7 @@ export class VariableDeclarationContext extends ParserRuleContext {
 }
 
 
-export class VariableAssignmentContext extends ParserRuleContext {
+export class AssignmentStatementContext extends ParserRuleContext {
 	public IDENTIFIER(): TerminalNode { return this.getToken(LuminaParser.IDENTIFIER, 0); }
 	public expression(): ExpressionContext {
 		return this.getRuleContext(0, ExpressionContext);
@@ -1580,23 +1383,53 @@ export class VariableAssignmentContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return LuminaParser.RULE_variableAssignment; }
+	public get ruleIndex(): number { return LuminaParser.RULE_assignmentStatement; }
 	// @Override
 	public enterRule(listener: LuminaListener): void {
-		if (listener.enterVariableAssignment) {
-			listener.enterVariableAssignment(this);
+		if (listener.enterAssignmentStatement) {
+			listener.enterAssignmentStatement(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: LuminaListener): void {
-		if (listener.exitVariableAssignment) {
-			listener.exitVariableAssignment(this);
+		if (listener.exitAssignmentStatement) {
+			listener.exitAssignmentStatement(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
-		if (visitor.visitVariableAssignment) {
-			return visitor.visitVariableAssignment(this);
+		if (visitor.visitAssignmentStatement) {
+			return visitor.visitAssignmentStatement(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+
+
+export class IncrementStatementContext extends ParserRuleContext {
+	public IDENTIFIER(): TerminalNode { return this.getToken(LuminaParser.IDENTIFIER, 0); }
+	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+		super(parent, invokingState);
+	}
+	// @Override
+	public get ruleIndex(): number { return LuminaParser.RULE_incrementStatement; }
+	// @Override
+	public enterRule(listener: LuminaListener): void {
+		if (listener.enterIncrementStatement) {
+			listener.enterIncrementStatement(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: LuminaListener): void {
+		if (listener.exitIncrementStatement) {
+			listener.exitIncrementStatement(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
+		if (visitor.visitIncrementStatement) {
+			return visitor.visitIncrementStatement(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
@@ -1855,8 +1688,8 @@ export class IfStatementContext extends ParserRuleContext {
 
 
 export class ForStatementContext extends ParserRuleContext {
-	public variableDeclaration(): VariableDeclarationContext | undefined {
-		return this.tryGetRuleContext(0, VariableDeclarationContext);
+	public variableDeclaration(): VariableDeclarationContext {
+		return this.getRuleContext(0, VariableDeclarationContext);
 	}
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
@@ -1869,10 +1702,6 @@ export class ForStatementContext extends ParserRuleContext {
 	}
 	public block(): BlockContext {
 		return this.getRuleContext(0, BlockContext);
-	}
-	public IDENTIFIER(): TerminalNode | undefined { return this.tryGetToken(LuminaParser.IDENTIFIER, 0); }
-	public type(): TypeContext | undefined {
-		return this.tryGetRuleContext(0, TypeContext);
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
@@ -1895,41 +1724,6 @@ export class ForStatementContext extends ParserRuleContext {
 	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
 		if (visitor.visitForStatement) {
 			return visitor.visitForStatement(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-
-
-export class WhileStatementContext extends ParserRuleContext {
-	public expression(): ExpressionContext {
-		return this.getRuleContext(0, ExpressionContext);
-	}
-	public block(): BlockContext {
-		return this.getRuleContext(0, BlockContext);
-	}
-	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
-		super(parent, invokingState);
-	}
-	// @Override
-	public get ruleIndex(): number { return LuminaParser.RULE_whileStatement; }
-	// @Override
-	public enterRule(listener: LuminaListener): void {
-		if (listener.enterWhileStatement) {
-			listener.enterWhileStatement(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: LuminaListener): void {
-		if (listener.exitWhileStatement) {
-			listener.exitWhileStatement(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
-		if (visitor.visitWhileStatement) {
-			return visitor.visitWhileStatement(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
@@ -2035,7 +1829,7 @@ export class IdentifierExprContext extends ExpressionContext {
 		}
 	}
 }
-export class IncrementDecrementExprContext extends ExpressionContext {
+export class IncrementExprContext extends ExpressionContext {
 	public IDENTIFIER(): TerminalNode { return this.getToken(LuminaParser.IDENTIFIER, 0); }
 	constructor(ctx: ExpressionContext) {
 		super(ctx.parent, ctx.invokingState);
@@ -2043,64 +1837,28 @@ export class IncrementDecrementExprContext extends ExpressionContext {
 	}
 	// @Override
 	public enterRule(listener: LuminaListener): void {
-		if (listener.enterIncrementDecrementExpr) {
-			listener.enterIncrementDecrementExpr(this);
+		if (listener.enterIncrementExpr) {
+			listener.enterIncrementExpr(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: LuminaListener): void {
-		if (listener.exitIncrementDecrementExpr) {
-			listener.exitIncrementDecrementExpr(this);
+		if (listener.exitIncrementExpr) {
+			listener.exitIncrementExpr(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
-		if (visitor.visitIncrementDecrementExpr) {
-			return visitor.visitIncrementDecrementExpr(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class AssignmentExprContext extends ExpressionContext {
-	public IDENTIFIER(): TerminalNode { return this.getToken(LuminaParser.IDENTIFIER, 0); }
-	public expression(): ExpressionContext {
-		return this.getRuleContext(0, ExpressionContext);
-	}
-	constructor(ctx: ExpressionContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: LuminaListener): void {
-		if (listener.enterAssignmentExpr) {
-			listener.enterAssignmentExpr(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: LuminaListener): void {
-		if (listener.exitAssignmentExpr) {
-			listener.exitAssignmentExpr(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
-		if (visitor.visitAssignmentExpr) {
-			return visitor.visitAssignmentExpr(this);
+		if (visitor.visitIncrementExpr) {
+			return visitor.visitIncrementExpr(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
 	}
 }
 export class FunctionCallExprContext extends ExpressionContext {
-	public functionCall(): FunctionCallContext | undefined {
-		return this.tryGetRuleContext(0, FunctionCallContext);
-	}
-	public expression(): ExpressionContext | undefined {
-		return this.tryGetRuleContext(0, ExpressionContext);
-	}
-	public argumentList(): ArgumentListContext | undefined {
-		return this.tryGetRuleContext(0, ArgumentListContext);
+	public functionCall(): FunctionCallContext {
+		return this.getRuleContext(0, FunctionCallContext);
 	}
 	constructor(ctx: ExpressionContext) {
 		super(ctx.parent, ctx.invokingState);
@@ -2127,37 +1885,37 @@ export class FunctionCallExprContext extends ExpressionContext {
 		}
 	}
 }
-export class PropertyAccessExprContext extends ExpressionContext {
+export class ParenExprContext extends ExpressionContext {
 	public expression(): ExpressionContext {
 		return this.getRuleContext(0, ExpressionContext);
 	}
-	public IDENTIFIER(): TerminalNode { return this.getToken(LuminaParser.IDENTIFIER, 0); }
 	constructor(ctx: ExpressionContext) {
 		super(ctx.parent, ctx.invokingState);
 		this.copyFrom(ctx);
 	}
 	// @Override
 	public enterRule(listener: LuminaListener): void {
-		if (listener.enterPropertyAccessExpr) {
-			listener.enterPropertyAccessExpr(this);
+		if (listener.enterParenExpr) {
+			listener.enterParenExpr(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: LuminaListener): void {
-		if (listener.exitPropertyAccessExpr) {
-			listener.exitPropertyAccessExpr(this);
+		if (listener.exitParenExpr) {
+			listener.exitParenExpr(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
-		if (visitor.visitPropertyAccessExpr) {
-			return visitor.visitPropertyAccessExpr(this);
+		if (visitor.visitParenExpr) {
+			return visitor.visitParenExpr(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
 	}
 }
-export class IndexAccessExprContext extends ExpressionContext {
+export class BinaryExprContext extends ExpressionContext {
+	public _op!: Token;
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
 	public expression(i?: number): ExpressionContext | ExpressionContext[] {
@@ -2173,125 +1931,20 @@ export class IndexAccessExprContext extends ExpressionContext {
 	}
 	// @Override
 	public enterRule(listener: LuminaListener): void {
-		if (listener.enterIndexAccessExpr) {
-			listener.enterIndexAccessExpr(this);
+		if (listener.enterBinaryExpr) {
+			listener.enterBinaryExpr(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: LuminaListener): void {
-		if (listener.exitIndexAccessExpr) {
-			listener.exitIndexAccessExpr(this);
+		if (listener.exitBinaryExpr) {
+			listener.exitBinaryExpr(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
-		if (visitor.visitIndexAccessExpr) {
-			return visitor.visitIndexAccessExpr(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class MultiplicativeExprContext extends ExpressionContext {
-	public expression(): ExpressionContext[];
-	public expression(i: number): ExpressionContext;
-	public expression(i?: number): ExpressionContext | ExpressionContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(ExpressionContext);
-		} else {
-			return this.getRuleContext(i, ExpressionContext);
-		}
-	}
-	constructor(ctx: ExpressionContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: LuminaListener): void {
-		if (listener.enterMultiplicativeExpr) {
-			listener.enterMultiplicativeExpr(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: LuminaListener): void {
-		if (listener.exitMultiplicativeExpr) {
-			listener.exitMultiplicativeExpr(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
-		if (visitor.visitMultiplicativeExpr) {
-			return visitor.visitMultiplicativeExpr(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class AdditiveExprContext extends ExpressionContext {
-	public expression(): ExpressionContext[];
-	public expression(i: number): ExpressionContext;
-	public expression(i?: number): ExpressionContext | ExpressionContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(ExpressionContext);
-		} else {
-			return this.getRuleContext(i, ExpressionContext);
-		}
-	}
-	constructor(ctx: ExpressionContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: LuminaListener): void {
-		if (listener.enterAdditiveExpr) {
-			listener.enterAdditiveExpr(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: LuminaListener): void {
-		if (listener.exitAdditiveExpr) {
-			listener.exitAdditiveExpr(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
-		if (visitor.visitAdditiveExpr) {
-			return visitor.visitAdditiveExpr(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class ComparisonExprContext extends ExpressionContext {
-	public expression(): ExpressionContext[];
-	public expression(i: number): ExpressionContext;
-	public expression(i?: number): ExpressionContext | ExpressionContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(ExpressionContext);
-		} else {
-			return this.getRuleContext(i, ExpressionContext);
-		}
-	}
-	constructor(ctx: ExpressionContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: LuminaListener): void {
-		if (listener.enterComparisonExpr) {
-			listener.enterComparisonExpr(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: LuminaListener): void {
-		if (listener.exitComparisonExpr) {
-			listener.exitComparisonExpr(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
-		if (visitor.visitComparisonExpr) {
-			return visitor.visitComparisonExpr(this);
+		if (visitor.visitBinaryExpr) {
+			return visitor.visitBinaryExpr(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
@@ -2362,35 +2015,6 @@ export class LogicalOrExprContext extends ExpressionContext {
 	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
 		if (visitor.visitLogicalOrExpr) {
 			return visitor.visitLogicalOrExpr(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class ParenExprContext extends ExpressionContext {
-	public expression(): ExpressionContext {
-		return this.getRuleContext(0, ExpressionContext);
-	}
-	constructor(ctx: ExpressionContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: LuminaListener): void {
-		if (listener.enterParenExpr) {
-			listener.enterParenExpr(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: LuminaListener): void {
-		if (listener.exitParenExpr) {
-			listener.exitParenExpr(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: LuminaVisitor<Result>): Result {
-		if (visitor.visitParenExpr) {
-			return visitor.visitParenExpr(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

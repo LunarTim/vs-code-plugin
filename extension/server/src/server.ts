@@ -166,62 +166,62 @@ documents.onDidChangeContent(change => {
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
-	const text = textDocument.getText();
-	const compilerResult = compiler.compile(text);
-	
-	return compilerResult.diagnostics.map(diagnostic => {
-		// Convert 1-based line numbers to 0-based for VSCode
-		const line = diagnostic.line - 1;
-		const column = diagnostic.column;
+	try {
+		const text = textDocument.getText();
+		const compilerResult = compiler.compile(text);
 		
-		// Get the line text to determine the range
-		const lines = text.split('\n');
-		const lineText = lines[line] || '';
-		
-		// Create a range that spans the appropriate portion of the line
-		const range = {
-			start: {
-				line,
-				character: column
+		return compilerResult.diagnostics.map(diagnostic => {
+			// Convert 1-based line numbers to 0-based for VSCode
+			const line = Math.max(0, diagnostic.line - 1);
+			let column = diagnostic.column;
+			
+			// Get the line text to determine the range
+			const lines = text.split('\n');
+			const lineText = lines[line] || '';
+			
+			// Calculate the range based on the message type
+			let endCharacter = column + 1;
+			if (diagnostic.message.includes('is declared but never used')) {
+				// Find the identifier in the warning message
+				const match = diagnostic.message.match(/Variable '([^']+)'/);
+				if (match) {
+					endCharacter = column + match[1].length;
+				}
+			} else if (diagnostic.message.includes('is not assignable to type')) {
+				// For type errors, highlight the value after the equals sign
+				const equalsIndex = lineText.indexOf('=', column);
+				if (equalsIndex !== -1) {
+					const valueStart = equalsIndex + 1;
+					const valueMatch = lineText.slice(valueStart).match(/\s*([^;]+)/);
+					if (valueMatch) {
+						column = valueStart + valueMatch[0].indexOf(valueMatch[1]);
+						endCharacter = column + valueMatch[1].length;
+					}
+				}
+			}
+
+			return {
+				severity: diagnostic.severity as DiagnosticSeverity,
+				range: {
+					start: { line, character: column },
+					end: { line, character: endCharacter }
+				},
+				message: diagnostic.message,
+				source: 'lumina'
+			};
+		});
+	} catch (error) {
+		console.error('Validation error:', error);
+		return [{
+			severity: DiagnosticSeverity.Error,
+			range: {
+				start: { line: 0, character: 0 },
+				end: { line: 0, character: 1 }
 			},
-			end: {
-				line,
-				character: column + 1
-			}
-		};
-
-		// For variable declarations, try to highlight the whole problematic part
-		if (diagnostic.message.includes('must have an identifier')) {
-			// Find the 'let' keyword and highlight it plus some space after it
-			const letMatch = lineText.match(/\blet\b/);
-			if (letMatch) {
-				range.start.character = letMatch.index || 0;
-				range.end.character = (letMatch.index || 0) + 4;
-			}
-		} else if (diagnostic.message.includes('should specify a type')) {
-			// Find the identifier and highlight it
-			const afterLet = lineText.substring(lineText.indexOf('let') + 3);
-			const identifierMatch = afterLet.match(/\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
-			if (identifierMatch) {
-				range.start.character = lineText.indexOf('let') + 3 + (identifierMatch.index || 0);
-				range.end.character = range.start.character + identifierMatch[1].length;
-			}
-		} else if (diagnostic.message.includes('not assignable to type')) {
-			// Find the expression after the equals sign
-			const equalsIndex = lineText.indexOf('=');
-			if (equalsIndex !== -1) {
-				range.start.character = equalsIndex + 1;
-				range.end.character = lineText.length;
-			}
-		}
-
-		return {
-			severity: diagnostic.severity as DiagnosticSeverity,
-			range,
-			message: diagnostic.message,
+			message: error instanceof Error ? error.message : 'An error occurred during validation',
 			source: 'lumina'
-		};
-	});
+		}];
+	}
 }
 
 connection.onDidChangeWatchedFiles(_change => {
@@ -229,9 +229,26 @@ connection.onDidChangeWatchedFiles(_change => {
 	connection.console.log('We received a file change event');
 });
 
-// This handler provides the initial list of the completion items.
+// Define our language keywords
+const keywords = [
+	'let',
+	'function',
+	'if',
+	'else',
+	'for',
+	'return',
+	'number',
+	'string',
+	'boolean',
+	'void'
+];
+
+// Store document symbols (variables and functions)
+const documentSymbols = new Map<string, Map<string, { kind: CompletionItemKind; type?: string }>>();
+
+// Handle code completion requests
 connection.onCompletion(
-	(textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
+	async (textDocumentPosition: TextDocumentPositionParams): Promise<CompletionItem[]> => {
 		const document = documents.get(textDocumentPosition.textDocument.uri);
 		if (!document) {
 			return [];
@@ -239,72 +256,49 @@ connection.onCompletion(
 
 		const text = document.getText();
 		const position = textDocumentPosition.position;
-		const offset = document.offsetAt(position);
+		const line = text.split('\n')[position.line];
+		const linePrefix = line.slice(0, position.character);
 
-		// Get the current line up to the cursor
-		const currentLine = text.split('\n')[position.line];
-		const linePrefix = currentLine.slice(0, position.character);
+		// Get document symbols from compiler
+		const compilerResults = await compiler.compile(text);
+		const symbols = new Map(
+			Array.from(compilerResults.symbols.entries()).map(([name, info]) => [
+				name,
+				{
+					kind: info.kind === 'Function' ? CompletionItemKind.Function : CompletionItemKind.Variable,
+					type: info.type
+				}
+			])
+		);
+		documentSymbols.set(document.uri, symbols);
 
-		// Check if we're in a variable declaration
-		if (linePrefix.trim().startsWith('let')) {
-			// After 'let' keyword, suggest type annotations
-			if (linePrefix.includes('let') && !linePrefix.includes(':')) {
-				return [
-					{
-						label: ': number',
-						kind: CompletionItemKind.Snippet,
-						detail: 'Declare a number variable',
-						insertText: ': number'
-					},
-					{
-						label: ': string',
-						kind: CompletionItemKind.Snippet,
-						detail: 'Declare a string variable',
-						insertText: ': string'
-					},
-					{
-						label: ': boolean',
-						kind: CompletionItemKind.Snippet,
-						detail: 'Declare a boolean variable',
-						insertText: ': boolean'
-					}
-				];
-			}
+		const completions: CompletionItem[] = [];
+
+		// Add keyword completions
+		keywords.forEach(keyword => {
+			completions.push({
+				label: keyword,
+				kind: CompletionItemKind.Keyword,
+				data: { type: 'keyword' }
+			});
+		});
+
+		// Add variable and function completions from the document
+		const docSymbols = documentSymbols.get(document.uri);
+		if (docSymbols) {
+			docSymbols.forEach((info, name) => {
+				const isFunction = info.kind === CompletionItemKind.Function;
+				completions.push({
+					label: name,
+					kind: info.kind,
+					detail: info.type ? `(${info.type})` : undefined,
+					insertText: isFunction ? `${name}()` : name,
+					data: { type: 'symbol', symbolType: info.type, kind: info.kind }
+				});
+			});
 		}
 
-		// Default completions
-		return [
-			{
-				label: 'let',
-				kind: CompletionItemKind.Keyword,
-				detail: 'Variable declaration',
-				documentation: 'Declares a new variable'
-			},
-			{
-				label: 'function',
-				kind: CompletionItemKind.Keyword,
-				detail: 'Function declaration',
-				documentation: 'Declares a new function'
-			},
-			{
-				label: 'if',
-				kind: CompletionItemKind.Keyword,
-				detail: 'If statement',
-				documentation: 'Conditional execution'
-			},
-			{
-				label: 'for',
-				kind: CompletionItemKind.Keyword,
-				detail: 'For loop',
-				documentation: 'Loop construct'
-			},
-			{
-				label: 'return',
-				kind: CompletionItemKind.Keyword,
-				detail: 'Return statement',
-				documentation: 'Returns a value from a function'
-			}
-		];
+		return completions;
 	}
 );
 
@@ -312,6 +306,12 @@ connection.onCompletion(
 // the completion list.
 connection.onCompletionResolve(
 	(item: CompletionItem): CompletionItem => {
+		if (item.data?.type === 'keyword') {
+			item.detail = 'Keyword';
+			item.documentation = 'Language keyword';
+		} else if (item.data?.type === 'symbol') {
+			item.documentation = `Symbol of type: ${item.data.symbolType}`;
+		}
 		return item;
 	}
 );
