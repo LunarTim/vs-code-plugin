@@ -1,6 +1,6 @@
 @echo off
 
-cd src\antlr || exit /b 1
+cd src\grammar || exit /b 1
 
 java -jar ..\..\lib\antlr-4.13.1-complete.jar ^
     -visitor ^

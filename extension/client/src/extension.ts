@@ -16,13 +16,10 @@ import {
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
-	console.log('Activating Lumina Language Client');
-
+	// The server is implemented in node
 	const serverModule = context.asAbsolutePath(
 		path.join('server', 'out', 'server.js')
 	);
-
-	console.log(`Server module path: ${serverModule}`);
 
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
@@ -53,11 +50,7 @@ export function activate(context: ExtensionContext) {
 	);
 
 	// Start the client. This will also launch the server
-	client.start().then(() => {
-		console.log('Lumina Language Client started successfully');
-	}).catch(error => {
-		console.error('Failed to start Lumina Language Client:', error);
-	});
+	client.start();
 }
 
 export function deactivate(): Thenable<void> | undefined {

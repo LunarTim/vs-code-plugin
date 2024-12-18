@@ -1,148 +1,120 @@
-# Lumina Compiler
+# TypeScript Variant Compiler
 
-A compiler for the Lumina programming language, featuring static typing, modern syntax, and comprehensive error reporting.
+Author: Tim Hofman
 
-## Features
+## Language Features
 
-### Language Features Supported
-- Variable declarations (let, const, var)
-- Function declarations with parameters and return types
-- Basic types: number, string, boolean, any
-- Control structures:
-  - if/else statements
-  - for loops
-  - while loops
-- Function calls with arguments
-- Type annotations
-- Built-in parsing functions (parseInt, parseFloat, parseString, etc.)
-- Comments (single-line and multi-line)
+This is a TypeScript variant that supports the following features:
 
 ### Example Code
-#### Variable Declarations
-```TypeScript
-let x: number = 10;
-const y: string = "Hello, World!";
-var z: boolean = true;
-```
+```typescript
+// Variable declarations
+let x: number = 42;
+let message: string = "Hello";
+let isValid: boolean = true;
 
-#### Function Declarations
-```TypeScript
+// Function declaration with parameters
 function add(a: number, b: number): number {
     return a + b;
 }
-```
 
-#### Control Structures
-```TypeScript
-if (x > 0) {
-    console.log("x is positive");
-} else {
-    console.log("x is not positive");
+// Control structures
+function processNumbers(count: number): void {
+    // For loop
+    for (let i: number = 0; i < count; i = i + 1) {
+        // If-else statement
+        if (i % 2 == 0) {
+            add(i, 1);
+        } else {
+            add(i, 2);
+        }
+    }
 }
 ```
 
-#### Function Calls
-```TypeScript
-const result = add(5, 3);
-console.log(result); // Output: 8
+### EBNF Grammar
+```ebnf
+program = statement* EOF ;
+
+statement = variableDeclaration
+          | functionDeclaration
+          | expressionStatement
+          | ifStatement
+          | forStatement
+          | returnStatement ;
+
+variableDeclaration = "let" IDENTIFIER (":" type)? ("=" expression)? ";" ;
+
+functionDeclaration = "function" IDENTIFIER "(" parameterList? ")" (":" type)? block ;
+
+parameterList = parameter ("," parameter)* ;
+
+parameter = IDENTIFIER ":" type ;
+
+type = "number" | "string" | "boolean" | "void" ;
+
+block = "{" statement* "}" ;
+
+expressionStatement = expression ";" ;
+
+ifStatement = "if" "(" expression ")" block ("else" block)? ;
+
+forStatement = "for" "(" variableDeclaration expression ";" expression ")" block ;
+
+returnStatement = "return" expression? ";" ;
+
+expression = literal
+           | IDENTIFIER
+           | functionCall
+           | expression ("*"|"/") expression
+           | expression ("+"|"-") expression
+           | expression ("=="|"!="|"<"|">"|"<="|">=") expression
+           | expression "&&" expression
+           | expression "||" expression
+           | "(" expression ")" ;
+
+functionCall = IDENTIFIER "(" argumentList? ")" ;
+
+argumentList = expression ("," expression)* ;
+
+literal = NUMBER | STRING | BOOLEAN ;
 ```
 
-### Diagnostics Support
-The compiler provides detailed error messages for syntax errors, semantic errors, and Warning Diagnostics, helping developers identify and fix issues in their code.
+## Diagnostics Support
 
-#### Error Diagnostics
-##### Syntax Errors
-- Missing semicolon
-- Unmatched brackets/parentheses
-- Unexpected tokens
+### Error Diagnostics
+1. Syntax Errors: The compiler detects and reports syntax errors such as missing semicolons, mismatched parentheses, and invalid tokens.
+2. Type Mismatch Error: Reports when a value of one type is assigned to a variable of an incompatible type.
 
-##### Semantic Errors
-- Variable is not defined
-- Variable is already declared
-- Type mismatch in expression
+### Warning Diagnostics
+1. Unused Variable Warning: Reports when a declared variable is never used in the code.
+2. Implicit Type Warning: Reports when a variable is declared without an explicit type annotation.
 
-#### Warning Diagnostics
-- Unused variable or function declaration
-- Implicit type conversion
-- Unreachable code
+## Code Completion Support
 
-#### Code Completion
-##### Keyword Completion
-- Language keywords (let, const, var, function, etc.)
-- Type names (number, string, boolean, any)
-- Control Structures (if, else, for, while)
-
-##### Context-Aware Completion
-- Variable names in scope
-- Function names with parameter hints
-- Property access after dot operator
-- Built-in function names
-
-
-## Project Structure
-```
-└── 📁compiler
-    └── 📁lib
-        └── antlr-4.13.1-complete.jar
-    └── 📁src
-        └── 📁antlr
-            └── 📁generated
-                └── Lumina.interp
-                └── Lumina.tokens
-                └── LuminaLexer.interp
-                └── LuminaLexer.tokens
-                └── LuminaLexer.ts
-                └── LuminaListener.ts
-                └── LuminaParser.ts
-                └── LuminaVisitor.ts
-            └── lexer.g4
-            └── Lumina.g4
-            └── parser.g4
-        └── ast.ts
-        └── codeCompletion.ts
-        └── diagnostics.ts
-        └── index.ts
-        └── lexer.ts
-        └── LuminaVisitor.ts
-        └── parser.ts
-        └── semanticAnalyzer.ts
-    └── 📁tests
-        └── index.test.ts
-        └── lexer.test.ts
-        └── luminaLexer.test.ts
-        └── luminaVisitor.test.ts
-        └── parser.test.ts
-        └── semanticAnalyzer.test.ts
-    └── .gitignore
-    └── generate-compiler.bat
-    └── jest.config.js
-    └── package-lock.json
-    └── package.json
-    └── README.md
-    └── tsconfig.json
-    └── vitest.config.ts
-```
-
+1. Keyword Completion: Suggests language keywords like `let`, `function`, `if`, `for`, etc.
+2. Variable/Function Name Completion: Suggests previously declared variables and functions in the current scope.
 
 ## Build Instructions
-### Prerequisites
-- Node.js (v18.17.1 or newer)
-- npm (10.2.4 or newer)
-- Java Runtime Environment (for ANTLR)
 
-### Build
-```Bash
+1. Install dependencies:
+```bash
 npm install
+```
+
+2. Generate ANTLR4 parser:
+```bash
+npm run antlr4ts
+```
+
+3. Build the project:
+```bash
 npm run build
 ```
 
-### Generate ANTLR
-```Bash
-.\compiler\generate-compiler.bat
-```
+## Test Instructions
 
-
-### Running Tests
-```Bash
+Run the test suite:
+```bash
 npm test
-```
+``` 

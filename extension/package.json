@@ -1,21 +1,15 @@
 {
-	"name": "lsp-sample",
-	"description": "A language server example",
-	"author": "Microsoft Corporation",
-	"license": "MIT",
+	"name": "lumina-language",
+	"displayName": "Lumina Language Support",
+	"description": "Language support for Lumina programming language",
 	"version": "1.0.0",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Microsoft/vscode-extension-samples"
-	},
-	"publisher": "vscode-samples",
-	"categories": ["Programming Languages"],
-	"keywords": [
-		"multi-root ready"
-	],
+	"publisher": "Tim Hofman",
 	"engines": {
 		"vscode": "^1.75.0"
 	},
+	"categories": [
+		"Programming Languages"
+	],
 	"activationEvents": [
 		"onLanguage:lumina"
 	],
@@ -27,49 +21,27 @@
 			"extensions": [".lum", ".lumina"],
 			"configuration": "./language-configuration.json"
 		}],
-		"configuration": {
-			"type": "object",
-			"title": "Lumina Language Configuration",
-			"properties": {
-				"lumina.maxNumberOfProblems": {
-					"scope": "resource",
-					"type": "number",
-					"default": 100,
-					"description": "Controls the maximum number of problems produced by the server."
-				},
-				"lumina.trace.server": {
-					"scope": "window",
-					"type": "string",
-					"enum": [
-						"off",
-						"messages",
-						"verbose"
-					],
-					"default": "off",
-					"description": "Traces the communication between VS Code and the language server."
-				}
-			}
-		}
+		"grammars": [{
+			"language": "lumina",
+			"scopeName": "source.lumina",
+			"path": "./syntaxes/lumina.tmLanguage.json"
+		}]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -b",
 		"watch": "tsc -b -w",
-		"lint": "eslint",
+		"lint": "eslint ./client/src ./server/src --ext .ts,.tsx",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
 		"test": "sh ./scripts/e2e.sh"
 	},
 	"devDependencies": {
-		"@eslint/js": "^9.13.0",
-		"@stylistic/eslint-plugin": "^2.9.0",
-		"@types/mocha": "^10.0.6",
-		"@types/node": "^20",
-		"eslint": "^9.13.0",
-		"mocha": "^10.3.0",
-		"typescript": "^5.7.2",
-		"typescript-eslint": "^8.16.0"
-	},
-	"dependencies": {
-		"lumina-compiler": "file:../compiler"
+		"@types/mocha": "^9.1.0",
+		"@types/node": "^16.18.34",
+		"@typescript-eslint/eslint-plugin": "^5.0.0",
+		"@typescript-eslint/parser": "^5.0.0",
+		"eslint": "^8.35.0",
+		"mocha": "^9.2.1",
+		"typescript": "^5.2.2"
 	}
 }
