@@ -90,6 +90,16 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 const name = identifier.text;
                 const declaredType = type ? type.text : undefined;
 
+                // Add warning for missing type annotation
+                if (!declaredType) {
+                    this.addDiagnostic({
+                        message: `Variable '${name}' is missing type annotation`,
+                        line: ctx.start.line,
+                        column: identifier.symbol.charPositionInLine,
+                        severity: DiagnosticSeverity.Warning
+                    });
+                }
+
                 // Get the type of the initializer expression
                 const inferredType = expr ? this.getExpressionType(expr) : undefined;
                 console.log('Type checking:', {

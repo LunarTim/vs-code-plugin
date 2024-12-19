@@ -39,8 +39,12 @@ describe('Syntax Validation', () => {
             const input = 'let x = 42;';
             const result = compiler.compile(input);
 
-            expect(result.diagnostics).toHaveLength(1);
+            expect(result.diagnostics).toHaveLength(2);
             expect(result.diagnostics[0]).toMatchObject({
+                message: 'Variable \'x\' is missing type annotation',
+                severity: DiagnosticSeverity.Warning
+            });
+            expect(result.diagnostics[1]).toMatchObject({
                 message: 'Variable \'x\' is declared but never used',
                 severity: DiagnosticSeverity.Warning
             });
@@ -90,7 +94,11 @@ describe('Syntax Validation', () => {
             `;
             const result = compiler.compile(input);
 
-            expect(result.diagnostics).toHaveLength(0);
+            expect(result.diagnostics).toHaveLength(1);
+            expect(result.diagnostics[0]).toMatchObject({
+                message: "Variable 'z' is missing type annotation",
+                severity: DiagnosticSeverity.Warning
+            });
         });
     });
 

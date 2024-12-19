@@ -104,6 +104,20 @@ describe('Semantic Analyzer', () => {
             analyzer.visit(tree);
             expect(analyzer.getDiagnostics()).toHaveLength(0);
         });
+
+        test('should warn about missing type annotation', () => {
+            const input = 'let x = 42;';
+            const tree = parse(input);
+            analyzer.visit(tree);
+
+            const diagnostics = analyzer.getDiagnostics();
+            expect(diagnostics).toContainEqual(
+                expect.objectContaining({
+                    message: "Variable 'x' is missing type annotation",
+                    severity: DiagnosticSeverity.Warning
+                })
+            );
+        });
     });
 
     describe('Type Compatibility', () => {
