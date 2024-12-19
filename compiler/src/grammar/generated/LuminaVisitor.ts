@@ -19,6 +19,7 @@ import { ProgramContext } from "./LuminaParser";
 import { StatementContext } from "./LuminaParser";
 import { VariableDeclarationContext } from "./LuminaParser";
 import { AssignmentStatementContext } from "./LuminaParser";
+import { ConsoleLogStatementContext } from "./LuminaParser";
 import { IncrementStatementContext } from "./LuminaParser";
 import { FunctionDeclarationContext } from "./LuminaParser";
 import { ParameterListContext } from "./LuminaParser";
@@ -166,6 +167,13 @@ export interface LuminaVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitAssignmentStatement?: (ctx: AssignmentStatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LuminaParser.consoleLogStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitConsoleLogStatement?: (ctx: ConsoleLogStatementContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `LuminaParser.incrementStatement`.

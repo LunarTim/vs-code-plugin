@@ -1,7 +1,7 @@
 import { ParseTree } from 'antlr4ts/tree/ParseTree';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
 import { LuminaVisitor } from '../grammar/generated/LuminaVisitor';
-import { 
+import {
     ProgramContext,
     VariableDeclarationContext,
     TypeContext,
@@ -19,16 +19,18 @@ import {
     IncrementExprContext,
     FunctionCallContext,
     FunctionCallExprContext,
-    PropertyAccessExprContext
+    PropertyAccessExprContext,
+    ConsoleLogStatementContext,
+    IfStatementContext
 } from '../grammar/generated/LuminaParser';
 import { Diagnostic } from './Compiler';
 import { DiagnosticSeverity } from './types';
 
 export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements LuminaVisitor<void> {
     private diagnostics: Diagnostic[] = [];
-    private symbolTable: Map<string, { 
-        type: string; 
-        used: boolean; 
+    private symbolTable: Map<string, {
+        type: string;
+        used: boolean;
         kind: string;
         line: number;
         column: number;
@@ -44,7 +46,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
 
             // Visit all statements first
             ctx.statement().forEach(stmt => this.visit(stmt));
-            
+
             // Then check for unused variables
             this.symbolTable.forEach((info, name) => {
                 if (!info.used && info.kind === 'Variable') {
@@ -87,7 +89,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
             if (identifier) {
                 const name = identifier.text;
                 const declaredType = type ? type.text : undefined;
-                
+
                 // Get the type of the initializer expression
                 const inferredType = expr ? this.getExpressionType(expr) : undefined;
                 console.log('Type checking:', {
@@ -240,7 +242,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
             type: ctx.constructor.name,
             start: { line: ctx.start.line, column: ctx.start.charPositionInLine }
         });
-        
+
         if (ctx instanceof LiteralExprContext) {
             const literal = ctx.literal();
             console.log('Literal Expression:', {
@@ -249,7 +251,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 rawText: literal.text,
                 start: { line: literal.start.line, column: literal.start.charPositionInLine }
             });
-            
+
             // Check if it's a string literal (wrapped in quotes)
             if (literal.text.startsWith('"') || literal.text.startsWith("'")) {
                 return 'string';
@@ -270,7 +272,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
             const identifier = ctx.IDENTIFIER();
             const name = identifier.text;
             const symbol = this.symbolTable.get(name);
-            
+
             console.log('Identifier Expression:', {
                 name,
                 symbol,
@@ -316,7 +318,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 return 'string';
             }
 
-            if (['>','<','>=','<=','==','!='].includes(op)) {
+            if (['>', '<', '>=', '<=', '==', '!='].includes(op)) {
                 return 'boolean';
             }
 
@@ -358,7 +360,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         try {
             const identifier = ctx.IDENTIFIER();
             const returnType = ctx.type();
-            
+
             if (identifier) {
                 const name = identifier.text;
                 this.symbolTable.set(name, {
@@ -413,6 +415,34 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
             // Mark the function as used
             symbol.used = true;
             this.symbolTable.set(name, symbol);
+        }
+    }
+
+    visitConsoleLogStatement(ctx: ConsoleLogStatementContext): void {
+        try {
+            const expr = ctx.expression();
+            if (expr) {
+                // This will mark any variables in the expression as used
+                this.getExpressionType(expr);
+            }
+        } catch (error) {
+            console.error('Error in visitConsoleLogStatement:', error);
+        }
+    }
+
+    visitIfStatement(ctx: IfStatementContext): void {
+        try {
+            const condition = ctx.expression();
+            if (condition) {
+                // This will mark any variables in the condition as used
+                this.getExpressionType(condition);
+            }
+
+            // Visit the if block and else block if they exist
+            const blocks = ctx.block();
+            blocks.forEach(block => this.visit(block));
+        } catch (error) {
+            console.error('Error in visitIfStatement:', error);
         }
     }
 } 

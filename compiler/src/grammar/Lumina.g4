@@ -8,6 +8,7 @@ program
 statement
     : variableDeclaration
     | assignmentStatement
+    | consoleLogStatement
     | incrementStatement
     | functionDeclaration
     | expressionStatement
@@ -22,6 +23,10 @@ variableDeclaration
 
 assignmentStatement
     : IDENTIFIER ('=' | '+=' | '-=' | '*=' | '/=') expression ';'
+    ;
+
+consoleLogStatement
+    : 'console.log' '(' expression ')' ';'
     ;
 
 incrementStatement

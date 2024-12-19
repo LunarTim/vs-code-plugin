@@ -29,10 +29,12 @@
     ],
     "repository": {
         "keywords": {
-            "patterns": [{
-                "name": "keyword.control.lumina",
-                "match": "\\b(let|const|var|function|if|else|for|return)\\b"
-            }]
+            "patterns": [
+                {
+                    "name": "keyword.control.lumina",
+                    "match": "\\b(let|const|var|function|if|else|for|return)\\b"
+                }
+            ]
         },
         "strings": {
             "name": "string.quoted.double.lumina",
@@ -116,4 +118,4 @@
         }
     },
     "scopeName": "source.lumina"
-} 
+}

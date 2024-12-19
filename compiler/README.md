@@ -1,4 +1,4 @@
-# TypeScript Variant Compiler
+# Lumina Compiler
 
 Author: Tim Hofman
 
@@ -12,6 +12,8 @@ This is a TypeScript variant that supports the following features:
 let x: number = 42;
 let message: string = "Hello";
 let isValid: boolean = true;
+const constant: number = 0.10;
+var variable: string = "world";
 
 // Function declaration with parameters
 function add(a: number, b: number): number {
@@ -21,12 +23,12 @@ function add(a: number, b: number): number {
 // Control structures
 function processNumbers(count: number): void {
     // For loop
-    for (let i: number = 0; i < count; i = i + 1) {
+    for (let i: number = 0; i < count; i++) {
         // If-else statement
-        if (i % 2 == 0) {
-            add(i, 1);
+        if (i > 10){
+            console.log("Number is greater than 10");
         } else {
-            add(i, 2);
+            console.log("Number is less than or equal to 10");
         }
     }
 }
@@ -34,48 +36,56 @@ function processNumbers(count: number): void {
 
 ### EBNF Grammar
 ```ebnf
-program = statement* EOF ;
+program = statement*, EOF ;
 
 statement = variableDeclaration
+          | assignmentStatement
+          | incrementStatement
           | functionDeclaration
           | expressionStatement
           | ifStatement
           | forStatement
           | returnStatement ;
 
-variableDeclaration = "let" IDENTIFIER (":" type)? ("=" expression)? ";" ;
+variableDeclaration = ("let" | "const" | "var"), IDENTIFIER, [":", type], ["=", expression], ";" ;
 
-functionDeclaration = "function" IDENTIFIER "(" parameterList? ")" (":" type)? block ;
+assignmentStatement = IDENTIFIER, ("=" | "+=" | "-=" | "*=" | "/="), expression, ";" ;
 
-parameterList = parameter ("," parameter)* ;
+incrementStatement = IDENTIFIER, ("++" | "--"), ";" ;
 
-parameter = IDENTIFIER ":" type ;
+functionDeclaration = "function", IDENTIFIER, "(", [parameterList], ")", [":", type], block ;
+
+parameterList = parameter, (",", parameter)* ;
+
+parameter = IDENTIFIER, ":", type ;
 
 type = "number" | "string" | "boolean" | "void" ;
 
-block = "{" statement* "}" ;
+block = "{", statement*, "}" ;
 
-expressionStatement = expression ";" ;
+expressionStatement = expression, ";" ;
 
-ifStatement = "if" "(" expression ")" block ("else" block)? ;
+ifStatement = "if", "(", expression, ")", block, ["else", block] ;
 
-forStatement = "for" "(" variableDeclaration expression ";" expression ")" block ;
+forStatement = "for", "(", variableDeclaration, expression, ";", expression, ")", block ;
 
-returnStatement = "return" expression? ";" ;
+returnStatement = "return", [expression], ";" ;
 
 expression = literal
            | IDENTIFIER
+           | IDENTIFIER, ("++" | "--")
            | functionCall
-           | expression ("*"|"/") expression
-           | expression ("+"|"-") expression
-           | expression ("=="|"!="|"<"|">"|"<="|">=") expression
-           | expression "&&" expression
-           | expression "||" expression
-           | "(" expression ")" ;
+           | expression, ".", IDENTIFIER
+           | "(", expression, ")"
+           | expression, op=("*" | "/"), expression
+           | expression, op=("+" | "-"), expression
+           | expression, op=("==" | "!=" | "<" | ">" | "<=" | ">="), expression
+           | expression, "&&", expression
+           | expression, "||", expression ;
 
-functionCall = IDENTIFIER "(" argumentList? ")" ;
+functionCall = IDENTIFIER, "(", [argumentList], ")" ;
 
-argumentList = expression ("," expression)* ;
+argumentList = expression, (",", expression)* ;
 
 literal = NUMBER | STRING | BOOLEAN ;
 ```
@@ -102,15 +112,11 @@ literal = NUMBER | STRING | BOOLEAN ;
 npm install
 ```
 
-2. Generate ANTLR4 parser:
-```bash
-npm run antlr4ts
-```
-
-3. Build the project:
+2. Build the project:
 ```bash
 npm run build
 ```
+build also generates the ANTLR4 files.
 
 ## Test Instructions
 

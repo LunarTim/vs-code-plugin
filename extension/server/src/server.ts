@@ -180,19 +180,19 @@ async function validateTextDocument(textDocument: TextDocument): Promise<Diagnos
 			diagnosticsCount: compilerResult.diagnostics.length,
 			diagnostics: compilerResult.diagnostics
 		});
-		
+
 		return compilerResult.diagnostics.map(diagnostic => {
 			// Convert 1-based line numbers to 0-based for VSCode
 			const line = Math.max(0, diagnostic.line - 1);
 			let column = diagnostic.column;
-			
+
 			// Get the line text to determine the range
 			const lines = text.split('\n');
 			const lineText = lines[line] || '';
-			
+
 			// Calculate the range based on the message type
 			let endCharacter = column;
-			
+
 			if (diagnostic.message.includes('is declared but never used')) {
 				// For unused variable warnings, highlight the variable name
 				const match = diagnostic.message.match(/Variable '([^']+)'/);
@@ -289,23 +289,23 @@ const keywords = [
 ];
 
 const liveTemplates = new Map<string, { snippet: string, description: string }>([
-	['log', { 
+	['log', {
 		snippet: 'console.log($1);',
 		description: 'Console log statement'
 	}],
-	['fi', { 
+	['fi', {
 		snippet: 'if ($1) {\n\t$2\n}',
 		description: 'If statement'
 	}],
-	['elfi', { 
+	['elfi', {
 		snippet: 'if ($1) {\n\t$2\n} else {\n\t$3\n}',
-		description: 'Else statement'
+		description: 'If else statement'
 	}],
-	['fori', { 
+	['fori', {
 		snippet: 'for (let ${1:i}: number = 0; ${1:i} < ${2:length}; ${1:i}++) {\n\t$3\n}',
 		description: 'For loop'
 	}],
-	['fn', { 
+	['fn', {
 		snippet: 'function ${1:name}(${2:params}): ${3:type} {\n\t$4\n}',
 		description: 'Function declaration'
 	}]

@@ -19,6 +19,7 @@ import { ProgramContext } from "./LuminaParser";
 import { StatementContext } from "./LuminaParser";
 import { VariableDeclarationContext } from "./LuminaParser";
 import { AssignmentStatementContext } from "./LuminaParser";
+import { ConsoleLogStatementContext } from "./LuminaParser";
 import { IncrementStatementContext } from "./LuminaParser";
 import { FunctionDeclarationContext } from "./LuminaParser";
 import { ParameterListContext } from "./LuminaParser";
@@ -239,6 +240,17 @@ export interface LuminaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitAssignmentStatement?: (ctx: AssignmentStatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LuminaParser.consoleLogStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterConsoleLogStatement?: (ctx: ConsoleLogStatementContext) => void;
+	/**
+	 * Exit a parse tree produced by `LuminaParser.consoleLogStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitConsoleLogStatement?: (ctx: ConsoleLogStatementContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `LuminaParser.incrementStatement`.
