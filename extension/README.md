@@ -129,6 +129,7 @@ console.log(a);
 ```
 
 ![Unused Variable](./images/unused_variable.png)
+
 ![Unused Variable Warning](./images/unused_variable_warning.png)
 
 ### Type Mismatch
@@ -141,6 +142,7 @@ console.log(a + b);
 ```
 
 ![Type Mismatch](./images/type_mismatch.png)
+
 ![Type Mismatch Error](./images/type_mismatch_error.png)
 
 ### reassignment of constant variable
@@ -151,6 +153,7 @@ a = 2;
 ```
 
 ![Reassignment of Constant Variable](./images/reassignment_of_constant_variable.png)
+
 ![Reassignment of Constant Variable Error](./images/reassignment_of_constant_variable_error.png)
 
 
@@ -164,6 +167,7 @@ console.log(b);
 ```
 
 ![Unknown Variable](./images/unknown_variable.png)
+
 ![Unknown Variable Error](./images/unknown_variable_error.png)
 
 ### function declaration error
@@ -188,6 +192,7 @@ let a: number = 1
 ```
 
 ![Missing Semicolon](./images/missing_semicolon.png)
+
 ![Missing Semicolon Error](./images/missing_semicolon_error.png)
 
 
