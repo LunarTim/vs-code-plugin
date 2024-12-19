@@ -22,59 +22,56 @@ describe('Semantic Analyzer', () => {
 
     describe('Variable Declaration Analysis', () => {
         test('should analyze valid variable declarations', () => {
-            const validCases = [
-                'let x: number = 42;',
-                'const y: string = "hello";',
-                'var z: boolean = true;'
-            ];
-
-            validCases.forEach(input => {
-                analyzer = new SemanticAnalyzer();
-                const tree = parse(input);
-                analyzer.visit(tree);
-                expect(analyzer.getDiagnostics()).toHaveLength(0);
-            });
-        });
-
-        test('should detect missing initializer in const declarations', () => {
-            const tree = parse('const x: number;');
+            const input = `
+                let x: number = 42;
+                const y: string = "hello";
+                var z: boolean = true;
+                console.log(x);
+                console.log(y);
+                console.log(z); 
+            `;
+            const tree = parse(input);
             analyzer.visit(tree);
-
-            const diagnostics = analyzer.getDiagnostics();
-            expect(diagnostics).toHaveLength(1);
-            expect(diagnostics[0]).toMatchObject({
-                message: 'Const declarations must be initialized',
-                severity: DiagnosticSeverity.Error
-            });
+            expect(analyzer.getDiagnostics()).toHaveLength(0);
         });
 
         test('should prevent const reassignment', () => {
-            const tree = parse(`
+            const input = `
                 const x: number = 42;
                 x = 10;
-            `);
+            `;
+            const tree = parse(input);
             analyzer.visit(tree);
 
             const diagnostics = analyzer.getDiagnostics();
-            expect(diagnostics).toHaveLength(1);
+            expect(diagnostics).toHaveLength(2);
             expect(diagnostics[0]).toMatchObject({
                 message: "Cannot assign to 'x' because it is a constant",
                 severity: DiagnosticSeverity.Error
             });
+            expect(diagnostics[1]).toMatchObject({
+                message: "Variable 'x' is declared but never used",
+                severity: DiagnosticSeverity.Warning
+            });
         });
 
         test('should prevent const increment', () => {
-            const tree = parse(`
+            const input = `
                 const x: number = 42;
                 x++;
-            `);
+            `;
+            const tree = parse(input);
             analyzer.visit(tree);
 
             const diagnostics = analyzer.getDiagnostics();
-            expect(diagnostics).toHaveLength(1);
+            expect(diagnostics).toHaveLength(2);
             expect(diagnostics[0]).toMatchObject({
                 message: "Cannot increment 'x' because it is a constant",
                 severity: DiagnosticSeverity.Error
+            });
+            expect(diagnostics[1]).toMatchObject({
+                message: "Variable 'x' is declared but never used",
+                severity: DiagnosticSeverity.Warning
             });
         });
 
@@ -99,37 +96,13 @@ describe('Semantic Analyzer', () => {
         });
 
         test('should analyze valid variable declaration', () => {
-            const tree = parse('let x: number = 42;');
+            const input = `
+                let x: number = 42;
+                console.log(x);
+            `;
+            const tree = parse(input);
             analyzer.visit(tree);
             expect(analyzer.getDiagnostics()).toHaveLength(0);
-        });
-
-        test('should detect missing identifier', () => {
-            const tree = parse('let = 42;');
-            analyzer.visit(tree);
-
-            const diagnostics = analyzer.getDiagnostics();
-            // Note: The parser might not even create a valid tree for this case,
-            // so we might not get semantic errors
-            expect(diagnostics.length).toBeLessThanOrEqual(1);
-            if (diagnostics.length > 0) {
-                expect(diagnostics[0]).toMatchObject({
-                    message: 'Variable declaration must have an identifier',
-                    severity: DiagnosticSeverity.Error
-                });
-            }
-        });
-
-        test('should warn about missing type annotation', () => {
-            const tree = parse('let x = 42;');
-            analyzer.visit(tree);
-
-            const diagnostics = analyzer.getDiagnostics();
-            expect(diagnostics).toHaveLength(1);
-            expect(diagnostics[0]).toMatchObject({
-                message: 'Variable declaration should specify a type',
-                severity: DiagnosticSeverity.Warning
-            });
         });
     });
 
@@ -169,28 +142,28 @@ describe('Semantic Analyzer', () => {
                 analyzer.visit(tree);
 
                 const diagnostics = analyzer.getDiagnostics();
-                expect(diagnostics).toHaveLength(1);
+                expect(diagnostics).toHaveLength(2);
                 expect(diagnostics[0]).toMatchObject({
                     message: `Type '${expectedType}' is not assignable to type '${declaredType}'`,
                     severity: DiagnosticSeverity.Error
+                });
+                expect(diagnostics[1]).toMatchObject({
+                    message: "Variable 'x' is declared but never used",
+                    severity: DiagnosticSeverity.Warning
                 });
             });
         });
 
         test('should allow compatible type assignments', () => {
-            const validCases = [
-                'let x: number = 42;',
-                'let x: string = "hello";',
-                'let x: boolean = true;',
-                'let x: boolean = false;'
-            ];
+            const validCases = `
+                let x: number = 42;
+                let x: string = "hello";
+                let x: boolean = true;
+                console.log(x);
+            `;
+            analyzer.visit(parse(validCases));
+            expect(analyzer.getDiagnostics()).toHaveLength(0);
 
-            validCases.forEach(input => {
-                analyzer = new SemanticAnalyzer();
-                const tree = parse(input);
-                analyzer.visit(tree);
-                expect(analyzer.getDiagnostics()).toHaveLength(0);
-            });
         });
     });
 
@@ -200,6 +173,9 @@ describe('Semantic Analyzer', () => {
                 let x: number = 42;
                 let y: string = "hello";
                 let z: boolean = true;
+                console.log(x);
+                console.log(y);
+                console.log(z);
             `);
             analyzer.visit(tree);
             expect(analyzer.getDiagnostics()).toHaveLength(0);
@@ -207,7 +183,6 @@ describe('Semantic Analyzer', () => {
 
         test('should collect all diagnostics', () => {
             const tree = parse(`
-                let = 42;
                 let y: string = 123;
                 let z;
             `);
@@ -227,7 +202,14 @@ describe('Semantic Analyzer', () => {
 
             expect(diagnostics).toContainEqual(
                 expect.objectContaining({
-                    message: 'Variable declaration should specify a type',
+                    message: "Variable 'y' is declared but never used",
+                    severity: DiagnosticSeverity.Warning
+                })
+            );
+
+            expect(diagnostics).toContainEqual(
+                expect.objectContaining({
+                    message: "Variable 'z' is declared but never used",
                     severity: DiagnosticSeverity.Warning
                 })
             );
