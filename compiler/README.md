@@ -124,3 +124,39 @@ Run the test suite:
 ```bash
 npm test
 ``` 
+
+
+## File Structure
+```
+└── 📁compiler
+    └── 📁lib
+        └── antlr-4.13.1-complete.jar
+    └── 📁src
+        └── 📁compiler
+            └── Compiler.ts
+            └── ErrorListener.ts
+            └── SemanticAnalyzer.ts
+            └── types.ts
+        └── 📁grammar
+            └── 📁generated
+                └── Lumina.interp
+                └── Lumina.tokens
+                └── LuminaLexer.interp
+                └── LuminaLexer.tokens
+                └── LuminaLexer.ts
+                └── LuminaListener.ts
+                └── LuminaParser.ts
+                └── LuminaVisitor.ts
+            └── Lumina.g4
+        └── index.ts
+        └── 📁tests
+            └── semantic.test.ts
+            └── syntax.test.ts
+    └── .gitignore
+    └── generate-compiler.bat
+    └── package-lock.json
+    └── package.json
+    └── README.md
+    └── tsconfig.json
+    └── vitest.config.ts
+```

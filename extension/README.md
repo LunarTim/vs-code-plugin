@@ -35,6 +35,7 @@ The Lumina Language VS Code Extension provides language support for the Lumina p
 3. Switch to the Run and Debug View in the Sidebar (`Ctrl+Shift+D`).
 4. Select `Launch Client` from the dropdown.
 5. Press `F5` to run the extension in a new Extension Development Host window.
+6. Create a new file with the `.lum` or `.lumina` extension.
 
 ## Development
 
@@ -52,12 +53,6 @@ To start the build process in watch mode, run:
 npm run watch
 ```
 
-### Lint
-
-To lint the code, run:
-```bash
-npm run lint
-```
 
 ## Testing
 
@@ -203,6 +198,7 @@ let a: number = 1
 ### Live Templates
 #### If Statement
 type `fi` and press `Tab` to get the following:
+
 ![fi completion](./images/fi_completion.png)
 ```Lumina
 if () {
@@ -212,6 +208,7 @@ if () {
 
 #### If Else Statement
 type `elfi` and press `Tab` to get the following:
+
 ![elfi completion](./images/elfi_completion.png)
 ```Lumina
 if () {
@@ -223,6 +220,7 @@ if () {
 
 #### For Loop
 type `fori` and press `Tab` to get the following:
+
 ![for completion](./images/fori_completion.png)
 ```Lumina
 for (let i: number = 0; i < length; i++) {
@@ -232,6 +230,7 @@ for (let i: number = 0; i < length; i++) {
 
 #### Function Declaration
 type `fn` and press `Tab` to get the following:
+
 ![func completion](./images/fn_completion.png)
 ```Lumina
 function name(params): type {
@@ -241,6 +240,7 @@ function name(params): type {
 
 #### Console Log
 type `log` and press `Tab` to get the following:
+
 ![cl completion](./images/log_completion.png)
 ```Lumina
 console.log();
@@ -248,3 +248,49 @@ console.log();
 
 ### Other
 When you type the left bracket `(` after a function name, it will automatically add the right bracket `)` and the parameters. `}` or `]` will be added when you type the left bracket `{` or `[`.
+
+
+## File Structure
+```
+└── 📁extension
+    └── 📁.vscode
+        └── extensions.json
+        └── launch.json
+        └── settings.json
+        └── tasks.json
+    └── 📁client
+        └── package-lock.json
+        └── package.json
+        └── 📁src
+            └── extension.ts
+            └── 📁test
+                └── completion.test.ts
+                └── diagnostics.test.ts
+                └── helper.ts
+                └── index.ts
+                └── runTest.ts
+        └── 📁testFixture
+            └── completion.txt
+            └── diagnostics.txt
+        └── tsconfig.json
+        └── tsconfig.tsbuildinfo
+    └── 📁scripts
+        └── e2e.sh
+    └── 📁server
+        └── package-lock.json
+        └── package.json
+        └── 📁src
+            └── server.ts
+        └── tsconfig.json
+        └── tsconfig.tsbuildinfo
+    └── 📁syntaxes
+        └── lumina.tmLanguage.json
+    └── .gitignore
+    └── .vscodeignore
+    └── eslint.config.mjs
+    └── language-configuration.json
+    └── package-lock.json
+    └── package.json
+    └── README.md
+    └── tsconfig.json
+```

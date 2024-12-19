@@ -57,6 +57,3 @@ Code completion features:
 See detailed setup and usage instructions in:
 - [Compiler README](./compiler/README.md)
 - [Extension README](./extension/README.md)
-
-## License
-This project is licensed under the MIT License.
