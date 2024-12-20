@@ -54,9 +54,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
     private checkUnusedIdentifiers(scope: Map<string, any>) {
         scope.forEach((info, name) => {
             if (!info.used) {
-                const message = info.kind === 'Parameter' 
-                    ? `Parameter '${name}' is declared but never used`
-                    : `Variable '${name}' is declared but never used`;
+                const message = `${info.kind} '${name}' is declared but never used`;
                 this.addDiagnostic({
                     message,
                     line: info.line,
@@ -80,7 +78,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
 
     visitProgram(ctx: ProgramContext): void {
         try {
-            this.scopes = [new Map()]; 
+            this.scopes = [new Map()];
             this.diagnostics = [];
             console.log('Starting semantic analysis...');
 
@@ -308,8 +306,15 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
             });
 
             if (symbol) {
-                symbol.used = true;
-                this.currentScope.set(name, symbol);
+                // Mark the identifier as used
+                for (let i = this.scopes.length - 1; i >= 0; i--) {
+                    if (this.scopes[i].has(name)) {
+                        const foundSymbol = this.scopes[i].get(name)!;
+                        foundSymbol.used = true;
+                        this.scopes[i].set(name, foundSymbol);
+                        break;
+                    }
+                }
                 return symbol.type;
             } else {
                 this.addDiagnostic({
@@ -334,6 +339,33 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 }
             });
 
+            // Mark identifiers in binary expressions as used
+            if (ctx.expression(0) instanceof IdentifierExprContext) {
+                const identExpr = ctx.expression(0) as IdentifierExprContext;
+                const name = identExpr.IDENTIFIER().text;
+                for (let i = this.scopes.length - 1; i >= 0; i--) {
+                    if (this.scopes[i].has(name)) {
+                        const symbol = this.scopes[i].get(name)!;
+                        symbol.used = true;
+                        this.scopes[i].set(name, symbol);
+                        break;
+                    }
+                }
+            }
+
+            if (ctx.expression(1) instanceof IdentifierExprContext) {
+                const identExpr = ctx.expression(1) as IdentifierExprContext;
+                const name = identExpr.IDENTIFIER().text;
+                for (let i = this.scopes.length - 1; i >= 0; i--) {
+                    if (this.scopes[i].has(name)) {
+                        const symbol = this.scopes[i].get(name)!;
+                        symbol.used = true;
+                        this.scopes[i].set(name, symbol);
+                        break;
+                    }
+                }
+            }
+
             if (leftType === 'number' && rightType === 'number') {
                 return 'number';
             }
@@ -352,6 +384,24 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 column: ctx.start.charPositionInLine,
                 severity: DiagnosticSeverity.Error
             });
+        } else if (ctx instanceof FunctionCallExprContext) {
+            const functionCall = ctx.functionCall();
+            const identifier = functionCall.IDENTIFIER();
+            const name = identifier.text;
+            const symbol = this.findSymbol(name);
+
+            if (symbol) {
+                // Mark the function as used
+                for (let i = this.scopes.length - 1; i >= 0; i--) {
+                    if (this.scopes[i].has(name)) {
+                        const funcSymbol = this.scopes[i].get(name)!;
+                        funcSymbol.used = true;
+                        this.scopes[i].set(name, funcSymbol);
+                        break;
+                    }
+                }
+                return symbol.type;
+            }
         }
         return undefined;
     }
@@ -396,22 +446,24 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                     column: identifier.symbol.charPositionInLine
                 });
 
+                // Create new scope for function body
                 this.pushScope();
 
+                // Add parameters to function scope but don't mark them as used by default
                 parameters.forEach(param => {
                     const paramId = param.IDENTIFIER();
                     const paramType = param.type();
                     if (paramId && paramType) {
                         this.currentScope.set(paramId.text, {
                             type: paramType.text,
-                            used: false,
+                            used: false, // Don't mark as used by default
                             kind: 'Parameter',
                             line: paramId.symbol.line,
                             column: paramId.symbol.charPositionInLine
                         });
                     }
                 });
-                
+
                 const block = ctx.block();
                 if (block) {
                     this.visit(block);
@@ -450,8 +502,15 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 return;
             }
 
-            symbol.used = true;
-            this.currentScope.set(name, symbol);
+            // Mark the function as used
+            for (let i = this.scopes.length - 1; i >= 0; i--) {
+                if (this.scopes[i].has(name)) {
+                    const funcSymbol = this.scopes[i].get(name)!;
+                    funcSymbol.used = true;
+                    this.scopes[i].set(name, funcSymbol);
+                    break;
+                }
+            }
         }
     }
 
@@ -478,5 +537,21 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         } catch (error) {
             console.error('Error in visitIfStatement:', error);
         }
+    }
+
+    getAllSymbols(): Map<string, { kind: string; type?: string }> {
+        const allSymbols = new Map<string, { kind: string; type?: string }>();
+        
+        // Collect symbols from all scopes
+        this.scopes.forEach(scope => {
+            scope.forEach((info, name) => {
+                allSymbols.set(name, {
+                    kind: info.kind,
+                    type: info.type
+                });
+            });
+        });
+        
+        return allSymbols;
     }
 } 

@@ -1,11 +1,11 @@
 import { CharStreams, CommonTokenStream, CharStream } from 'antlr4ts';
 import { LuminaLexer } from '../grammar/generated/LuminaLexer';
-import { LuminaParser } from '../grammar/generated/LuminaParser';
+import { LuminaParser, ProgramContext } from '../grammar/generated/LuminaParser';
 import { LexerErrorListener, ParserErrorListener } from './ErrorListener';
 import { DiagnosticSeverity } from './types';
 import { SemanticAnalyzer } from './SemanticAnalyzer';
 import { DefaultErrorStrategy } from 'antlr4ts/DefaultErrorStrategy';
-import { CompletionItem, CompletionItemKind } from './types';
+import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver-types';
 import { Position } from './types';
 
 export interface Diagnostic {
@@ -43,11 +43,11 @@ export class Compiler {
             // Set up error handling
             const lexerErrorListener = new LexerErrorListener();
             const parserErrorListener = new ParserErrorListener();
-            
+
             // Remove default listeners and add our custom ones
             lexer.removeErrorListeners();
             parser.removeErrorListeners();
-            
+
             lexer.addErrorListener(lexerErrorListener);
             parser.addErrorListener(parserErrorListener);
 
@@ -123,11 +123,17 @@ export class Compiler {
 
     getCompletionItems(sourceCode: string, position: Position): CompletionItem[] {
         try {
+            // First compile to get the semantic analysis
             const result = this.compile(sourceCode);
+
+            // Create a new analyzer and analyze the code to get current scope
             const analyzer = new SemanticAnalyzer();
-            
-            // Gebruik de positie en symbolen om relevante completion items te genereren
-            return this.generateCompletionItems(position, analyzer.getSymbols());
+            analyzer.visit(this.parse(sourceCode));
+
+            // Get all symbols from the analyzer
+            const symbols = analyzer.getAllSymbols();
+
+            return this.generateCompletionItems(position, symbols);
         } catch (error) {
             console.error('Error getting completion items:', error);
             return [];
@@ -137,24 +143,99 @@ export class Compiler {
     private generateCompletionItems(position: Position, symbols: Map<string, { kind: string; type?: string }>): CompletionItem[] {
         const items: CompletionItem[] = [];
 
-        // Voeg keywords toe
-        items.push({
-            label: 'function',
-            kind: CompletionItemKind.Keyword
+        // Add live templates
+        const liveTemplates = new Map<string, { snippet: string, description: string }>([
+            ['log', {
+                snippet: 'console.log($1);',
+                description: 'Console log statement'
+            }],
+            ['fi', {
+                snippet: 'if ($1) {\n\t$2\n}',
+                description: 'If statement'
+            }],
+            ['elfi', {
+                snippet: 'if ($1) {\n\t$2\n} else {\n\t$3\n}',
+                description: 'If else statement'
+            }],
+            ['fori', {
+                snippet: 'for (let ${1:i}: number = 0; ${1:i} < ${2:length}; ${1:i}++) {\n\t$3\n}',
+                description: 'For loop'
+            }],
+            ['fn', {
+                snippet: 'function ${1:name}(${2:params}): ${3:type} {\n\t$4\n}',
+                description: 'Function declaration'
+            }]
+        ]);
+
+        // Add live template completions
+        liveTemplates.forEach((template, trigger) => {
+            items.push({
+                label: trigger,
+                kind: CompletionItemKind.Snippet,
+                detail: template.description,
+                insertText: template.snippet,
+                insertTextFormat: InsertTextFormat.Snippet
+            });
         });
 
-        // Voeg methoden toe voor bekende types
-        items.push({
-            label: 'toString',
-            kind: CompletionItemKind.Method
+        // Add language keywords
+        const keywords = ['let', 'const', 'var', 'function', 'if', 'else', 'return'];
+        keywords.forEach(keyword => {
+            items.push({
+                label: keyword,
+                kind: CompletionItemKind.Keyword
+            });
         });
 
-        // Voeg console.log toe
-        items.push({
-            label: 'log',
-            kind: CompletionItemKind.Method
+        // Add symbols from current scope
+        symbols.forEach((info, name) => {
+            items.push({
+                label: name,
+                kind: this.getCompletionItemKind(info.kind),
+                detail: info.type ? `(${info.type})` : undefined
+            });
+        });
+
+        // Add built-in types
+        const types = ['number', 'string', 'boolean', 'void'];
+        types.forEach(type => {
+            items.push({
+                label: type,
+                kind: CompletionItemKind.TypeParameter
+            });
+        });
+
+        // Add built-in methods
+        const methods = new Map([
+            ['toString', { type: 'string' }],
+            ['log', { type: 'void' }]
+        ]);
+
+        methods.forEach((info, name) => {
+            items.push({
+                label: name,
+                kind: CompletionItemKind.Method,
+                detail: `(): ${info.type}`
+            });
         });
 
         return items;
+    }
+
+    private getCompletionItemKind(symbolKind: string): CompletionItemKind {
+        switch (symbolKind) {
+            case 'Function': return CompletionItemKind.Function;
+            case 'Variable': return CompletionItemKind.Variable;
+            case 'Parameter': return CompletionItemKind.Variable;
+            default: return CompletionItemKind.Text;
+        }
+    }
+
+    private parse(sourceCode: string): ProgramContext {
+        const inputStream = CharStreams.fromString(sourceCode);
+        const lexer = new LuminaLexer(inputStream);
+        const tokenStream = new CommonTokenStream(lexer);
+        const parser = new LuminaParser(tokenStream);
+        return parser.program();
     }
 } 

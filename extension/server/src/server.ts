@@ -322,63 +322,21 @@ connection.onCompletion(
 			return [];
 		}
 
-		const text = document.getText();
-		const position = textDocumentPosition.position;
-		const line = text.split('\n')[position.line];
-		const linePrefix = line.slice(0, position.character);
-
-		const completions: CompletionItem[] = [];
-
-		// Add live template completions
-		liveTemplates.forEach((template, trigger) => {
-			completions.push({
-				label: trigger,
-				kind: CompletionItemKind.Snippet,
-				detail: template.description,
-				insertText: template.snippet,
-				insertTextFormat: InsertTextFormat.Snippet,
-				data: { type: 'template' }
+		try {
+			return compiler.getCompletionItems(document.getText(), {
+				line: textDocumentPosition.position.line,
+				character: textDocumentPosition.position.character
 			});
-		});
-
-		// Add keyword completions
-		keywords.forEach(keyword => {
-			completions.push({
-				label: keyword,
-				kind: CompletionItemKind.Keyword,
-				data: { type: 'keyword' }
-			});
-		});
-
-		// Add variable and function completions from the document
-		const docSymbols = documentSymbols.get(document.uri);
-		if (docSymbols) {
-			docSymbols.forEach((info, name) => {
-				const isFunction = info.kind === CompletionItemKind.Function;
-				completions.push({
-					label: name,
-					kind: info.kind,
-					detail: info.type ? `(${info.type})` : undefined,
-					insertText: isFunction ? `${name}()` : name,
-					data: { type: 'symbol', symbolType: info.type, kind: info.kind }
-				});
-			});
+		} catch (error) {
+			console.error('Error getting completions:', error);
+			return [];
 		}
-
-		return completions;
 	}
 );
 
-// This handler resolves additional information for the item selected in
-// the completion list.
+// Simplify completion resolve since details are now provided by compiler
 connection.onCompletionResolve(
 	(item: CompletionItem): CompletionItem => {
-		if (item.data?.type === 'keyword') {
-			item.detail = 'Keyword';
-			item.documentation = 'Language keyword';
-		} else if (item.data?.type === 'symbol') {
-			item.documentation = `Symbol of type: ${item.data.symbolType}`;
-		}
 		return item;
 	}
 );
