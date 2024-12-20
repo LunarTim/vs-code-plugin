@@ -204,9 +204,6 @@ describe('Semantic Analyzer', () => {
 
             const diagnostics = analyzer.getDiagnostics();
 
-            // We expect:
-            // 1. Type mismatch error for y
-            // 2. Missing type warning for z
             expect(diagnostics).toContainEqual(
                 expect.objectContaining({
                     message: "Type 'number' is not assignable to type 'string'",
@@ -225,6 +222,73 @@ describe('Semantic Analyzer', () => {
                 expect.objectContaining({
                     message: "Variable 'z' is declared but never used",
                     severity: DiagnosticSeverity.Warning
+                })
+            );
+        });
+    });
+
+    describe('Function Analysis', () => {
+        test('should recognize function parameters in scope', () => {
+            const input = `
+                function test(param: number): void {
+                    console.log(param);
+                }
+                test(1);
+            `;
+            const tree = parse(input);
+            analyzer.visit(tree);
+
+            expect(analyzer.getDiagnostics()).toHaveLength(0);
+        });
+
+        test('should detect unused parameters', () => {
+            const input = `
+                function test(param: number): void {
+                    let x: number = 42;
+                    console.log(x);
+                }
+            `;
+            const tree = parse(input);
+            analyzer.visit(tree);
+
+            const diagnostics = analyzer.getDiagnostics();
+            expect(diagnostics).toContainEqual(
+                expect.objectContaining({
+                    message: "Parameter 'param' is declared but never used",
+                    severity: DiagnosticSeverity.Warning
+                })
+            );
+        });
+
+        test('should handle multiple parameters', () => {
+            const input = `
+                function test(a: number, b: string): void {
+                    console.log(a);
+                    console.log(b);
+                }
+                test(1, "hello");
+            `;
+            const tree = parse(input);
+            analyzer.visit(tree);
+
+            expect(analyzer.getDiagnostics()).toHaveLength(0);
+        });
+
+        test('should keep parameters scoped to function', () => {
+            const input = `
+                function test(param: number): void {
+                    console.log(param);
+                }
+                let x = param; // Should error - param not in scope
+            `;
+            const tree = parse(input);
+            analyzer.visit(tree);
+
+            const diagnostics = analyzer.getDiagnostics();
+            expect(diagnostics).toContainEqual(
+                expect.objectContaining({
+                    message: "Cannot find name 'param'",
+                    severity: DiagnosticSeverity.Error
                 })
             );
         });

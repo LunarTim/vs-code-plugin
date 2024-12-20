@@ -5,6 +5,8 @@ import { LexerErrorListener, ParserErrorListener } from './ErrorListener';
 import { DiagnosticSeverity } from './types';
 import { SemanticAnalyzer } from './SemanticAnalyzer';
 import { DefaultErrorStrategy } from 'antlr4ts/DefaultErrorStrategy';
+import { CompletionItem, CompletionItemKind } from './types';
+import { Position } from './types';
 
 export interface Diagnostic {
     message: string;
@@ -117,5 +119,42 @@ export class Compiler {
                 symbols: new Map()
             };
         }
+    }
+
+    getCompletionItems(sourceCode: string, position: Position): CompletionItem[] {
+        try {
+            const result = this.compile(sourceCode);
+            const analyzer = new SemanticAnalyzer();
+            
+            // Gebruik de positie en symbolen om relevante completion items te genereren
+            return this.generateCompletionItems(position, analyzer.getSymbols());
+        } catch (error) {
+            console.error('Error getting completion items:', error);
+            return [];
+        }
+    }
+
+    private generateCompletionItems(position: Position, symbols: Map<string, { kind: string; type?: string }>): CompletionItem[] {
+        const items: CompletionItem[] = [];
+
+        // Voeg keywords toe
+        items.push({
+            label: 'function',
+            kind: CompletionItemKind.Keyword
+        });
+
+        // Voeg methoden toe voor bekende types
+        items.push({
+            label: 'toString',
+            kind: CompletionItemKind.Method
+        });
+
+        // Voeg console.log toe
+        items.push({
+            label: 'log',
+            kind: CompletionItemKind.Method
+        });
+
+        return items;
     }
 } 

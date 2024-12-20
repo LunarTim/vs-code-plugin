@@ -28,41 +28,67 @@ import { DiagnosticSeverity } from './types';
 
 export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements LuminaVisitor<void> {
     private diagnostics: Diagnostic[] = [];
-    private symbolTable: Map<string, {
+    private scopes: Array<Map<string, {
         type: string;
         used: boolean;
         kind: string;
         line: number;
         column: number;
         isConst?: boolean;
-    }> = new Map();
+    }>> = [new Map()]; // Global scope
+
+    private get currentScope(): Map<string, any> {
+        return this.scopes[this.scopes.length - 1];
+    }
+
+    private pushScope() {
+        this.scopes.push(new Map());
+    }
+
+    private popScope() {
+        // Check for unused variables before popping
+        this.checkUnusedIdentifiers(this.currentScope);
+        this.scopes.pop();
+    }
+
+    private checkUnusedIdentifiers(scope: Map<string, any>) {
+        scope.forEach((info, name) => {
+            if (!info.used) {
+                const message = info.kind === 'Parameter' 
+                    ? `Parameter '${name}' is declared but never used`
+                    : `Variable '${name}' is declared but never used`;
+                this.addDiagnostic({
+                    message,
+                    line: info.line,
+                    column: info.column,
+                    severity: DiagnosticSeverity.Warning
+                });
+            }
+        });
+    }
+
+    private findSymbol(name: string): { type: string; used: boolean; kind: string; isConst?: boolean } | undefined {
+        // Search from current scope up to global scope
+        for (let i = this.scopes.length - 1; i >= 0; i--) {
+            const symbol = this.scopes[i].get(name);
+            if (symbol) {
+                return symbol;
+            }
+        }
+        return undefined;
+    }
 
     visitProgram(ctx: ProgramContext): void {
         try {
-            // Clear previous state
-            this.symbolTable.clear();
+            this.scopes = [new Map()]; 
             this.diagnostics = [];
             console.log('Starting semantic analysis...');
 
-            // Visit all statements first
+            // Visit all statements
             ctx.statement().forEach(stmt => this.visit(stmt));
 
-            // Then check for unused variables
-            this.symbolTable.forEach((info, name) => {
-                if (!info.used && info.kind === 'Variable') {
-                    console.log('Found unused variable:', {
-                        name,
-                        info,
-                        location: `line ${info.line}, column ${info.column}`
-                    });
-                    this.addDiagnostic({
-                        message: `Variable '${name}' is declared but never used`,
-                        line: info.line,
-                        column: info.column,
-                        severity: DiagnosticSeverity.Warning
-                    });
-                }
-            });
+            // Check for unused variables in global scope
+            this.checkUnusedIdentifiers(this.currentScope);
 
             console.log('Semantic analysis completed. Generated diagnostics:', this.diagnostics);
         } catch (error) {
@@ -90,7 +116,6 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 const name = identifier.text;
                 const declaredType = type ? type.text : undefined;
 
-                // Add warning for missing type annotation
                 if (!declaredType) {
                     this.addDiagnostic({
                         message: `Variable '${name}' is missing type annotation`,
@@ -111,7 +136,6 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                     column: expr?.start.charPositionInLine
                 });
 
-                // Check type compatibility
                 if (expr && declaredType && inferredType && declaredType !== inferredType) {
                     const exprStartColumn = expr.start.charPositionInLine;
                     console.log(`Type mismatch: ${inferredType} is not assignable to ${declaredType} at column ${exprStartColumn}`);
@@ -123,8 +147,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                     });
                 }
 
-                // Add to symbol table
-                this.symbolTable.set(name, {
+                this.currentScope.set(name, {
                     type: declaredType || inferredType || 'any',
                     used: false,
                     kind: 'Variable',
@@ -135,7 +158,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
 
                 console.log('Added to symbol table:', {
                     name,
-                    symbol: this.symbolTable.get(name)
+                    symbol: this.currentScope.get(name)
                 });
             }
         } catch (error) {
@@ -150,7 +173,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
 
         if (identifier) {
             const name = identifier.text;
-            const symbol = this.symbolTable.get(name);
+            const symbol = this.findSymbol(name);
 
             if (!symbol) {
                 this.addDiagnostic({
@@ -162,7 +185,6 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 return;
             }
 
-            // Check for const reassignment
             if (symbol.isConst) {
                 this.addDiagnostic({
                     message: `Cannot assign to '${name}' because it is a constant`,
@@ -192,9 +214,8 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 }
             }
 
-            // Mark the variable as used
             symbol.used = true;
-            this.symbolTable.set(name, symbol);
+            this.currentScope.set(name, symbol);
         }
     }
 
@@ -202,7 +223,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         const identifier = ctx.IDENTIFIER();
         if (identifier) {
             const name = identifier.text;
-            const symbol = this.symbolTable.get(name);
+            const symbol = this.findSymbol(name);
 
             if (!symbol) {
                 this.addDiagnostic({
@@ -214,7 +235,6 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 return;
             }
 
-            // Check for const increment
             if (symbol.isConst) {
                 this.addDiagnostic({
                     message: `Cannot increment '${name}' because it is a constant`,
@@ -235,9 +255,8 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 return;
             }
 
-            // Mark the variable as used
             symbol.used = true;
-            this.symbolTable.set(name, symbol);
+            this.currentScope.set(name, symbol);
         }
     }
 
@@ -262,26 +281,22 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 start: { line: literal.start.line, column: literal.start.charPositionInLine }
             });
 
-            // Check if it's a string literal (wrapped in quotes)
             if (literal.text.startsWith('"') || literal.text.startsWith("'")) {
                 return 'string';
             }
-            // Check if it's a number
             if (/^[0-9]+(\.[0-9]+)?$/.test(literal.text)) {
                 return 'number';
             }
-            // Check if it's a boolean
             if (literal.text === 'true' || literal.text === 'false') {
                 return 'boolean';
             }
-            // If it's a number in quotes, it's still a string
             if (/^["'][0-9]+(\.[0-9]+)?["']$/.test(literal.text)) {
                 return 'string';
             }
         } else if (ctx instanceof IdentifierExprContext) {
             const identifier = ctx.IDENTIFIER();
             const name = identifier.text;
-            const symbol = this.symbolTable.get(name);
+            const symbol = this.findSymbol(name);
 
             console.log('Identifier Expression:', {
                 name,
@@ -293,9 +308,8 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
             });
 
             if (symbol) {
-                // Mark the variable as used when referenced
                 symbol.used = true;
-                this.symbolTable.set(name, symbol);
+                this.currentScope.set(name, symbol);
                 return symbol.type;
             } else {
                 this.addDiagnostic({
@@ -344,7 +358,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
 
     getSymbols(): Map<string, { kind: string; type?: string }> {
         const symbols = new Map<string, { kind: string; type?: string }>();
-        this.symbolTable.forEach((info, name) => {
+        this.scopes[0].forEach((info, name) => {
             symbols.set(name, {
                 kind: info.kind,
                 type: info.type
@@ -370,26 +384,40 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         try {
             const identifier = ctx.IDENTIFIER();
             const returnType = ctx.type();
+            const parameters = ctx.parameterList()?.parameter() || [];
 
             if (identifier) {
                 const name = identifier.text;
-                this.symbolTable.set(name, {
+                this.currentScope.set(name, {
                     type: returnType ? returnType.text : 'void',
                     used: false,
                     kind: 'Function',
                     line: identifier.symbol.line,
                     column: identifier.symbol.charPositionInLine
                 });
-            }
 
-            // Visit function body if it exists
-            try {
+                this.pushScope();
+
+                parameters.forEach(param => {
+                    const paramId = param.IDENTIFIER();
+                    const paramType = param.type();
+                    if (paramId && paramType) {
+                        this.currentScope.set(paramId.text, {
+                            type: paramType.text,
+                            used: false,
+                            kind: 'Parameter',
+                            line: paramId.symbol.line,
+                            column: paramId.symbol.charPositionInLine
+                        });
+                    }
+                });
+                
                 const block = ctx.block();
                 if (block) {
                     this.visit(block);
                 }
-            } catch (error) {
-                // Ignore block errors during typing
+
+                this.popScope();
             }
         } catch (error) {
             console.error('Error in visitFunctionDeclaration:', error);
@@ -400,7 +428,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         const identifier = ctx.IDENTIFIER();
         if (identifier) {
             const name = identifier.text;
-            const symbol = this.symbolTable.get(name);
+            const symbol = this.findSymbol(name);
 
             if (!symbol) {
                 this.addDiagnostic({
@@ -422,9 +450,8 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 return;
             }
 
-            // Mark the function as used
             symbol.used = true;
-            this.symbolTable.set(name, symbol);
+            this.currentScope.set(name, symbol);
         }
     }
 
@@ -432,7 +459,6 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         try {
             const expr = ctx.expression();
             if (expr) {
-                // This will mark any variables in the expression as used
                 this.getExpressionType(expr);
             }
         } catch (error) {
@@ -444,11 +470,9 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         try {
             const condition = ctx.expression();
             if (condition) {
-                // This will mark any variables in the condition as used
                 this.getExpressionType(condition);
             }
 
-            // Visit the if block and else block if they exist
             const blocks = ctx.block();
             blocks.forEach(block => this.visit(block));
         } catch (error) {
