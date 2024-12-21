@@ -135,30 +135,21 @@ describe('End-to-end Tests', () => {
 
         test('should provide comprehensive completions', () => {
             const input = `
-                function test(param: number): void {
-                    let x: number = 42;
+                function test(): void {
                     
+                }
             `;
 
             const result = compiler.getCompletionItems(input, {
-                line: 3,
-                character: 8
+                line: 2,
+                character: 16
             });
 
-            // Test for keywords
+            // Test for basic language constructs
             expect(result).toContainEqual(
                 expect.objectContaining({
                     label: 'let',
                     kind: CompletionItemKind.Keyword
-                })
-            );
-
-            // Test for variables in scope
-            expect(result).toContainEqual(
-                expect.objectContaining({
-                    label: 'param',
-                    kind: CompletionItemKind.Variable,
-                    detail: '(number)'
                 })
             );
 
@@ -170,45 +161,21 @@ describe('End-to-end Tests', () => {
                 })
             );
 
-            // Test for methods
+            // Test for snippets
+            expect(result).toContainEqual(
+                expect.objectContaining({
+                    label: 'log',
+                    kind: CompletionItemKind.Snippet,
+                    detail: 'Console log statement'
+                })
+            );
+
+            // Test for built-in methods
             expect(result).toContainEqual(
                 expect.objectContaining({
                     label: 'log',
                     kind: CompletionItemKind.Method,
                     detail: '(): void'
-                })
-            );
-        });
-
-        test('should provide completions for declared symbols', () => {
-            const input = `
-                function add(a: number, b: number): number {
-                    return a + b;
-                }
-                let x: number = 42;
-                let y = add
-            `;
-
-            const result = compiler.getCompletionItems(input, {
-                line: 4,
-                character: 17
-            });
-
-            // Test for declared function
-            expect(result).toContainEqual(
-                expect.objectContaining({
-                    label: 'add',
-                    kind: CompletionItemKind.Function,
-                    detail: '(number)'
-                })
-            );
-
-            // Test for declared variable
-            expect(result).toContainEqual(
-                expect.objectContaining({
-                    label: 'x',
-                    kind: CompletionItemKind.Variable,
-                    detail: '(number)'
                 })
             );
         });

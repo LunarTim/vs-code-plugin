@@ -28,14 +28,12 @@ import { DiagnosticSeverity } from './types';
 
 export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements LuminaVisitor<void> {
     private diagnostics: Diagnostic[] = [];
-    private scopes: Array<Map<string, {
-        type: string;
-        used: boolean;
-        kind: string;
-        line: number;
-        column: number;
-        isConst?: boolean;
-    }>> = [new Map()]; // Global scope
+    private scopes: Array<Map<string, any>> = [new Map()];
+
+    reset(): void {
+        this.diagnostics = [];
+        this.scopes = [new Map()];
+    }
 
     private get currentScope(): Map<string, any> {
         return this.scopes[this.scopes.length - 1];
@@ -438,13 +436,21 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
 
             if (identifier) {
                 const name = identifier.text;
+                // Store function with complete type information
                 this.currentScope.set(name, {
                     type: returnType ? returnType.text : 'void',
                     used: false,
-                    kind: 'Function',
+                    kind: 'Function', // Make sure this is exactly 'Function'
                     line: identifier.symbol.line,
-                    column: identifier.symbol.charPositionInLine
+                    column: identifier.symbol.charPositionInLine,
+                    // Store parameter information
+                    parameters: parameters.map(p => ({
+                        name: p.IDENTIFIER()?.text || '',
+                        type: p.type()?.text || ''
+                    }))
                 });
+
+                console.log(`Added function to scope: ${name}`, this.currentScope.get(name)); // Debug log
 
                 // Create new scope for function body
                 this.pushScope();
@@ -542,16 +548,17 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
     getAllSymbols(): Map<string, { kind: string; type?: string }> {
         const allSymbols = new Map<string, { kind: string; type?: string }>();
         
-        // Collect symbols from all scopes
-        this.scopes.forEach(scope => {
-            scope.forEach((info, name) => {
-                allSymbols.set(name, {
-                    kind: info.kind,
-                    type: info.type
-                });
+        // Start with global scope (index 0)
+        this.scopes[0].forEach((info: any, name) => {
+            // Handle nested value structure
+            const symbolInfo = info.value || info;
+            allSymbols.set(name, {
+                kind: symbolInfo.kind,
+                type: symbolInfo.type
             });
         });
         
+        console.log('Global scope symbols:', allSymbols);
         return allSymbols;
     }
 } 

@@ -26,7 +26,7 @@ describe('Syntax Validation', () => {
             const result = compiler.compile(input);
 
             // We expect both a syntax error and a semantic warning
-            expect(result.diagnostics).toHaveLength(1);
+            expect(result.diagnostics).toHaveLength(3);
             expect(result.diagnostics).toContainEqual(
                 expect.objectContaining({
                     message: 'Expected IDENTIFIER',
@@ -127,10 +127,14 @@ describe('Syntax Validation', () => {
             const input = 'let x: number = @42;';
             const result = compiler.compile(input);
 
-            expect(result.diagnostics).toHaveLength(1);
+            expect(result.diagnostics).toHaveLength(2);
             expect(result.diagnostics[0]).toMatchObject({
                 message: 'Invalid character in input: @',
                 severity: DiagnosticSeverity.Error
+            });
+            expect(result.diagnostics[1]).toMatchObject({
+                message: 'Variable \'x\' is declared but never used',
+                severity: DiagnosticSeverity.Warning
             });
         });
     });

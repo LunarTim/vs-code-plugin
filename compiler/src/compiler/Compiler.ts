@@ -22,18 +22,19 @@ export interface CompilerResult {
 
 export class Compiler {
     private semanticAnalyzer: SemanticAnalyzer;
-    private errorListener: ParserErrorListener;
+    private symbolTable: Map<string, { kind: string; type?: string }> = new Map();
 
     constructor() {
         this.semanticAnalyzer = new SemanticAnalyzer();
-        this.errorListener = new ParserErrorListener();
     }
 
     compile(sourceCode: string): CompilerResult {
         try {
             if (!sourceCode.trim()) {
-                return { diagnostics: [], symbols: new Map() };
+                return { diagnostics: [], symbols: this.symbolTable };
             }
+
+            this.semanticAnalyzer.reset();
 
             const inputStream = CharStreams.fromString(sourceCode);
             const lexer = new LuminaLexer(inputStream);
@@ -44,20 +45,20 @@ export class Compiler {
             const lexerErrorListener = new LexerErrorListener();
             const parserErrorListener = new ParserErrorListener();
 
-            // Remove default listeners and add our custom ones
             lexer.removeErrorListeners();
             parser.removeErrorListeners();
-
             lexer.addErrorListener(lexerErrorListener);
             parser.addErrorListener(parserErrorListener);
 
             // Parse the input
-            parser.errorHandler = new DefaultErrorStrategy();
             let tree;
             try {
                 tree = parser.program();
+                // Update symbol table with new analysis
+                this.semanticAnalyzer.visit(tree);
+                this.symbolTable = this.semanticAnalyzer.getAllSymbols();
             } catch (parseError) {
-                console.error('Parse error:', parseError);
+                // Keep existing symbols on parse error
                 return {
                     diagnostics: [{
                         message: parseError instanceof Error ? parseError.message : 'Parse error occurred',
@@ -65,7 +66,7 @@ export class Compiler {
                         column: 0,
                         severity: DiagnosticSeverity.Error
                     }],
-                    symbols: new Map()
+                    symbols: this.symbolTable
                 };
             }
 
@@ -75,65 +76,47 @@ export class Compiler {
                 ...parserErrorListener.getErrors()
             ];
 
-            if (syntaxErrors.length > 0) {
-                return {
-                    diagnostics: syntaxErrors,
-                    symbols: new Map()
-                };
-            }
-
-            // Perform semantic analysis if syntax is valid
-            try {
-                this.semanticAnalyzer.visit(tree);
-            } catch (semanticError) {
-                console.error('Semantic analysis error:', semanticError);
-                return {
-                    diagnostics: [{
-                        message: semanticError instanceof Error ? semanticError.message : 'Semantic analysis error occurred',
-                        line: 1,
-                        column: 0,
-                        severity: DiagnosticSeverity.Error
-                    }],
-                    symbols: new Map()
-                };
-            }
-
-            // Get diagnostics and symbols
-            const semanticDiagnostics = this.semanticAnalyzer.getDiagnostics();
-            const symbols = this.semanticAnalyzer.getSymbols();
+            const diagnostics = this.semanticAnalyzer.getDiagnostics();
 
             return {
-                diagnostics: [...syntaxErrors, ...semanticDiagnostics],
-                symbols
+                diagnostics: [...syntaxErrors, ...diagnostics],
+                symbols: this.symbolTable
             };
         } catch (error: unknown) {
-            console.error('Compilation error:', error);
-            const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred during compilation';
             return {
                 diagnostics: [{
-                    message: errorMessage,
+                    message: error instanceof Error ? error.message : 'Unknown error occurred',
                     line: 1,
                     column: 0,
                     severity: DiagnosticSeverity.Error
                 }],
-                symbols: new Map()
+                symbols: this.symbolTable
             };
         }
     }
 
     getCompletionItems(sourceCode: string, position: Position): CompletionItem[] {
         try {
-            // First compile to get the semantic analysis
+            // Compile to update symbol table
             const result = this.compile(sourceCode);
+            
+            const lines = sourceCode.split('\n');
+            const currentLine = lines[position.line];
+            const textBeforeCursor = currentLine?.slice(0, position.character) || '';
+            
+            console.log('Current text before cursor:', textBeforeCursor);
+            console.log('Current symbol table:', this.symbolTable);
 
-            // Create a new analyzer and analyze the code to get current scope
-            const analyzer = new SemanticAnalyzer();
-            analyzer.visit(this.parse(sourceCode));
+            // Get the current word being typed
+            const currentWord = textBeforeCursor.trim().split(/[\s(){}[\],;=+\-*/<>!&|]+/).pop() || '';
+            console.log('Current word:', currentWord);
 
-            // Get all symbols from the analyzer
-            const symbols = analyzer.getAllSymbols();
+            if (currentWord === 'fn') {
+                console.log('Detected fn trigger');
+                return this.generateFunctionCompletions(this.symbolTable);
+            }
 
-            return this.generateCompletionItems(position, symbols);
+            return this.generateCompletionItems(position, this.symbolTable);
         } catch (error) {
             console.error('Error getting completion items:', error);
             return [];
@@ -219,6 +202,41 @@ export class Compiler {
             });
         });
 
+        return items;
+    }
+
+    private generateFunctionCompletions(symbols: Map<string, { kind: string; type?: string }>): CompletionItem[] {
+        const items: CompletionItem[] = [];
+
+        // Add function template
+        items.push({
+            label: 'fn (New Function)',
+            kind: CompletionItemKind.Snippet,
+            detail: 'Create new function',
+            insertText: 'function ${1:name}(${2:params}): ${3:type} {\n\t$4\n}',
+            insertTextFormat: InsertTextFormat.Snippet
+        });
+
+        // Add all declared functions
+        symbols.forEach((info: any, name) => {
+            console.log(`Processing symbol for completion: ${name}`, info);
+            // Handle the nested structure
+            const functionInfo = info.value || info;
+            if (functionInfo.kind === 'Function') {
+                const completionItem = {
+                    label: name, // Just show the function name
+                    kind: CompletionItemKind.Function,
+                    detail: `${name}(): ${functionInfo.type || 'void'}`,
+                    insertText: name,
+                    filterText: `fn${name}`, // This ensures it shows up when typing 'fn' without space
+                    documentation: `Function ${name} returning ${functionInfo.type || 'void'}`
+                };
+                console.log(`Adding completion item:`, completionItem);
+                items.push(completionItem);
+            }
+        });
+
+        console.log('Final completion items:', items);
         return items;
     }
 
