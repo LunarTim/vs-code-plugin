@@ -21,7 +21,8 @@ import {
     FunctionCallExprContext,
     PropertyAccessExprContext,
     ConsoleLogStatementContext,
-    IfStatementContext
+    IfStatementContext,
+    ReturnStatementContext
 } from '../grammar/generated/LuminaParser';
 import { Diagnostic } from './Compiler';
 import { DiagnosticSeverity } from './types';
@@ -560,5 +561,38 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         
         console.log('Global scope symbols:', allSymbols);
         return allSymbols;
+    }
+
+    visitReturnStatement(ctx: ReturnStatementContext): void {
+        const expr = ctx.expression();
+        if (expr) {
+            this.visit(expr);
+            
+            // Mark any variables in the return expression as active
+            const vars = this.findVariablesInExpression(expr);
+            vars.forEach(variable => {
+                this.markVariableAsActive(variable);
+            });
+        }
+    }
+
+    private findVariablesInExpression(ctx: ExpressionContext): string[] {
+        const variables: string[] = [];
+        
+        if (ctx instanceof IdentifierExprContext) {
+            variables.push(ctx.IDENTIFIER().text);
+        } else if (ctx instanceof BinaryExprContext) {
+            variables.push(...this.findVariablesInExpression(ctx.expression(0)));
+            variables.push(...this.findVariablesInExpression(ctx.expression(1)));
+        }
+        
+        return variables;
+    }
+
+    private markVariableAsActive(variableName: string): void {
+        const variable = this.findSymbol(variableName);
+        if (variable) {
+            variable.used = true;
+        }
     }
 } 
