@@ -122,9 +122,13 @@ build also generates the ANTLR4 files.
 
 Run the test suite:
 ```bash
-npm test
+npm run test
 ``` 
 
+Run the test suite with coverage:
+```bash
+npm run coverage
+```
 
 ## File Structure
 ```
@@ -150,6 +154,7 @@ npm test
             └── Lumina.g4
         └── index.ts
         └── 📁tests
+            └── e2e.test.ts
             └── semantic.test.ts
             └── syntax.test.ts
     └── .gitignore

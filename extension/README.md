@@ -13,17 +13,12 @@ The Lumina Language VS Code Extension provides language support for the Lumina p
 
 ## Installation
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   ```
-
-2. Navigate to the `extension` directory:
+1. Navigate to the `extension` directory:
    ```bash
    cd extension
    ```
 
-3. Install dependencies:
+2. Install dependencies:
    ```bash
    npm install
    ```
@@ -53,13 +48,6 @@ To start the build process in watch mode, run:
 npm run watch
 ```
 
-
-## Testing
-
-To run the test suite, execute:
-```bash
-npm test
-```
 
 ## Examples
 
@@ -253,6 +241,12 @@ console.log();
 
 ### Other
 When you type the left bracket `(` after a function name, it will automatically add the right bracket `)` and the parameters. `}` or `]` will be added when you type the left bracket `{` or `[`.
+
+I also implemented a completion provider for functions that will automatically add the brackets `()` when you type the function name.
+
+There is also a completion provider that when you type `fn` followed by a space, it will list all the declared functions in the current scope.
+![List of declared functions](./images/fn_functions_completion.png)
+    Currently it works but not the way I want it to work. You first need to type `fn` followed by a space, then it shows the declared functions but then you need to do a backspace and the choose the function.
 
 
 ## File Structure
