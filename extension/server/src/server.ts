@@ -166,6 +166,11 @@ documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
 });
 
+/**
+ * Validate a text document
+ * @param textDocument - The text document to validate
+ * @returns The diagnostics
+ */
 async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
 	try {
 		const text = textDocument.getText();

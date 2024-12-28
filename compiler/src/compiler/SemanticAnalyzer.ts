@@ -22,29 +22,51 @@ import {
 import { Diagnostic } from './Compiler';
 import { DiagnosticSeverity } from './types';
 
+/**
+ * Semantic analyzer
+ * 
+ * This class is responsible for semantic analysis of the source code
+ */
 export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements LuminaVisitor<void> {
     private diagnostics: Diagnostic[] = [];
     private scopes: Array<Map<string, any>> = [new Map()];
 
+    /**
+     * Reset the semantic analyzer
+     */
     reset(): void {
         this.diagnostics = [];
         this.scopes = [new Map()];
     }
 
+    /**
+     * Get the current scope
+     * @returns The current scope
+     */
     private get currentScope(): Map<string, any> {
         return this.scopes[this.scopes.length - 1];
     }
 
+    /**
+     * Push a new scope
+     */
     private pushScope() {
         this.scopes.push(new Map());
     }
 
+    /**
+     * Pop the current scope
+     */
     private popScope() {
         // Check for unused variables before popping
         this.checkUnusedIdentifiers(this.currentScope);
         this.scopes.pop();
     }
 
+    /**
+     * Check for unused identifiers
+     * @param scope - The scope to check
+     */
     private checkUnusedIdentifiers(scope: Map<string, any>) {
         scope.forEach((info, name) => {
             if (!info.used) {
@@ -59,6 +81,11 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         });
     }
 
+    /**
+     * Find a symbol in the current scope or any parent scope
+     * @param name - The name of the symbol
+     * @returns The symbol or undefined if not found
+     */
     private findSymbol(name: string): { type: string; used: boolean; kind: string; isConst?: boolean } | undefined {
         // Search from current scope up to global scope
         for (let i = this.scopes.length - 1; i >= 0; i--) {
@@ -70,6 +97,10 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         return undefined;
     }
 
+    /**
+     * Visit the program
+     * @param ctx - The context of the program
+     */
     visitProgram(ctx: ProgramContext): void {
         try {
             this.scopes = [new Map()];
@@ -88,6 +119,10 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         }
     }
 
+    /**
+     * Visit the variable declaration
+     * @param ctx - The context of the variable declaration
+     */
     visitVariableDeclaration(ctx: VariableDeclarationContext): void {
         try {
             const identifier = ctx.IDENTIFIER();
@@ -158,6 +193,10 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         }
     }
 
+    /**
+     * Visit the assignment statement
+     * @param ctx - The context of the assignment statement
+     */
     visitAssignmentStatement(ctx: AssignmentStatementContext): void {
         const identifier = ctx.IDENTIFIER();
         const expr = ctx.expression();
@@ -211,6 +250,10 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         }
     }
 
+    /**
+     * Visit the increment statement
+     * @param ctx - The context of the increment statement
+     */
     visitIncrementStatement(ctx: IncrementStatementContext): void {
         const identifier = ctx.IDENTIFIER();
         if (identifier) {
@@ -252,11 +295,21 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         }
     }
 
+    /**
+     * Infer the type of an expression
+     * @param expr - The expression to infer the type of
+     * @returns The type of the expression or undefined if the expression is undefined
+     */
     private inferType(expr: ExpressionContext | undefined): string | undefined {
         if (!expr) return undefined;
         return this.getExpressionType(expr);
     }
 
+    /**
+     * Get the type of an expression
+     * @param ctx - The context of the expression
+     * @returns The type of the expression or undefined if the expression is undefined
+     */
     private getExpressionType(ctx: ExpressionContext): string | undefined {
         console.log('Getting expression type for:', {
             text: ctx.text,
@@ -400,19 +453,35 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         return undefined;
     }
 
+    /**
+     * Get the diagnostics
+     * @returns The diagnostics
+     */
     getDiagnostics(): Diagnostic[] {
         return this.diagnostics;
     }
 
+    /**
+     * Add a diagnostic
+     * @param diagnostic - The diagnostic to add
+     */
     private addDiagnostic(diagnostic: Diagnostic): void {
         console.log('Adding diagnostic:', diagnostic);
         this.diagnostics.push(diagnostic);
     }
 
+    /**
+     * Default result
+     * @returns The default result
+     */
     protected defaultResult(): void {
         return;
     }
 
+    /**
+     * Visit the function declaration
+     * @param ctx - The context of the function declaration
+     */
     visitFunctionDeclaration(ctx: FunctionDeclarationContext): void {
         try {
             const identifier = ctx.IDENTIFIER();
@@ -467,6 +536,10 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         }
     }
 
+    /**
+     * Visit the function call
+     * @param ctx - The context of the function call
+     */
     visitFunctionCall(ctx: FunctionCallContext): void {
         const identifier = ctx.IDENTIFIER();
         if (identifier) {
@@ -505,6 +578,10 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         }
     }
 
+    /**
+     * Visit the console log statement
+     * @param ctx - The context of the console log statement
+     */
     visitConsoleLogStatement(ctx: ConsoleLogStatementContext): void {
         try {
             const expr = ctx.expression();
@@ -516,6 +593,10 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         }
     }
 
+    /**
+     * Visit the if statement
+     * @param ctx - The context of the if statement
+     */
     visitIfStatement(ctx: IfStatementContext): void {
         try {
             const condition = ctx.expression();
@@ -530,6 +611,10 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         }
     }
 
+    /**
+     * Get all symbols
+     * @returns The symbols
+     */
     getAllSymbols(): Map<string, { kind: string; type?: string }> {
         const allSymbols = new Map<string, { kind: string; type?: string }>();
 
@@ -547,6 +632,10 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         return allSymbols;
     }
 
+    /**
+     * Visit the return statement
+     * @param ctx - The context of the return statement
+     */
     visitReturnStatement(ctx: ReturnStatementContext): void {
         const expr = ctx.expression();
         if (expr) {
@@ -560,6 +649,11 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         }
     }
 
+    /**
+     * Find variables in an expression
+     * @param ctx - The context of the expression
+     * @returns The variables in the expression
+     */
     private findVariablesInExpression(ctx: ExpressionContext): string[] {
         const variables: string[] = [];
 
@@ -573,6 +667,10 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         return variables;
     }
 
+    /**
+     * Mark a variable as active
+     * @param variableName - The name of the variable
+     */
     private markVariableAsActive(variableName: string): void {
         const variable = this.findSymbol(variableName);
         if (variable) {

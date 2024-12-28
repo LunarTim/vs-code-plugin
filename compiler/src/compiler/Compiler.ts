@@ -7,6 +7,13 @@ import { SemanticAnalyzer } from './SemanticAnalyzer';
 import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver-types';
 import { Position } from './types';
 
+/**
+ * Diagnostic interface for the compiler
+ * @param message - The message of the diagnostic
+ * @param line - The line of the diagnostic
+ * @param column - The column of the diagnostic
+ * @param severity - The severity of the diagnostic
+ */
 export interface Diagnostic {
     message: string;
     line: number;
@@ -14,11 +21,21 @@ export interface Diagnostic {
     severity: DiagnosticSeverity;
 }
 
+/**
+ * Compiler result interface for the compiler
+ * @param diagnostics - The diagnostics of the compiler
+ * @param symbols - The symbols of the compiler
+ */
 export interface CompilerResult {
     diagnostics: Diagnostic[];
     symbols: Map<string, { kind: string; type?: string }>;
 }
 
+/**
+ * Compiler class for the compiler
+ * @param semanticAnalyzer - The semantic analyzer of the compiler
+ * @param symbolTable - The symbol table of the compiler
+ */ 
 export class Compiler {
     private semanticAnalyzer: SemanticAnalyzer;
     private symbolTable: Map<string, { kind: string; type?: string }> = new Map();
@@ -27,6 +44,11 @@ export class Compiler {
         this.semanticAnalyzer = new SemanticAnalyzer();
     }
 
+    /**
+     * Compile the source code
+     * @param sourceCode - The source code to compile
+     * @returns The compiler result
+     */
     compile(sourceCode: string): CompilerResult {
         try {
             if (!sourceCode.trim()) {
@@ -94,6 +116,12 @@ export class Compiler {
         }
     }
 
+    /**
+     * Get the completion items for the source code
+     * @param sourceCode - The source code to get completion items for
+     * @param position - The position of the cursor
+     * @returns The completion items
+     */
     getCompletionItems(sourceCode: string, position: Position): CompletionItem[] {
         try {
             // Compile to update symbol table
@@ -122,10 +150,19 @@ export class Compiler {
         }
     }
 
+    /**
+     * Generate the completion items for the source code
+     * @param symbols - The symbols of the compiler
+     * @returns The completion items
+     */ 
     private generateCompletionItems(symbols: Map<string, { kind: string; type?: string }>): CompletionItem[] {
         const items: CompletionItem[] = [];
 
-        // Add live templates
+        /**
+         * Live templates are snippets that are inserted into the source code
+         * @param snippet - The snippet to insert into the source code
+         * @param description - The description of the snippet
+         */
         const liveTemplates = new Map<string, { snippet: string, description: string }>([
             ['log', {
                 snippet: 'console.log($1);',
@@ -160,7 +197,10 @@ export class Compiler {
             });
         });
 
-        // Add language keywords
+        /**
+         * Keywords are reserved words in the language
+         * @param keywords - The keywords of the language
+         */
         const keywords = ['let', 'const', 'var', 'function', 'if', 'else', 'return'];
         keywords.forEach(keyword => {
             items.push({
@@ -169,7 +209,11 @@ export class Compiler {
             });
         });
 
-        // Add symbols from current scope
+        /**
+         * Add symbols from the current scope
+         * @param info - The information of the symbol
+         * @param name - The name of the symbol
+         */
         symbols.forEach((info, name) => {
             const completionItem: CompletionItem = {
                 label: name,
@@ -186,7 +230,10 @@ export class Compiler {
             items.push(completionItem);
         });
 
-        // Add built-in types
+        /**
+         * Built-in types are types that are built into the language
+         * @param types - The types of the language
+         */
         const types = ['number', 'string', 'boolean', 'void'];
         types.forEach(type => {
             items.push({
@@ -195,7 +242,10 @@ export class Compiler {
             });
         });
 
-        // Add built-in methods
+        /**
+         * Built-in methods are methods that are built into the language
+         * @param methods - The methods of the language
+         */
         const methods = new Map([
             ['toString', { type: 'string' }],
             ['log', { type: 'void' }]
@@ -214,10 +264,22 @@ export class Compiler {
         return items;
     }
 
+    /**
+     * Generate the function completions for the source code
+     * @param symbols - The symbols of the compiler
+     * @returns The function completions
+     */
     private generateFunctionCompletions(symbols: Map<string, { kind: string; type?: string }>): CompletionItem[] {
         const items: CompletionItem[] = [];
 
-        // Add function template
+        /**
+         * Add function template
+         * @param label - The label of the function template
+         * @param kind - The kind of the function template
+         * @param detail - The detail of the function template
+         * @param insertText - The text to insert into the source code
+         * @param insertTextFormat - The format of the text to insert into the source code
+         */
         items.push({
             label: 'fn (New Function)',
             kind: CompletionItemKind.Snippet,
@@ -226,7 +288,11 @@ export class Compiler {
             insertTextFormat: InsertTextFormat.Snippet
         });
 
-        // Add all declared functions
+        /**
+         * Add all declared functions
+         * @param info - The information of the symbol
+         * @param name - The name of the symbol
+         */
         symbols.forEach((info: any, name) => {
             console.log(`Processing symbol for completion: ${name}`, info);
             // Handle the nested structure
@@ -250,6 +316,11 @@ export class Compiler {
         return items;
     }
 
+    /**
+     * Get the completion item kind for the symbol
+     * @param symbolKind - The kind of the symbol
+     * @returns The completion item kind
+     */
     private getCompletionItemKind(symbolKind: string): CompletionItemKind {
         switch (symbolKind) {
             case 'Function': return CompletionItemKind.Function;
