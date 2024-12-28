@@ -99,11 +99,11 @@ export class Compiler {
         try {
             // Compile to update symbol table
             const result = this.compile(sourceCode);
-            
+
             const lines = sourceCode.split('\n');
             const currentLine = lines[position.line];
             const textBeforeCursor = currentLine?.slice(0, position.character) || '';
-            
+
             console.log('Current text before cursor:', textBeforeCursor);
             console.log('Current symbol table:', this.symbolTable);
 
@@ -172,11 +172,19 @@ export class Compiler {
 
         // Add symbols from current scope
         symbols.forEach((info, name) => {
-            items.push({
+            const completionItem: CompletionItem = {
                 label: name,
                 kind: this.getCompletionItemKind(info.kind),
                 detail: info.type ? `(${info.type})` : undefined
-            });
+            };
+
+            // Add brackets for functions
+            if (info.kind === 'Function') {
+                completionItem.insertText = `${name}($1)`;
+                completionItem.insertTextFormat = InsertTextFormat.Snippet;
+            }
+
+            items.push(completionItem);
         });
 
         // Add built-in types
@@ -198,7 +206,9 @@ export class Compiler {
             items.push({
                 label: name,
                 kind: CompletionItemKind.Method,
-                detail: `(): ${info.type}`
+                detail: `(): ${info.type}`,
+                insertText: `${name}($1)`,
+                insertTextFormat: InsertTextFormat.Snippet
             });
         });
 
@@ -224,11 +234,12 @@ export class Compiler {
             const functionInfo = info.value || info;
             if (functionInfo.kind === 'Function') {
                 const completionItem = {
-                    label: name, // Just show the function name
+                    label: name,
                     kind: CompletionItemKind.Function,
                     detail: `${name}(): ${functionInfo.type || 'void'}`,
-                    insertText: name,
-                    filterText: `fn${name}`, // This ensures it shows up when typing 'fn' without space
+                    insertText: `${name}($1)`,
+                    insertTextFormat: InsertTextFormat.Snippet,
+                    filterText: `fn${name}`,
                     documentation: `Function ${name} returning ${functionInfo.type || 'void'}`
                 };
                 console.log(`Adding completion item:`, completionItem);
