@@ -12,12 +12,14 @@ import { Position } from './types';
  * @param message - The message of the diagnostic
  * @param line - The line of the diagnostic
  * @param column - The column of the diagnostic
+ * @param endColumn - The end column of the diagnostic (optional)
  * @param severity - The severity of the diagnostic
  */
 export interface Diagnostic {
     message: string;
     line: number;
     column: number;
+    endColumn?: number;
     severity: DiagnosticSeverity;
 }
 
@@ -35,7 +37,7 @@ export interface CompilerResult {
  * Compiler class for the compiler
  * @param semanticAnalyzer - The semantic analyzer of the compiler
  * @param symbolTable - The symbol table of the compiler
- */ 
+ */
 export class Compiler {
     private semanticAnalyzer: SemanticAnalyzer;
     private symbolTable: Map<string, { kind: string; type?: string }> = new Map();
@@ -78,6 +80,12 @@ export class Compiler {
                 // Update symbol table with new analysis
                 this.semanticAnalyzer.visit(tree);
                 this.symbolTable = this.semanticAnalyzer.getAllSymbols();
+                console.log('Updated symbol table:', {
+                    symbols: Array.from(this.symbolTable.entries()).map(([key, value]) => ({
+                        name: key,
+                        info: value
+                    }))
+                });
             } catch (parseError) {
                 // Keep existing symbols on parse error
                 return {
@@ -127,12 +135,18 @@ export class Compiler {
             // Compile to update symbol table
             const result = this.compile(sourceCode);
 
+            console.log('Symbol table for completions:', {
+                symbols: Array.from(this.symbolTable.entries()).map(([key, value]) => ({
+                    name: key,
+                    info: value
+                }))
+            });
+
             const lines = sourceCode.split('\n');
             const currentLine = lines[position.line];
             const textBeforeCursor = currentLine?.slice(0, position.character) || '';
 
             console.log('Current text before cursor:', textBeforeCursor);
-            console.log('Current symbol table:', this.symbolTable);
 
             // Get the current word being typed
             const currentWord = textBeforeCursor.trim().split(/[\s(){}[\],;=+\-*/<>!&|]+/).pop() || '';
@@ -154,8 +168,8 @@ export class Compiler {
      * Generate the completion items for the source code
      * @param symbols - The symbols of the compiler
      * @returns The completion items
-     */ 
-    private generateCompletionItems(symbols: Map<string, { kind: string; type?: string }>): CompletionItem[] {
+     */
+    private generateCompletionItems(symbols: Map<string, { kind: string; type?: string; parameters?: Array<{ name: string; type: string }> }>): CompletionItem[] {
         const items: CompletionItem[] = [];
 
         /**
@@ -218,13 +232,17 @@ export class Compiler {
             const completionItem: CompletionItem = {
                 label: name,
                 kind: this.getCompletionItemKind(info.kind),
-                detail: info.type ? `(${info.type})` : undefined
             };
 
-            // Add brackets for functions
+            // Add type information to detail
             if (info.kind === 'Function') {
+                const params = info.parameters?.map((p: { name: string; type: string }) => p.type).join(', ') || '';
+                const returnType = info.type || 'void';
+                completionItem.detail = `(${params}): ${returnType}`;
                 completionItem.insertText = `${name}($1)`;
                 completionItem.insertTextFormat = InsertTextFormat.Snippet;
+            } else if (info.type) {
+                completionItem.detail = `${info.type}`;
             }
 
             items.push(completionItem);
@@ -269,7 +287,7 @@ export class Compiler {
      * @param symbols - The symbols of the compiler
      * @returns The function completions
      */
-    private generateFunctionCompletions(symbols: Map<string, { kind: string; type?: string }>): CompletionItem[] {
+    private generateFunctionCompletions(symbols: Map<string, { kind: string; type?: string; parameters?: Array<{ name: string; type: string }> }>): CompletionItem[] {
         const items: CompletionItem[] = [];
 
         /**
@@ -298,14 +316,16 @@ export class Compiler {
             // Handle the nested structure
             const functionInfo = info.value || info;
             if (functionInfo.kind === 'Function') {
+                const params = functionInfo.parameters?.map((p: { name: string; type: string }) => p.type).join(', ') || '';
+                const returnType = functionInfo.type || 'void';
                 const completionItem = {
                     label: name,
                     kind: CompletionItemKind.Function,
-                    detail: `${name}(): ${functionInfo.type || 'void'}`,
+                    detail: `(${params}): ${returnType}`,
                     insertText: `${name}($1)`,
                     insertTextFormat: InsertTextFormat.Snippet,
                     filterText: `fn${name}`,
-                    documentation: `Function ${name} returning ${functionInfo.type || 'void'}`
+                    documentation: `Function ${name}`
                 };
                 console.log(`Adding completion item:`, completionItem);
                 items.push(completionItem);

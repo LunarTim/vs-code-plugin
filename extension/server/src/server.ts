@@ -198,7 +198,9 @@ async function validateTextDocument(textDocument: TextDocument): Promise<Diagnos
 			// Calculate the range based on the message type
 			let endCharacter = column;
 
-			if (diagnostic.message.includes('is declared but never used')) {
+			if ('endColumn' in diagnostic && typeof diagnostic.endColumn === 'number') {
+				endCharacter = diagnostic.endColumn;
+			} else if (diagnostic.message.includes('is declared but never used')) {
 				// For unused variable warnings, highlight the variable name
 				const match = diagnostic.message.match(/Variable '([^']+)'/);
 				if (match) {

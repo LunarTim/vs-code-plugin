@@ -86,7 +86,13 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
      * @param name - The name of the symbol
      * @returns The symbol or undefined if not found
      */
-    private findSymbol(name: string): { type: string; used: boolean; kind: string; isConst?: boolean } | undefined {
+    private findSymbol(name: string): {
+        type: string;
+        used: boolean;
+        kind: string;
+        isConst?: boolean;
+        parameters?: Array<{ name: string; type: string }>;
+    } | undefined {
         // Search from current scope up to global scope
         for (let i = this.scopes.length - 1; i >= 0; i--) {
             const symbol = this.scopes[i].get(name);
@@ -491,20 +497,24 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
             if (identifier) {
                 const name = identifier.text;
                 // Store function with complete type information
-                this.currentScope.set(name, {
+                const functionInfo = {
                     type: returnType ? returnType.text : 'void',
                     used: false,
-                    kind: 'Function', // Make sure this is exactly 'Function'
+                    kind: 'Function',
                     line: identifier.symbol.line,
                     column: identifier.symbol.charPositionInLine,
-                    // Store parameter information
                     parameters: parameters.map(p => ({
                         name: p.IDENTIFIER()?.text || '',
                         type: p.type()?.text || ''
                     }))
+                };
+
+                console.log('Adding function to scope:', {
+                    name,
+                    functionInfo
                 });
 
-                console.log(`Added function to scope: ${name}`, this.currentScope.get(name)); // Debug log
+                this.currentScope.set(name, functionInfo);
 
                 // Create new scope for function body
                 this.pushScope();
@@ -516,7 +526,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                     if (paramId && paramType) {
                         this.currentScope.set(paramId.text, {
                             type: paramType.text,
-                            used: false, // Don't mark as used by default
+                            used: false,
                             kind: 'Parameter',
                             line: paramId.symbol.line,
                             column: paramId.symbol.charPositionInLine
@@ -561,6 +571,26 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                     message: `'${name}' is not a function`,
                     line: ctx.start.line,
                     column: ctx.start.charPositionInLine,
+                    severity: DiagnosticSeverity.Error
+                });
+                return;
+            }
+
+            // Check parameter count
+            const providedArgs = ctx.argumentList()?.expression() || [];
+            const expectedParams = symbol.parameters || [];
+            if (providedArgs.length !== expectedParams.length) {
+                const startColumn = ctx.start.charPositionInLine;
+                // Calculate end position to include the entire function call
+                const functionName = ctx.IDENTIFIER().text;
+                const fullText = ctx.text;
+                const endColumn = startColumn + fullText.length;
+
+                this.addDiagnostic({
+                    message: `Expected ${expectedParams.length} arguments, but got ${providedArgs.length}`,
+                    line: ctx.start.line,
+                    column: startColumn,
+                    endColumn: endColumn,
                     severity: DiagnosticSeverity.Error
                 });
                 return;
@@ -615,17 +645,24 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
      * Get all symbols
      * @returns The symbols
      */
-    getAllSymbols(): Map<string, { kind: string; type?: string }> {
-        const allSymbols = new Map<string, { kind: string; type?: string }>();
+    getAllSymbols(): Map<string, { kind: string; type?: string; parameters?: Array<{ name: string; type: string }> }> {
+        const allSymbols = new Map<string, { kind: string; type?: string; parameters?: Array<{ name: string; type: string }> }>();
 
         // Start with global scope (index 0)
         this.scopes[0].forEach((info: any, name) => {
             // Handle nested value structure
             const symbolInfo = info.value || info;
-            allSymbols.set(name, {
+            const symbol: { kind: string; type?: string; parameters?: Array<{ name: string; type: string }> } = {
                 kind: symbolInfo.kind,
                 type: symbolInfo.type
-            });
+            };
+
+            // Include parameters for functions
+            if (symbolInfo.kind === 'Function' && symbolInfo.parameters) {
+                symbol.parameters = symbolInfo.parameters;
+            }
+
+            allSymbols.set(name, symbol);
         });
 
         console.log('Global scope symbols:', allSymbols);

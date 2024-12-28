@@ -246,7 +246,8 @@ I also implemented a completion provider for functions that will automatically a
 
 There is also a completion provider that when you type `fn` followed by a space, it will list all the declared functions in the current scope.
 ![List of declared functions](./images/fn_functions_completion.png)
-    Currently it works but not the way I want it to work. You first need to type `fn` followed by a space, then it shows the declared functions but then you need to do a backspace and the choose the function.
+
+Currently it works but not the way I intended it to. You first need to type `fn` followed by a space, then it shows the declared functions but then you need to do a backspace and the choose the function.
 
 
 ## File Structure
