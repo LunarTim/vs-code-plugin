@@ -1,10 +1,9 @@
-import { CharStreams, CommonTokenStream, CharStream } from 'antlr4ts';
+import { CharStreams, CommonTokenStream } from 'antlr4ts';
 import { LuminaLexer } from '../grammar/generated/LuminaLexer';
-import { LuminaParser, ProgramContext } from '../grammar/generated/LuminaParser';
+import { LuminaParser } from '../grammar/generated/LuminaParser';
 import { LexerErrorListener, ParserErrorListener } from './ErrorListener';
 import { DiagnosticSeverity } from './types';
 import { SemanticAnalyzer } from './SemanticAnalyzer';
-import { DefaultErrorStrategy } from 'antlr4ts/DefaultErrorStrategy';
 import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver-types';
 import { Position } from './types';
 
@@ -116,14 +115,14 @@ export class Compiler {
                 return this.generateFunctionCompletions(this.symbolTable);
             }
 
-            return this.generateCompletionItems(position, this.symbolTable);
+            return this.generateCompletionItems(this.symbolTable);
         } catch (error) {
             console.error('Error getting completion items:', error);
             return [];
         }
     }
 
-    private generateCompletionItems(position: Position, symbols: Map<string, { kind: string; type?: string }>): CompletionItem[] {
+    private generateCompletionItems(symbols: Map<string, { kind: string; type?: string }>): CompletionItem[] {
         const items: CompletionItem[] = [];
 
         // Add live templates
@@ -258,13 +257,5 @@ export class Compiler {
             case 'Parameter': return CompletionItemKind.Variable;
             default: return CompletionItemKind.Text;
         }
-    }
-
-    private parse(sourceCode: string): ProgramContext {
-        const inputStream = CharStreams.fromString(sourceCode);
-        const lexer = new LuminaLexer(inputStream);
-        const tokenStream = new CommonTokenStream(lexer);
-        const parser = new LuminaParser(tokenStream);
-        return parser.program();
     }
 } 

@@ -267,52 +267,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<Diagnos
 	}
 }
 
-connection.onDidChangeWatchedFiles(_change => {
-	// Monitored files have change in VSCode
-	connection.console.log('We received a file change event');
-});
 
-// Define our language keywords and templates
-const keywords = [
-	'let',
-	'function',
-	'if',
-	'else',
-	'for',
-	'return',
-	'number',
-	'string',
-	'boolean',
-	'void',
-	'console',
-	'log'
-];
-
-const liveTemplates = new Map<string, { snippet: string, description: string }>([
-	['log', {
-		snippet: 'console.log($1);',
-		description: 'Console log statement'
-	}],
-	['fi', {
-		snippet: 'if ($1) {\n\t$2\n}',
-		description: 'If statement'
-	}],
-	['elfi', {
-		snippet: 'if ($1) {\n\t$2\n} else {\n\t$3\n}',
-		description: 'If else statement'
-	}],
-	['fori', {
-		snippet: 'for (let ${1:i}: number = 0; ${1:i} < ${2:length}; ${1:i}++) {\n\t$3\n}',
-		description: 'For loop'
-	}],
-	['fn', {
-		snippet: 'function ${1:name}(${2:params}): ${3:type} {\n\t$4\n}',
-		description: 'Function declaration'
-	}]
-]);
-
-// Store document symbols (variables and functions)
-const documentSymbols = new Map<string, Map<string, { kind: CompletionItemKind; type?: string }>>();
 
 // Handle code completion requests
 connection.onCompletion(

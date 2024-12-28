@@ -8,18 +8,13 @@ import {
     ExpressionContext,
     LiteralContext,
     LiteralExprContext,
-    NumberLiteralContext,
-    StringLiteralContext,
-    BooleanLiteralContext,
-    FunctionDeclarationContext,
-    IdentifierExprContext,
     BinaryExprContext,
-    AssignmentStatementContext,
-    IncrementStatementContext,
-    IncrementExprContext,
+    IdentifierExprContext,
+    FunctionDeclarationContext,
     FunctionCallContext,
     FunctionCallExprContext,
-    PropertyAccessExprContext,
+    AssignmentStatementContext,
+    IncrementStatementContext,
     ConsoleLogStatementContext,
     IfStatementContext,
     ReturnStatementContext
@@ -405,17 +400,6 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         return undefined;
     }
 
-    getSymbols(): Map<string, { kind: string; type?: string }> {
-        const symbols = new Map<string, { kind: string; type?: string }>();
-        this.scopes[0].forEach((info, name) => {
-            symbols.set(name, {
-                kind: info.kind,
-                type: info.type
-            });
-        });
-        return symbols;
-    }
-
     getDiagnostics(): Diagnostic[] {
         return this.diagnostics;
     }
@@ -548,7 +532,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
 
     getAllSymbols(): Map<string, { kind: string; type?: string }> {
         const allSymbols = new Map<string, { kind: string; type?: string }>();
-        
+
         // Start with global scope (index 0)
         this.scopes[0].forEach((info: any, name) => {
             // Handle nested value structure
@@ -558,7 +542,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 type: symbolInfo.type
             });
         });
-        
+
         console.log('Global scope symbols:', allSymbols);
         return allSymbols;
     }
@@ -567,7 +551,7 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
         const expr = ctx.expression();
         if (expr) {
             this.visit(expr);
-            
+
             // Mark any variables in the return expression as active
             const vars = this.findVariablesInExpression(expr);
             vars.forEach(variable => {
@@ -578,14 +562,14 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
 
     private findVariablesInExpression(ctx: ExpressionContext): string[] {
         const variables: string[] = [];
-        
+
         if (ctx instanceof IdentifierExprContext) {
             variables.push(ctx.IDENTIFIER().text);
         } else if (ctx instanceof BinaryExprContext) {
             variables.push(...this.findVariablesInExpression(ctx.expression(0)));
             variables.push(...this.findVariablesInExpression(ctx.expression(1)));
         }
-        
+
         return variables;
     }
 
