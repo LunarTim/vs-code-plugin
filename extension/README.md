@@ -30,7 +30,7 @@ The Lumina Language VS Code Extension provides language support for the Lumina p
 3. Switch to the Run and Debug View in the Sidebar (`Ctrl+Shift+D`).
 4. Select `Launch Client` from the dropdown.
 5. Press `F5` to run the extension in a new Extension Development Host window.
-6. Create a new file with the `.lum` or `.lumina` extension.
+6. Create or open a file with the `.lum` or `.lumina` extension.
 
 ## Development
 
@@ -50,6 +50,8 @@ npm run watch
 
 
 ## Examples
+Example files can be found in the root of the project. `voorbeeld.lum` is an example file with what is supported and `voorbeeldFouten.lumina` is an example file with errors.
+Both can be opened in Visual Studio Code following the [usage](#usage) instructions.
 
 ### Hello World
 

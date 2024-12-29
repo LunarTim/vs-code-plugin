@@ -73,17 +73,18 @@ returnStatement
     ;
 
 expression
-    : literal                                  #literalExpr
-    | IDENTIFIER                              #identifierExpr
-    | IDENTIFIER ('++' | '--')                #incrementExpr
-    | functionCall                            #functionCallExpr
-    | expression '.' IDENTIFIER               #propertyAccessExpr
-    | '(' expression ')'                      #parenExpr
-    | expression op=('*'|'/') expression      #binaryExpr
-    | expression op=('+'|'-') expression      #binaryExpr
-    | expression op=('=='|'!='|'<'|'>'|'<='|'>=') expression  #binaryExpr
-    | expression '&&' expression              #logicalAndExpr
-    | expression '||' expression              #logicalOrExpr
+    : literal                                                                  #literalExpr
+    | IDENTIFIER                                                              #identifierExpr
+    | IDENTIFIER ('++' | '--')                                               #incrementExpr
+    | functionCall                                                           #functionCallExpr
+    | expression '.' IDENTIFIER                                              #propertyAccessExpr
+    | '(' expression ')'                                                     #parenExpr
+    | '!' expression                                                         #unaryNotExpr
+    | expression ('*' | '/') expression                                      #binaryExpr
+    | expression ('+' | '-') expression                                      #binaryExpr
+    | expression ('==' | '!=' | '<' | '>' | '<=' | '>=') expression         #binaryExpr
+    | expression '&&' expression                                             #logicalAndExpr
+    | expression '||' expression                                             #logicalOrExpr
     ;
 
 functionCall
@@ -105,6 +106,7 @@ NUMBER: [0-9]+ ('.' [0-9]+)?;
 STRING: '"' (~["\r\n] | '\\"')* '"';
 BOOLEAN: 'true' | 'false';
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
+NOT: '!';
 WS: [ \t\r\n]+ -> skip;
 COMMENT: '//' ~[\r\n]* -> skip;
 MULTILINE_COMMENT: '/*' .*? '*/' -> skip; 

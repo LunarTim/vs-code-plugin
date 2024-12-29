@@ -17,7 +17,8 @@ import {
     IncrementStatementContext,
     ConsoleLogStatementContext,
     IfStatementContext,
-    ReturnStatementContext
+    ReturnStatementContext,
+    UnaryNotExprContext
 } from '../grammar/generated/LuminaParser';
 import { Diagnostic } from './Compiler';
 import { DiagnosticSeverity } from './types';
@@ -323,6 +324,22 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
             start: { line: ctx.start.line, column: ctx.start.charPositionInLine }
         });
 
+        if (ctx instanceof UnaryNotExprContext) {
+            const operandType = this.getExpressionType(ctx.expression());
+
+            if (operandType === 'boolean') {
+                return 'boolean';
+            } else {
+                this.addDiagnostic({
+                    message: `Operator '!' cannot be applied to type '${operandType}'`,
+                    line: ctx.start.line,
+                    column: ctx.start.charPositionInLine,
+                    severity: DiagnosticSeverity.Error
+                });
+                return undefined;
+            }
+        }
+
         if (ctx instanceof LiteralExprContext) {
             const literal = ctx.literal();
             console.log('Literal Expression:', {
@@ -581,8 +598,6 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
             const expectedParams = symbol.parameters || [];
             if (providedArgs.length !== expectedParams.length) {
                 const startColumn = ctx.start.charPositionInLine;
-                // Calculate end position to include the entire function call
-                const functionName = ctx.IDENTIFIER().text;
                 const fullText = ctx.text;
                 const endColumn = startColumn + fullText.length;
 
@@ -595,6 +610,25 @@ export class SemanticAnalyzer extends AbstractParseTreeVisitor<void> implements 
                 });
                 return;
             }
+
+            // Type check each argument
+            providedArgs.forEach((arg, index) => {
+                const providedType = this.getExpressionType(arg);
+                const expectedType = expectedParams[index].type;
+
+                if (providedType && expectedType && providedType !== expectedType) {
+                    const startColumn = arg.start.charPositionInLine;
+                    const endColumn = startColumn + arg.text.length;
+
+                    this.addDiagnostic({
+                        message: `Argument of type '${providedType}' is not assignable to parameter of type '${expectedType}'`,
+                        line: arg.start.line,
+                        column: startColumn,
+                        endColumn: endColumn,
+                        severity: DiagnosticSeverity.Error
+                    });
+                }
+            });
 
             // Mark the function as used
             for (let i = this.scopes.length - 1; i >= 0; i--) {

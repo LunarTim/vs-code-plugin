@@ -1,0 +1,30 @@
+let x: number = 1;
+var waar: boolean = true;
+const fout: string = "waar is false";
+const juist: string = "waar is true";
+
+
+if (!waar) {
+    console.log(fout);
+} else  {
+    console.log(juist);
+}
+
+for (let i: number = 0; i < 12; i++) {
+    x*=i;
+}
+
+function add(a: number, b: number): number {
+    return a+b;
+}
+
+function subtractFromX(a: number): void {
+    x-=a;
+}
+
+let result: number = add(1, 3);
+console.log(result);
+
+
+subtractFromX(8);
+console.log(x);

@@ -53,6 +53,41 @@ Code completion features:
 - `/compiler` - Contains the Lumina language compiler implementation
 - `/extension` - Contains the VS Code extension implementation
 
+## Build Project
+### In steps (from root)
+1. change to compiler
+```Bash
+cd compiler
+```
+2. Install dependecies
+```Bash
+npm install
+```
+3. Build the compiler
+```Bash
+npm run build
+```
+4. change to extension
+```Bash
+cd ../extension
+```
+5. Install dependecies
+```Bash
+npm install
+```
+6. Build the extension
+```Bash
+npm run compile
+```
+
+### In one command (from root)
+```Bash
+cd compiler; npm install; npm run build; cd ../extension; npm install; npm run compile
+```
+
+Then follow the instructions in [Usage](./extension/README.md#usage) on how to run the extension in VS Code.
+
+
 ## Getting Started
 See detailed setup and usage instructions in:
 - [Compiler README](./compiler/README.md)

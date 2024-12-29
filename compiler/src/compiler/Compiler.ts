@@ -215,11 +215,12 @@ export class Compiler {
          * Keywords are reserved words in the language
          * @param keywords - The keywords of the language
          */
-        const keywords = ['let', 'const', 'var', 'function', 'if', 'else', 'return'];
+        const keywords = ['let', 'const', 'var', 'function', 'if', 'else', 'return', 'console', '!'];
         keywords.forEach(keyword => {
             items.push({
                 label: keyword,
-                kind: CompletionItemKind.Keyword
+                kind: CompletionItemKind.Keyword,
+                detail: keyword === '!' ? 'Logical NOT operator' : undefined
             });
         });
 
